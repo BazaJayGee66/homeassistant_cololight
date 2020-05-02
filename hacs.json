@@ -1,0 +1,8 @@
+{
+    "name": "LifeSmart Cololight",
+    "domains": [
+        "light"
+    ],
+    "iot_class": "Local Polling",
+    "render_readme": true
+}

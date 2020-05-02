@@ -120,4 +120,3 @@ class coloLight(Light):
     def turn_off(self, **kwargs):
         self._sock.sendto(bytes.fromhex('{}{}{}'.format(MESSAGE_PREFIX, MESSAGE_COMMAND_CONFIG, MESSAGE_OFF)), (self._host, self._port))
         self._on = False
-
