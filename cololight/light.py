@@ -52,10 +52,12 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+    """Set up the cololight light platform."""
     host = config[CONF_HOST]
     name = config[CONF_NAME]
-    add_entities([coloLight(host, name)])
+    async_add_entities([coloLight(host, name)])
+
 
 class coloLight(Light):
     def __init__(self, host, name):
@@ -95,7 +97,7 @@ class coloLight(Light):
     def hs_color(self) -> tuple:
         return self._hs
 
-    def turn_on(self, **kwargs):
+    async def async_turn_on(self, **kwargs):
         hs_color = kwargs.get(ATTR_HS_COLOR)
         brightness = kwargs.get(ATTR_BRIGHTNESS)
         effect = kwargs.get(ATTR_EFFECT)
@@ -117,7 +119,7 @@ class coloLight(Light):
         self._sock.sendto(bytes.fromhex('{}{}{}{:02x}'.format(MESSAGE_PREFIX, MESSAGE_COMMAND_CONFIG, MESSAGE_BRIGHTNESS, int(brightness))), (self._host, self._port))
         self._on = True
 
-    def turn_off(self, **kwargs):
+    async def async_turn_off(self, **kwargs):
         self._sock.sendto(bytes.fromhex('{}{}{}'.format(MESSAGE_PREFIX, MESSAGE_COMMAND_CONFIG, MESSAGE_OFF)), (self._host, self._port))
         self._on = False
 
