@@ -1,0 +1,8 @@
+{
+    "domain": "cololight",
+    "name": "LifeSmart Cololight",
+    "documentation": "https://github.com/xiidoz/homeassistant-cololight",
+    "dependencies": [],
+    "codeowners": [],
+    "requirements": []
+}
