@@ -111,6 +111,9 @@ class coloLight(Light):
     def hs_color(self) -> tuple:
         return self._hs
 
+    def send_message(self, message):
+        self._sock.sendto(message, (self._host, self._port))
+
     async def async_turn_on(self, **kwargs):
         hs_color = kwargs.get(ATTR_HS_COLOR)
         brightness = kwargs.get(ATTR_BRIGHTNESS)
@@ -120,25 +123,23 @@ class coloLight(Light):
 
         if rgb:
             self._hs = hs_color
-            self._sock.sendto(
+            self.send_message(
                 bytes.fromhex(
                     "{}{}{:02x}{:02x}{:02x}".format(
                         MESSAGE_PREFIX, MESSAGE_COMMAND_COLOR, *rgb
                     )
-                ),
-                (self._host, self._port),
+                )
             )
 
         if effect:
-            self._sock.sendto(
+            self.send_message(
                 bytes.fromhex(
                     "{}{}{}".format(
                         MESSAGE_PREFIX,
                         MESSAGE_COMMAND_EFFECT,
                         COLOLIGHT_EFFECT_MAPPING[effect],
                     )
-                ),
-                (self._host, self._port),
+                )
             )
 
         if brightness:
@@ -146,7 +147,7 @@ class coloLight(Light):
 
         brightness = (self._brightness / 255) * 100
 
-        self._sock.sendto(
+        self.send_message(
             bytes.fromhex(
                 "{}{}{}{:02x}".format(
                     MESSAGE_PREFIX,
@@ -154,16 +155,14 @@ class coloLight(Light):
                     MESSAGE_BRIGHTNESS,
                     int(brightness),
                 )
-            ),
-            (self._host, self._port),
+            )
         )
         self._on = True
 
     async def async_turn_off(self, **kwargs):
-        self._sock.sendto(
+        self.send_message(
             bytes.fromhex(
                 "{}{}{}".format(MESSAGE_PREFIX, MESSAGE_COMMAND_CONFIG, MESSAGE_OFF)
-            ),
-            (self._host, self._port),
+            )
         )
         self._on = False
