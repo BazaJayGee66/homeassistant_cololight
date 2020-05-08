@@ -27,20 +27,20 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 
 ### Options
 
-| Name | Type | Required | Default | Description
-| --- | --- | --- | --- | ---
-| platform | string | ✔ |  | cololight
-| host | string | ✔ | | IP address of your Cololight
-| name | string | ✖ | Cololight | name of your entity
+| Name     | Type   | Required | Default   | Description                  |
+| -------- | ------ | -------- | --------- | ---------------------------- |
+| platform | string | ✔        |           | cololight                    |
+| host     | string | ✔        |           | IP address of your Cololight |
+| name     | string | ✖        | Cololight | name of your entity          |
 
 Add a light to your configuration:
 
-~~~ yaml
+```yaml
 light:
   - platform: cololight
     name: my_cololight
     host: 192.168.1.100
-~~~~
+```
 
 ## Credits
 
