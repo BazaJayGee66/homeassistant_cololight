@@ -83,6 +83,7 @@ class coloLight(Light):
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._supported_features = SUPPORT_BRIGHTNESS | SUPPORT_COLOR | SUPPORT_EFFECT
         self._effect_list = COLOLIGHT_EFFECT_LIST
+        self._effect = None
         self._on = False
         self._brightness = 255
         self._hs = None
@@ -102,6 +103,10 @@ class coloLight(Light):
     @property
     def effect_list(self):
         return self._effect_list
+
+    @property
+    def effect(self):
+        return self._effect
 
     @property
     def brightness(self) -> int:
@@ -132,6 +137,7 @@ class coloLight(Light):
             )
 
         if effect:
+            self._effect = effect
             self.send_message(
                 bytes.fromhex(
                     "{}{}{}".format(
