@@ -1,0 +1,38 @@
+FROM python:3.8
+
+RUN \
+    apt-get update && apt-get install -y --no-install-recommends \
+        libudev-dev \
+        libavformat-dev \
+        libavcodec-dev \
+        libavdevice-dev \
+        libavutil-dev \
+        libswscale-dev \
+        libswresample-dev \
+        libavfilter-dev \
+        git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src
+
+# Setup hass-release
+RUN git clone --depth 1 https://github.com/home-assistant/hass-release \
+    && pip3 install -e hass-release/
+
+WORKDIR /homeassistant
+
+# Setup homeassistant framework
+RUN git clone --depth 1 https://github.com/home-assistant/core.git && \
+    pip3 install -r core/requirements_test.txt -c core/homeassistant/package_constraints.txt && \
+    pip3 uninstall -y typing && \
+    core/script/setup && \
+    pip3 install sqlalchemy==1.3.16
+
+WORKDIR /workspaces
+
+RUN ln -s /workspaces/homeassistant_cololight/custom_components/cololight /homeassistant/core/homeassistant/components/cololight
+
+# Set the default shell to bash instead of sh
+ENV PYTHONPATH /workspaces/homeassistant_cololight/custom_components
+ENV SHELL /bin/bash

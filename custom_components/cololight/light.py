@@ -83,6 +83,7 @@ class coloLight(Light):
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._supported_features = SUPPORT_BRIGHTNESS | SUPPORT_COLOR | SUPPORT_EFFECT
         self._effect_list = COLOLIGHT_EFFECT_LIST
+        self._effect = None
         self._on = False
         self._brightness = 255
         self._hs = None
@@ -104,12 +105,19 @@ class coloLight(Light):
         return self._effect_list
 
     @property
+    def effect(self):
+        return self._effect
+
+    @property
     def brightness(self) -> int:
         return self._brightness
 
     @property
     def hs_color(self) -> tuple:
         return self._hs
+
+    def send_message(self, message):
+        self._sock.sendto(message, (self._host, self._port))
 
     async def async_turn_on(self, **kwargs):
         hs_color = kwargs.get(ATTR_HS_COLOR)
@@ -120,25 +128,24 @@ class coloLight(Light):
 
         if rgb:
             self._hs = hs_color
-            self._sock.sendto(
+            self.send_message(
                 bytes.fromhex(
                     "{}{}{:02x}{:02x}{:02x}".format(
                         MESSAGE_PREFIX, MESSAGE_COMMAND_COLOR, *rgb
                     )
-                ),
-                (self._host, self._port),
+                )
             )
 
         if effect:
-            self._sock.sendto(
+            self._effect = effect
+            self.send_message(
                 bytes.fromhex(
                     "{}{}{}".format(
                         MESSAGE_PREFIX,
                         MESSAGE_COMMAND_EFFECT,
                         COLOLIGHT_EFFECT_MAPPING[effect],
                     )
-                ),
-                (self._host, self._port),
+                )
             )
 
         if brightness:
@@ -146,7 +153,7 @@ class coloLight(Light):
 
         brightness = (self._brightness / 255) * 100
 
-        self._sock.sendto(
+        self.send_message(
             bytes.fromhex(
                 "{}{}{}{:02x}".format(
                     MESSAGE_PREFIX,
@@ -154,16 +161,14 @@ class coloLight(Light):
                     MESSAGE_BRIGHTNESS,
                     int(brightness),
                 )
-            ),
-            (self._host, self._port),
+            )
         )
         self._on = True
 
     async def async_turn_off(self, **kwargs):
-        self._sock.sendto(
+        self.send_message(
             bytes.fromhex(
                 "{}{}{}".format(MESSAGE_PREFIX, MESSAGE_COMMAND_CONFIG, MESSAGE_OFF)
-            ),
-            (self._host, self._port),
+            )
         )
         self._on = False
