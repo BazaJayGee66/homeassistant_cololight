@@ -43,6 +43,9 @@ COLOLIGHT_EFFECT_LIST = [
     "Sunrise",
     "The Circus",
     "Unicorns",
+    "Christmas",
+    "Rainbow Flow",
+    "Music Mode",
 ]
 
 COLOLIGHT_EFFECT_MAPPING = {
@@ -55,6 +58,9 @@ COLOLIGHT_EFFECT_MAPPING = {
     "Sunrise": "01c10a00",
     "The Circus": "04810130",
     "Unicorns": "049a0e00",
+    "Christmas": "068b0900",
+    "Rainbow Flow": "03810690",
+    "Music Mode": "07bd0990",
 }
 
 # Validation of the user's configuration
