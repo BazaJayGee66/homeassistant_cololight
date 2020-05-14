@@ -1,6 +1,7 @@
 """Platform for LifeSmart ColoLight Light integration."""
 import logging
 import voluptuous as vol
+import socket
 
 import homeassistant.helpers.config_validation as cv
 
@@ -76,13 +77,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     """Set up the cololight light platform."""
     host = config[CONF_HOST]
     name = config[CONF_NAME]
-    async_add_entities([coloLight(host, name)])
+
+    cololight_light = PyCololight(host)
+
+    async_add_entities([coloLight(cololight_light, host, name)])
 
 
 class coloLight(Light):
-    def __init__(self, host, name):
-        import socket
-
+    def __init__(self, light, host, name):
+        self._light = light
         self._host = host
         self._port = 8900
         self._name = name
@@ -144,15 +147,7 @@ class coloLight(Light):
 
         if effect:
             self._effect = effect
-            self.send_message(
-                bytes.fromhex(
-                    "{}{}{}".format(
-                        MESSAGE_PREFIX,
-                        MESSAGE_COMMAND_EFFECT,
-                        COLOLIGHT_EFFECT_MAPPING[effect],
-                    )
-                )
-            )
+            self._light.effect = effect
 
         if brightness:
             self._brightness = brightness
@@ -178,3 +173,46 @@ class coloLight(Light):
             )
         )
         self._on = False
+
+
+class PyCololight:
+    def __init__(self, host, port=8900):
+        self.host = host
+        self.port = port
+        self._effect = None
+        self._effects = {
+            "80s Club": "049a0000",
+            "Cherry Blossom": "04940800",
+            "Cocktail Parade": "05bd0690",
+            "Instagrammer": "03bc0190",
+            "Pensieve": "04c40600",
+            "Savasana": "04970400",
+            "Sunrise": "01c10a00",
+            "The Circus": "04810130",
+            "Unicorns": "049a0e00",
+            "Christmas": "068b0900",
+            "Rainbow Flow": "03810690",
+            "Music Mode": "07bd0990",
+        }
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    def _send(self, command):
+        self._sock.sendto(command, (self.host, self.port))
+
+    @property
+    def effect(self):
+        return self._effect
+
+    @effect.setter
+    def effect(self, effect):
+        command = bytes.fromhex(
+            "{}{}{}".format(
+                MESSAGE_PREFIX, MESSAGE_COMMAND_EFFECT, self._effects[effect],
+            )
+        )
+        self._effect = effect
+        self._send(command)
+
+    @property
+    def effects(self):
+        return list(self._effects.keys())

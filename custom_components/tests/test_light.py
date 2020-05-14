@@ -81,7 +81,8 @@ async def test_turn_on_with_brightness(mock_sending, hass):
 
 
 @patch("homeassistant.components.cololight.light.coloLight.send_message")
-async def test_turn_on_with_effect(mock_sending, hass):
+@patch("homeassistant.components.cololight.light.PyCololight._send")
+async def test_turn_on_with_effect(mock_send, mock_sending, hass):
     """Test the light turns on with effect."""
 
     await hass.services.async_call(
@@ -93,16 +94,12 @@ async def test_turn_on_with_effect(mock_sending, hass):
 
     state = hass.states.get(ENTITY_LIGHT)
 
-    expected_messages = [
-        call(
-            b"SZ00\x00\x00\x00\x00\x00#\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x06\x02\xff\x01\xc1\n\x00"
-        ),
-        call(
-            b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcf\x17"
-        ),
-    ]
-    mock_sending.assert_has_calls(expected_messages)
-    assert mock_sending.call_count == 2
+    mock_send.assert_called_with(
+        b"SZ00\x00\x00\x00\x00\x00#\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x06\x02\xff\x01\xc1\n\x00"
+    )
+    mock_sending.assert_called_with(
+        b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcf\x17"
+    )
 
     assert state.state == STATE_ON
     assert state.attributes.get(ATTR_BRIGHTNESS) == 60
