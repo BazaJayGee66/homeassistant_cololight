@@ -137,13 +137,7 @@ class coloLight(Light):
 
         if rgb:
             self._hs = hs_color
-            self.send_message(
-                bytes.fromhex(
-                    "{}{}{:02x}{:02x}{:02x}".format(
-                        MESSAGE_PREFIX, MESSAGE_COMMAND_COLOR, *rgb
-                    )
-                )
-            )
+            self._light.colour = rgb
 
         if effect:
             self._effect = effect
@@ -152,18 +146,7 @@ class coloLight(Light):
         if brightness:
             self._brightness = brightness
 
-        brightness = (self._brightness / 255) * 100
-
-        self.send_message(
-            bytes.fromhex(
-                "{}{}{}{:02x}".format(
-                    MESSAGE_PREFIX,
-                    MESSAGE_COMMAND_CONFIG,
-                    MESSAGE_BRIGHTNESS,
-                    int(brightness),
-                )
-            )
-        )
+        self._light.brightness = int(self._brightness / 2.55)
         self._on = True
 
     async def async_turn_off(self, **kwargs):
@@ -179,6 +162,8 @@ class PyCololight:
     def __init__(self, host, port=8900):
         self.host = host
         self.port = port
+        self._brightness = None
+        self._colour = None
         self._effect = None
         self._effects = {
             "80s Club": "049a0000",
@@ -198,6 +183,37 @@ class PyCololight:
 
     def _send(self, command):
         self._sock.sendto(command, (self.host, self.port))
+
+    @property
+    def brightness(self):
+        return self._brightness
+
+    @brightness.setter
+    def brightness(self, brightness):
+        command = bytes.fromhex(
+            "{}{}{}{:02x}".format(
+                MESSAGE_PREFIX,
+                MESSAGE_COMMAND_CONFIG,
+                MESSAGE_BRIGHTNESS,
+                int(brightness),
+            )
+        )
+        self._brightness = brightness
+        self._send(command)
+
+    @property
+    def colour(self):
+        return self._colour
+
+    @colour.setter
+    def colour(self, colour):
+        command = bytes.fromhex(
+            "{}{}{:02x}{:02x}{:02x}".format(
+                MESSAGE_PREFIX, MESSAGE_COMMAND_COLOR, *colour
+            )
+        )
+        self._colour = colour
+        self._send(command)
 
     @property
     def effect(self):
