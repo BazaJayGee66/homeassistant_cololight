@@ -14,6 +14,7 @@ from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_EFFECT,
     ATTR_HS_COLOR,
+    ATTR_EFFECT_LIST,
     DOMAIN as LIGHT_DOMAIN,
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
@@ -151,3 +152,24 @@ async def test_turn_off(mock_send, hass):
         b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xce\x1e"
     )
     assert state.state == STATE_OFF
+
+
+async def test_light_has_effects(hass):
+    state = hass.states.get(ENTITY_LIGHT)
+
+    expected_efects_list = [
+        "80s Club",
+        "Cherry Blossom",
+        "Cocktail Parade",
+        "Instagrammer",
+        "Pensieve",
+        "Savasana",
+        "Sunrise",
+        "The Circus",
+        "Unicorns",
+        "Christmas",
+        "Rainbow Flow",
+        "Music Mode",
+    ]
+
+    assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
