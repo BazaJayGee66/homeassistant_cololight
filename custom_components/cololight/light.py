@@ -146,7 +146,7 @@ class coloLight(Light):
         if brightness:
             self._brightness = brightness
 
-        self._light.brightness = int(self._brightness / 2.55)
+        self._light.on = int(self._brightness / 2.55)
         self._on = True
 
     async def async_turn_off(self, **kwargs):
@@ -162,6 +162,7 @@ class PyCololight:
     def __init__(self, host, port=8900):
         self.host = host
         self.port = port
+        self._on = False
         self._brightness = None
         self._colour = None
         self._effect = None
@@ -183,6 +184,15 @@ class PyCololight:
 
     def _send(self, command):
         self._sock.sendto(command, (self.host, self.port))
+
+    @property
+    def on(self):
+        return self._on
+
+    @on.setter
+    def on(self, brightness):
+        self.brightness = brightness
+        self._on = True
 
     @property
     def brightness(self):
