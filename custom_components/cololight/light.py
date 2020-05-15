@@ -54,7 +54,7 @@ class coloLight(Light):
         self._effect = None
         self._on = False
         self._brightness = 255
-        self._hs = None
+        self._hs_color = None
 
     @property
     def name(self):
@@ -82,7 +82,7 @@ class coloLight(Light):
 
     @property
     def hs_color(self) -> tuple:
-        return self._hs
+        return self._hs_color
 
     async def async_turn_on(self, **kwargs):
         hs_color = kwargs.get(ATTR_HS_COLOR)
@@ -92,7 +92,7 @@ class coloLight(Light):
         rgb = color_util.color_hs_to_RGB(*hs_color) if hs_color else None
 
         if rgb:
-            self._hs = hs_color
+            self._hs_color = hs_color
             self._light.colour = rgb
 
         if effect:
@@ -163,9 +163,13 @@ class PyCololight:
 
     @brightness.setter
     def brightness(self, brightness):
+        brightness_prefix = "f"
         command = bytes.fromhex(
             "{}{}{}{:02x}".format(
-                self.COMMAND_PREFIX, self.COMMAND_CONFIG, "f", int(brightness),
+                self.COMMAND_PREFIX,
+                self.COMMAND_CONFIG,
+                brightness_prefix,
+                int(brightness),
             )
         )
         self._brightness = brightness
@@ -177,9 +181,10 @@ class PyCololight:
 
     @colour.setter
     def colour(self, colour):
+        colour_prefix = "00"
         command = bytes.fromhex(
             "{}{}{}{:02x}{:02x}{:02x}".format(
-                self.COMMAND_PREFIX, self.COMMAND_EFFECT, "00", *colour
+                self.COMMAND_PREFIX, self.COMMAND_EFFECT, colour_prefix, *colour
             )
         )
         self._colour = colour
