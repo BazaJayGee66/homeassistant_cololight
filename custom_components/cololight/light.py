@@ -125,9 +125,6 @@ class coloLight(Light):
     def hs_color(self) -> tuple:
         return self._hs
 
-    def send_message(self, message):
-        self._sock.sendto(message, (self._host, self._port))
-
     async def async_turn_on(self, **kwargs):
         hs_color = kwargs.get(ATTR_HS_COLOR)
         brightness = kwargs.get(ATTR_BRIGHTNESS)
@@ -150,11 +147,7 @@ class coloLight(Light):
         self._on = True
 
     async def async_turn_off(self, **kwargs):
-        self.send_message(
-            bytes.fromhex(
-                "{}{}{}".format(MESSAGE_PREFIX, MESSAGE_COMMAND_CONFIG, MESSAGE_OFF)
-            )
-        )
+        self._light.on = 0
         self._on = False
 
 
@@ -191,8 +184,15 @@ class PyCololight:
 
     @on.setter
     def on(self, brightness):
-        self.brightness = brightness
-        self._on = True
+        if brightness:
+            self._on = True
+            self.brightness = brightness
+        else:
+            self._on = False
+            command = bytes.fromhex(
+                "{}{}{}".format(MESSAGE_PREFIX, MESSAGE_COMMAND_CONFIG, MESSAGE_OFF)
+            )
+            self._send(command)
 
     @property
     def brightness(self):

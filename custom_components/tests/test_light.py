@@ -137,8 +137,8 @@ async def test_turn_on_with_colour(mock_send, hass):
     assert state.attributes.get(ATTR_HS_COLOR) == (300, 50)
 
 
-@patch("homeassistant.components.cololight.light.coloLight.send_message")
-async def test_turn_off(mock_sending, hass):
+@patch("homeassistant.components.cololight.light.PyCololight._send")
+async def test_turn_off(mock_send, hass):
     """Test the light turns off successfully."""
 
     await hass.services.async_call(
@@ -147,7 +147,7 @@ async def test_turn_off(mock_sending, hass):
 
     state = hass.states.get(ENTITY_LIGHT)
 
-    mock_sending.assert_called_with(
+    mock_send.assert_called_with(
         b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xce\x1e"
     )
     assert state.state == STATE_OFF

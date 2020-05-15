@@ -23,7 +23,6 @@ class TestPyCololight:
     @patch("cololight.light.PyCololight._send")
     def test_setting_brightness(self, mock_send):
         light = PyCololight("1.1.1.1")
-        assert light.brightness == None
 
         light.brightness = 60
 
@@ -76,3 +75,15 @@ class TestPyCololight:
         ]
 
         assert light.effects == supported_efects
+
+    @patch("cololight.light.PyCololight._send")
+    def test_turn_off(self, mock_send):
+        light = PyCololight("1.1.1.1")
+        light._on = True
+
+        light.on = 0
+        mock_send.assert_called_with(
+            b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xce\x1e"
+        )
+
+        assert light.on == False
