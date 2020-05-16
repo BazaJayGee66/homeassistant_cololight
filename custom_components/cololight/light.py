@@ -102,7 +102,9 @@ class coloLight(Light):
         if brightness:
             self._brightness = brightness
 
-        self._light.on = int(self._brightness / 2.55)
+        coverted_brightness = max(1, (int(self._brightness / 2.55)))
+
+        self._light.on = coverted_brightness
         self._on = True
 
     async def async_turn_off(self, **kwargs):
