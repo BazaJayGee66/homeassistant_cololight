@@ -16,7 +16,7 @@ from homeassistant.components.light import (
     ATTR_EFFECT,
     Light,
 )
-from homeassistant.const import CONF_HOST, CONF_NAME
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_FRIENDLY_NAME, CONF_MODE
 import homeassistant.util.color as color_util
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,6 +28,20 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_HOST): cv.string,
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+        vol.Optional("custom_effects", default=[]): vol.All(
+            cv.ensure_list,
+            [
+                vol.Schema(
+                    {
+                        vol.Required(CONF_NAME): cv.string,
+                        vol.Required("color_scheme"): cv.string,
+                        vol.Required("color"): cv.string,
+                        vol.Required("cycle_speed"): cv.positive_int,
+                        vol.Required(CONF_MODE): cv.positive_int,
+                    }
+                )
+            ],
+        ),
     }
 )
 
@@ -36,8 +50,19 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     """Set up the cololight light platform."""
     host = config[CONF_HOST]
     name = config[CONF_NAME]
+    custom_effects = config.get("custom_effects")
 
     cololight_light = PyCololight(host)
+
+    if custom_effects:
+        for custom_effect in custom_effects:
+            cololight_light.add_custom_effect(
+                custom_effect[CONF_NAME],
+                custom_effect["color_scheme"],
+                custom_effect["color"],
+                custom_effect["cycle_speed"],
+                custom_effect[CONF_MODE],
+            )
 
     async_add_entities([coloLight(cololight_light, host, name)])
 
