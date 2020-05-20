@@ -56,13 +56,52 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
     if custom_effects:
         for custom_effect in custom_effects:
-            cololight_light.add_custom_effect(
-                custom_effect[CONF_NAME],
-                custom_effect["color_scheme"],
-                custom_effect["color"],
-                custom_effect["cycle_speed"],
-                custom_effect[CONF_MODE],
-            )
+            try:
+                cololight_light.add_custom_effect(
+                    custom_effect[CONF_NAME],
+                    custom_effect["color_scheme"],
+                    custom_effect["color"],
+                    custom_effect["cycle_speed"],
+                    custom_effect[CONF_MODE],
+                )
+            except ColourSchemeException:
+                _LOGGER.error(
+                    "Invalid color scheme '%s' given in custom effect '%s'. "
+                    "Valid color schemes include: %s",
+                    custom_effect["color_scheme"],
+                    custom_effect[CONF_NAME],
+                    cololight_light.custom_effect_colour_schemes(),
+                )
+                continue
+            except ColourException:
+                _LOGGER.error(
+                    "Invalid color '%s' given for color scheme '%s' in custom effect '%s'. "
+                    "Valid colors for color scheme '%s' include: %s",
+                    custom_effect["color"],
+                    custom_effect["color_scheme"],
+                    custom_effect[CONF_NAME],
+                    custom_effect["color_scheme"],
+                    cololight_light.custom_effect_colour_scheme_colours(
+                        custom_effect["color_scheme"]
+                    ),
+                )
+                continue
+            except CycleSpeedException:
+                _LOGGER.error(
+                    "Invalid cycle speed '%s' given in custom effect '%s'. "
+                    "Cycle speed must be between 1 and 32",
+                    custom_effect["cycle_speed"],
+                    custom_effect[CONF_NAME],
+                )
+                continue
+            except ModeExecption:
+                _LOGGER.error(
+                    "Invalid mode '%s' given in custom effect '%s'. "
+                    "Mode must be between 1 and 27",
+                    custom_effect[CONF_MODE],
+                    custom_effect[CONF_NAME],
+                )
+                continue
 
     async_add_entities([coloLight(cololight_light, host, name)])
 
@@ -135,6 +174,22 @@ class coloLight(Light):
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
+
+
+class ColourSchemeException(Exception):
+    pass
+
+
+class ColourException(Exception):
+    pass
+
+
+class CycleSpeedException(Exception):
+    pass
+
+
+class ModeExecption(Exception):
+    pass
 
 
 class PyCololight:
@@ -296,6 +351,8 @@ class PyCololight:
         self._sock.sendto(command, (self.host, self.port))
 
     def _cycle_speed_hex(self, cycle_speed, mode):
+        if not 1 <= cycle_speed <= 32:
+            raise CycleSpeedException
         if mode in [2]:
             # Mode 2 only has speeds 1, 2, 3, which are mapped differently to other modes
             cycle_speed_values = [3, 11, 19]
@@ -307,6 +364,11 @@ class PyCololight:
         return cycle_speed_hex
 
     def _colour_hex(self, colour_scheme, colour, mode):
+        if colour_scheme not in self.custom_effect_colour_schemes():
+            raise ColourSchemeException
+        if colour not in self.custom_effect_colour_scheme_colours(colour_scheme):
+            raise ColourException
+
         starting_decimal = self.CUSTOM_EFFECT_COLOURS[colour_scheme]["decimal"]
         colour_key = self.CUSTOM_EFFECT_COLOURS[colour_scheme]["colours"].index(colour)
         if mode in [13, 14, 15, 22, 23, 24]:
@@ -317,6 +379,9 @@ class PyCololight:
         return colour_hex
 
     def _mode_hex(self, mode):
+        if not 1 <= mode <= len(self.CUSTOM_EFFECT_MODES):
+            raise ModeExecption
+
         return self.CUSTOM_EFFECT_MODES[mode - 1]
 
     @property

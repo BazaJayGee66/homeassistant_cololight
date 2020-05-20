@@ -1,6 +1,12 @@
 import pytest
 
-from cololight.light import PyCololight
+from cololight.light import (
+    PyCololight,
+    ColourException,
+    ColourSchemeException,
+    ModeExecption,
+    CycleSpeedException,
+)
 
 from unittest.mock import patch, call
 
@@ -203,3 +209,27 @@ class TestPyCololight:
         )
 
         assert light.custom_effect_colour_scheme_colours("Flicker") == expected_colours
+
+    def test_colour_hex_raises_exeception_when_bad_scheme(self):
+        light = PyCololight("1.1.1.1")
+
+        with pytest.raises(ColourSchemeException):
+            light._colour_hex("bad_scheme", "colour", 1)
+
+    def test_colour_hex_raises_exeception_when_bad_colour(self):
+        light = PyCololight("1.1.1.1")
+
+        with pytest.raises(ColourException):
+            light._colour_hex("Mood", "bad_colour", 1)
+
+    def test_cycle_speed_hex_raises_exeception_when_bad_speed(self):
+        light = PyCololight("1.1.1.1")
+
+        with pytest.raises(CycleSpeedException):
+            light._cycle_speed_hex(35, 1)
+
+    def test_mode_hex_raises_exeception_when_bad_mode(self):
+        light = PyCololight("1.1.1.1")
+
+        with pytest.raises(ModeExecption):
+            light._mode_hex(0)

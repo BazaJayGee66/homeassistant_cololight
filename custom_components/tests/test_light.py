@@ -25,6 +25,8 @@ LIGHT_1_NAME = "cololight_test"
 ENTITY_1_LIGHT = f"light.{LIGHT_1_NAME}"
 LIGHT_2_NAME = "cololight_custom_effect"
 ENTITY_2_LIGHT = f"light.{LIGHT_2_NAME}"
+LIGHT_3_NAME = "cololight_incorrect_custom_effect"
+ENTITY_3_LIGHT = f"light.{LIGHT_3_NAME}"
 
 
 @pytest.fixture(autouse=True)
@@ -50,6 +52,27 @@ def setup_comp(mock_socket, hass):
                                 "cycle_speed": 1,
                                 "mode": 1,
                             }
+                        ],
+                    },
+                    {
+                        "platform": "cololight",
+                        "name": LIGHT_3_NAME,
+                        "host": "1.1.1.1",
+                        "custom_effects": [
+                            {
+                                "name": "Bad Effect",
+                                "color_scheme": "Bad",
+                                "color": "Green",
+                                "cycle_speed": 1,
+                                "mode": 1,
+                            },
+                            {
+                                "name": "Good Effect",
+                                "color_scheme": "Mood",
+                                "color": "Green",
+                                "cycle_speed": 1,
+                                "mode": 1,
+                            },
                         ],
                     },
                 ],
@@ -206,6 +229,28 @@ async def test_light_adds_custom_effect(hass):
         "Rainbow Flow",
         "Music Mode",
         "Test Effect",
+    ]
+
+    assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
+
+
+async def test_light_handles_incorrect_custom_effect(hass):
+    state = hass.states.get(ENTITY_3_LIGHT)
+
+    expected_efects_list = [
+        "80s Club",
+        "Cherry Blossom",
+        "Cocktail Parade",
+        "Instagrammer",
+        "Pensieve",
+        "Savasana",
+        "Sunrise",
+        "The Circus",
+        "Unicorns",
+        "Christmas",
+        "Rainbow Flow",
+        "Music Mode",
+        "Good Effect",
     ]
 
     assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
