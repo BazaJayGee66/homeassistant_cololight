@@ -472,4 +472,4 @@ class PyCololight:
         return list(self.CUSTOM_EFFECT_COLOURS.keys())
 
     def custom_effect_colour_scheme_colours(self, colour_scheme):
-        return self.CUSTOM_EFFECT_COLOURS[colour_scheme]["colours"]
+        return list(filter(None, self.CUSTOM_EFFECT_COLOURS[colour_scheme]["colours"]))

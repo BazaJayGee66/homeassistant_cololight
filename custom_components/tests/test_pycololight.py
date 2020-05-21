@@ -195,7 +195,7 @@ class TestPyCololight:
     def test_custom_effect_colour_scheme_colours_returns_colour_scheme_colours(self):
         light = PyCololight("1.1.1.1")
 
-        expected_colours = (
+        expected_colours = [
             "Red, Green, Blue",
             "Rainbow",
             "Green",
@@ -206,7 +206,7 @@ class TestPyCololight:
             "Orange",
             "Yellow",
             "White",
-        )
+        ]
 
         assert light.custom_effect_colour_scheme_colours("Flicker") == expected_colours
 
