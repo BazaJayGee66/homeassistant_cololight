@@ -36,8 +36,8 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 | custom_effects:name         | string | ✔        |           | Name of custom effect                   |
 | custom_effects:color_scheme | string | ✔        |           | Color Scheme of effect                  |
 | custom_effects:color        | string | ✔        |           | Color of effect                         |
-| custom_effects:cycle_speed  | int    | ✔        |           | Cycle speed of effect                   |
-| custom_effects:mode         | int    | ✔        |           | Mode of effect                          |
+| custom_effects:cycle_speed  | int    | ✔        |           | Cycle speed of effect (1 - 32)          |
+| custom_effects:mode         | int    | ✔        |           | [Mode](MODES.md) of effect (1 - 27)     |
 
 Add a light to your configuration:
 
