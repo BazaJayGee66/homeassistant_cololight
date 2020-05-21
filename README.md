@@ -27,17 +27,17 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 
 ### Options
 
-| Name                        | Type   | Required | Default   | Description                            |
-| --------------------------- | ------ | -------- | --------- | -------------------------------------- |
-| platform                    | string | ✔        |           | cololight                              |
-| host                        | string | ✔        |           | IP address of your Cololight           |
-| name                        | string | ✖        | ColoLight | Name of your entity                    |
-| custom_effects              | map    | ✖        |           | List of custom effect to add to entity |
-| custom_effects:name         | string | ✔        |           | Name of custom effect                  |
-| custom_effects:color_scheme | string | ✔        |           | Color Scheme of effect                 |
-| custom_effects:color        | string | ✔        |           | Color of effect                        |
-| custom_effects:cycle_speed  | int    | ✔        |           | Cycle speed of effect                  |
-| custom_effects:mode         | int    | ✔        |           | Mode of effect                         |
+| Name                        | Type   | Required | Default   | Description                             |
+| --------------------------- | ------ | -------- | --------- | --------------------------------------- |
+| platform                    | string | ✔        |           | cololight                               |
+| host                        | string | ✔        |           | IP address of your Cololight            |
+| name                        | string | ✖        | ColoLight | Name of your entity                     |
+| custom_effects              | map    | ✖        |           | List of custom effects to add to entity |
+| custom_effects:name         | string | ✔        |           | Name of custom effect                   |
+| custom_effects:color_scheme | string | ✔        |           | Color Scheme of effect                  |
+| custom_effects:color        | string | ✔        |           | Color of effect                         |
+| custom_effects:cycle_speed  | int    | ✔        |           | Cycle speed of effect                   |
+| custom_effects:mode         | int    | ✔        |           | Mode of effect                          |
 
 Add a light to your configuration:
 

@@ -16,7 +16,7 @@ from homeassistant.components.light import (
     ATTR_EFFECT,
     Light,
 )
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_FRIENDLY_NAME, CONF_MODE
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 import homeassistant.util.color as color_util
 
 _LOGGER = logging.getLogger(__name__)
