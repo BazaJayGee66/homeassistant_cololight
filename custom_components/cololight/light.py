@@ -19,7 +19,7 @@ try:
         LightEntity as Light,
     )
 # Legacy
-except:
+except ImportError:
     from homeassistant.components.light import (
         PLATFORM_SCHEMA,
         SUPPORT_COLOR,
