@@ -27,11 +27,17 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 
 ### Options
 
-| Name     | Type   | Required | Default   | Description                  |
-| -------- | ------ | -------- | --------- | ---------------------------- |
-| platform | string | ✔        |           | cololight                    |
-| host     | string | ✔        |           | IP address of your Cololight |
-| name     | string | ✖        | Cololight | name of your entity          |
+| Name                        | Type   | Required | Default   | Description                             |
+| --------------------------- | ------ | -------- | --------- | --------------------------------------- |
+| platform                    | string | ✔        |           | cololight                               |
+| host                        | string | ✔        |           | IP address of your Cololight            |
+| name                        | string | ✖        | ColoLight | Name of your entity                     |
+| custom_effects              | map    | ✖        |           | List of custom effects to add to entity |
+| custom_effects:name         | string | ✔        |           | Name of custom effect                   |
+| custom_effects:color_scheme | string | ✔        |           | Color Scheme of effect                  |
+| custom_effects:color        | string | ✔        |           | Color of effect                         |
+| custom_effects:cycle_speed  | int    | ✔        |           | Cycle speed of effect (1 - 32)          |
+| custom_effects:mode         | int    | ✔        |           | [Mode](MODES.md) of effect (1 - 27)     |
 
 Add a light to your configuration:
 
@@ -40,6 +46,17 @@ light:
   - platform: cololight
     name: my_cololight
     host: 192.168.1.100
+    custom_effects:
+      - name: My Cool Effect
+        color_scheme: Mood
+        color: Gold
+        cycle_speed: 10
+        mode: 1
+      - name: My Other Effect
+        color_scheme: Breath
+        color: Red, Green, Blue
+        cycle_speed: 10
+        mode: 1
 ```
 
 ## Credits

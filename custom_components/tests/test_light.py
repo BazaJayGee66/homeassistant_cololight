@@ -21,8 +21,12 @@ from homeassistant.components.light import (
 )
 from homeassistant.setup import async_setup_component
 
-CONF_NAME = "cololight_test"
-ENTITY_LIGHT = f"light.{CONF_NAME}"
+LIGHT_1_NAME = "cololight_test"
+ENTITY_1_LIGHT = f"light.{LIGHT_1_NAME}"
+LIGHT_2_NAME = "cololight_custom_effect"
+ENTITY_2_LIGHT = f"light.{LIGHT_2_NAME}"
+LIGHT_3_NAME = "cololight_incorrect_custom_effect"
+ENTITY_3_LIGHT = f"light.{LIGHT_3_NAME}"
 
 
 @pytest.fixture(autouse=True)
@@ -34,11 +38,44 @@ def setup_comp(mock_socket, hass):
             hass,
             LIGHT_DOMAIN,
             {
-                LIGHT_DOMAIN: {
-                    "platform": "cololight",
-                    "name": CONF_NAME,
-                    "host": "1.1.1.1",
-                }
+                LIGHT_DOMAIN: [
+                    {"platform": "cololight", "name": LIGHT_1_NAME, "host": "1.1.1.1",},
+                    {
+                        "platform": "cololight",
+                        "name": LIGHT_2_NAME,
+                        "host": "1.1.1.1",
+                        "custom_effects": [
+                            {
+                                "name": "Test Effect",
+                                "color_scheme": "Mood",
+                                "color": "Green",
+                                "cycle_speed": 1,
+                                "mode": 1,
+                            }
+                        ],
+                    },
+                    {
+                        "platform": "cololight",
+                        "name": LIGHT_3_NAME,
+                        "host": "1.1.1.1",
+                        "custom_effects": [
+                            {
+                                "name": "Bad Effect",
+                                "color_scheme": "Bad",
+                                "color": "Green",
+                                "cycle_speed": 1,
+                                "mode": 1,
+                            },
+                            {
+                                "name": "Good Effect",
+                                "color_scheme": "Mood",
+                                "color": "Green",
+                                "cycle_speed": 1,
+                                "mode": 1,
+                            },
+                        ],
+                    },
+                ],
             },
         )
     )
@@ -49,10 +86,10 @@ async def test_turn_on(mock_send, hass):
     """Test the light turns of successfully."""
 
     await hass.services.async_call(
-        LIGHT_DOMAIN, SERVICE_TURN_ON, {ATTR_ENTITY_ID: ENTITY_LIGHT}, blocking=True,
+        LIGHT_DOMAIN, SERVICE_TURN_ON, {ATTR_ENTITY_ID: ENTITY_1_LIGHT}, blocking=True,
     )
 
-    state = hass.states.get(ENTITY_LIGHT)
+    state = hass.states.get(ENTITY_1_LIGHT)
 
     mock_send.assert_called_with(
         b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcfd"
@@ -68,11 +105,11 @@ async def test_turn_on_with_brightness(mock_send, hass):
     await hass.services.async_call(
         LIGHT_DOMAIN,
         SERVICE_TURN_ON,
-        {ATTR_ENTITY_ID: ENTITY_LIGHT, ATTR_BRIGHTNESS: 60},
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT, ATTR_BRIGHTNESS: 60},
         blocking=True,
     )
 
-    state = hass.states.get(ENTITY_LIGHT)
+    state = hass.states.get(ENTITY_1_LIGHT)
 
     mock_send.assert_called_with(
         b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcf\x17"
@@ -88,11 +125,11 @@ async def test_turn_on_with_effect(mock_send, hass):
     await hass.services.async_call(
         LIGHT_DOMAIN,
         SERVICE_TURN_ON,
-        {ATTR_ENTITY_ID: ENTITY_LIGHT, ATTR_EFFECT: "Sunrise", ATTR_BRIGHTNESS: 60},
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT, ATTR_EFFECT: "Sunrise", ATTR_BRIGHTNESS: 60},
         blocking=True,
     )
 
-    state = hass.states.get(ENTITY_LIGHT)
+    state = hass.states.get(ENTITY_1_LIGHT)
 
     expected_messages = [
         call(
@@ -116,11 +153,11 @@ async def test_turn_on_with_colour(mock_send, hass):
     await hass.services.async_call(
         LIGHT_DOMAIN,
         SERVICE_TURN_ON,
-        {ATTR_ENTITY_ID: ENTITY_LIGHT, ATTR_HS_COLOR: (300, 50), ATTR_BRIGHTNESS: 60},
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT, ATTR_HS_COLOR: (300, 50), ATTR_BRIGHTNESS: 60},
         blocking=True,
     )
 
-    state = hass.states.get(ENTITY_LIGHT)
+    state = hass.states.get(ENTITY_1_LIGHT)
 
     expected_messages = [
         call(
@@ -143,10 +180,10 @@ async def test_turn_off(mock_send, hass):
     """Test the light turns off successfully."""
 
     await hass.services.async_call(
-        LIGHT_DOMAIN, SERVICE_TURN_OFF, {ATTR_ENTITY_ID: ENTITY_LIGHT}, blocking=True,
+        LIGHT_DOMAIN, SERVICE_TURN_OFF, {ATTR_ENTITY_ID: ENTITY_1_LIGHT}, blocking=True,
     )
 
-    state = hass.states.get(ENTITY_LIGHT)
+    state = hass.states.get(ENTITY_1_LIGHT)
 
     mock_send.assert_called_with(
         b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xce\x1e"
@@ -155,7 +192,7 @@ async def test_turn_off(mock_send, hass):
 
 
 async def test_light_has_effects(hass):
-    state = hass.states.get(ENTITY_LIGHT)
+    state = hass.states.get(ENTITY_1_LIGHT)
 
     expected_efects_list = [
         "80s Club",
@@ -170,6 +207,50 @@ async def test_light_has_effects(hass):
         "Christmas",
         "Rainbow Flow",
         "Music Mode",
+    ]
+
+    assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
+
+
+async def test_light_adds_custom_effect(hass):
+    state = hass.states.get(ENTITY_2_LIGHT)
+
+    expected_efects_list = [
+        "80s Club",
+        "Cherry Blossom",
+        "Cocktail Parade",
+        "Instagrammer",
+        "Pensieve",
+        "Savasana",
+        "Sunrise",
+        "The Circus",
+        "Unicorns",
+        "Christmas",
+        "Rainbow Flow",
+        "Music Mode",
+        "Test Effect",
+    ]
+
+    assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
+
+
+async def test_light_handles_incorrect_custom_effect(hass):
+    state = hass.states.get(ENTITY_3_LIGHT)
+
+    expected_efects_list = [
+        "80s Club",
+        "Cherry Blossom",
+        "Cocktail Parade",
+        "Instagrammer",
+        "Pensieve",
+        "Savasana",
+        "Sunrise",
+        "The Circus",
+        "Unicorns",
+        "Christmas",
+        "Rainbow Flow",
+        "Music Mode",
+        "Good Effect",
     ]
 
     assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
