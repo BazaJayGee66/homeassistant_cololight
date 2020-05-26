@@ -6,16 +6,31 @@ import socket
 import homeassistant.helpers.config_validation as cv
 
 # Import the device class from the component that you want to support
-from homeassistant.components.light import (
-    PLATFORM_SCHEMA,
-    SUPPORT_COLOR,
-    SUPPORT_BRIGHTNESS,
-    SUPPORT_EFFECT,
-    ATTR_HS_COLOR,
-    ATTR_BRIGHTNESS,
-    ATTR_EFFECT,
-    Light,
-)
+# H-A .110 and later
+try:
+    from homeassistant.components.light import (
+        PLATFORM_SCHEMA,
+        SUPPORT_COLOR,
+        SUPPORT_BRIGHTNESS,
+        SUPPORT_EFFECT,
+        ATTR_HS_COLOR,
+        ATTR_BRIGHTNESS,
+        ATTR_EFFECT,
+        LightEntity as Light,
+    )
+# Legacy
+except ImportError:
+    from homeassistant.components.light import (
+        PLATFORM_SCHEMA,
+        SUPPORT_COLOR,
+        SUPPORT_BRIGHTNESS,
+        SUPPORT_EFFECT,
+        ATTR_HS_COLOR,
+        ATTR_BRIGHTNESS,
+        ATTR_EFFECT,
+        Light,
+    )
+
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 import homeassistant.util.color as color_util
 
