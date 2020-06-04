@@ -1,12 +1,3 @@
-# This repository is archived.
-Please go to [BazaJayGee66's repository](https://github.com/BazaJayGee66/homeassistant_cololight) for continued support and updates. 
-
-
-
----
-
-
-
 # Home Assistant LifeSmart Cololight
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
@@ -14,7 +5,6 @@ Please go to [BazaJayGee66's repository](https://github.com/BazaJayGee66/homeass
 Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in Home Assistant
 
 ## Installation
-
 
 ### HACS
 
