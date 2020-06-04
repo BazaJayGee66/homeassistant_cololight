@@ -39,6 +39,8 @@ _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_NAME = "ColoLight"
 
+ICON = "mdi:hexagon-multiple"
+
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
@@ -138,6 +140,10 @@ class coloLight(Light, RestoreEntity):
     @property
     def name(self):
         return self._name
+
+    @property
+    def icon(self):
+        return ICON
 
     @property
     def is_on(self):
