@@ -127,7 +127,6 @@ class coloLight(Light):
         self._host = host
         self._port = 8900
         self._name = name
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._supported_features = SUPPORT_BRIGHTNESS | SUPPORT_COLOR | SUPPORT_EFFECT
         self._effect_list = light.effects
         self._effect = None
@@ -172,10 +171,12 @@ class coloLight(Light):
 
         if rgb:
             self._hs_color = hs_color
+            self._effect = None
             self._light.colour = rgb
 
         if effect:
             self._effect = effect
+            self._hs_color = None
             self._light.effect = effect
 
         if brightness:
