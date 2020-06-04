@@ -31,7 +31,8 @@ except ImportError:
         Light,
     )
 
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE, STATE_ON
+from homeassistant.helpers.restore_state import RestoreEntity
 import homeassistant.util.color as color_util
 
 _LOGGER = logging.getLogger(__name__)
@@ -121,7 +122,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     async_add_entities([coloLight(cololight_light, host, name)])
 
 
-class coloLight(Light):
+class coloLight(Light, RestoreEntity):
     def __init__(self, light, host, name):
         self._light = light
         self._host = host
@@ -190,6 +191,16 @@ class coloLight(Light):
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
+
+    async def async_added_to_hass(self):
+        """Handle entity about to be added to hass event."""
+        await super().async_added_to_hass()
+        last_state = await self.async_get_last_state()
+        if last_state:
+            self._on = last_state.state == STATE_ON
+            self._effect = last_state.attributes.get("effect")
+            self._brightness = last_state.attributes.get("brightness")
+            self._hs_color = last_state.attributes.get("hs_color")
 
 
 class ColourSchemeException(Exception):
