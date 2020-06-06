@@ -205,7 +205,7 @@ class coloLight(Light, RestoreEntity):
         if last_state:
             self._on = last_state.state == STATE_ON
             self._effect = last_state.attributes.get("effect")
-            self._brightness = last_state.attributes.get("brightness")
+            self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
 
 
