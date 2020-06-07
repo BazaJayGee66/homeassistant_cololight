@@ -1,4 +1,5 @@
 """ cololight """
+from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
 
@@ -14,6 +15,6 @@ async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry):
     """Load the saved entities."""
 
     hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "light")
+        hass.config_entries.async_forward_entry_setup(entry, LIGHT_DOMAIN)
     )
     return True

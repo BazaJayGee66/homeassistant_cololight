@@ -155,6 +155,11 @@ class coloLight(Light, RestoreEntity):
         return ICON
 
     @property
+    def unique_id(self):
+        """Return a unique id for the sensor."""
+        return self._host
+
+    @property
     def is_on(self):
         return self._on
 
