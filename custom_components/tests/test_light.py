@@ -43,7 +43,7 @@ def setup_comp(mock_socket, hass):
                     {
                         "platform": "cololight",
                         "name": LIGHT_2_NAME,
-                        "host": "1.1.1.1",
+                        "host": "1.1.1.2",
                         "custom_effects": [
                             {
                                 "name": "Test Effect",
@@ -57,7 +57,7 @@ def setup_comp(mock_socket, hass):
                     {
                         "platform": "cololight",
                         "name": LIGHT_3_NAME,
-                        "host": "1.1.1.1",
+                        "host": "1.1.1.3",
                         "custom_effects": [
                             {
                                 "name": "Bad Effect",
