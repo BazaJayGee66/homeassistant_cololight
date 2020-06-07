@@ -1,5 +1,8 @@
 {
   "config": {
+    "abort": {
+      "already_configured": "Host is already configured."
+    },
     "step": {
       "user": {
         "data": {
