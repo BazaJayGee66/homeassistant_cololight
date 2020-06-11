@@ -1,9 +1,9 @@
 {
-    "domain": "cololight",
-    "name": "LifeSmart Cololight",
-    "config_flow": true,
-    "documentation": "https://github.com/NoedelVreter/homeassistant_cololight",
-    "dependencies": [],
-    "codeowners": [],
-    "requirements": []
+  "domain": "cololight",
+  "name": "LifeSmart Cololight",
+  "config_flow": true,
+  "documentation": "https://github.com/BazaJayGee66/homeassistant_cololight",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": []
 }
