@@ -12,5 +12,25 @@
         "title": "Setup Cololight"
       }
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "select": "Select action"
+        },
+        "description": "Create/Delete Cololight effects"
+      },
+      "options_add_custom_effect": {
+        "data": {
+          "name": "Name",
+          "color_scheme": "Color Scheme",
+          "color": "Color",
+          "cycle_speed": "Cycle Speed",
+          "mode": "Mode"
+        },
+        "description": "Create Cololight effect"
+      }
+    }
   }
 }

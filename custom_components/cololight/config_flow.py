@@ -2,7 +2,8 @@
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_HOST, CONF_NAME
+from homeassistant.core import callback
+from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 
 from . import DOMAIN
 
@@ -16,6 +17,12 @@ class CololightConfigFlow(config_entries.ConfigFlow):
 
     VERSION = 1
 
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return CololightOptionsFlowHandler(config_entry)
+
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is not None:
@@ -26,4 +33,53 @@ class CololightConfigFlow(config_entries.ConfigFlow):
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
+        )
+
+
+class CololightOptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle Cololight options."""
+
+    def __init__(self, config_entry):
+        """Initialize Cololight options flow."""
+        self.config_entry = config_entry
+        self.options = dict(config_entry.options)
+
+    async def async_step_init(self, user_input=None):
+        """Manage the Cololight options."""
+        if user_input is not None:
+            if user_input["select"] == "Create":
+                return await self.async_step_options_add_custom_effect()
+
+        options = {
+            vol.Optional(
+                "select", default=self.config_entry.options.get("select", "Create"),
+            ): vol.In(["Create"]),
+        }
+
+        return self.async_show_form(step_id="init", data_schema=vol.Schema(options))
+
+    async def async_step_options_add_custom_effect(self, user_input=None):
+        if user_input is not None:
+            self.options.update(
+                {
+                    user_input[CONF_NAME]: {
+                        "color_scheme": user_input["color_scheme"],
+                        "color": user_input["color"],
+                        "cycle_speed": user_input["cycle_speed"],
+                        CONF_MODE: user_input[CONF_MODE],
+                    }
+                }
+            )
+            return self.async_create_entry(title="", data=self.options)
+
+        options = {
+            vol.Required(CONF_NAME): str,
+            vol.Required("color_scheme"): str,
+            vol.Required("color"): str,
+            vol.Required("cycle_speed"): int,
+            vol.Required(CONF_MODE): int,
+        }
+
+        return self.async_show_form(
+            step_id="options_add_custom_effect", data_schema=vol.Schema(options)
         )

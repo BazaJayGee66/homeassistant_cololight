@@ -35,6 +35,8 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE, STATE_ON
 from homeassistant.helpers.restore_state import RestoreEntity
 import homeassistant.util.color as color_util
 
+from . import DOMAIN
+
 _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_NAME = "ColoLight"
@@ -70,6 +72,20 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     cololight_light = PyCololight(host)
 
+    if DOMAIN not in hass.data:
+        hass.data[DOMAIN] = {}
+
+    if entry.options:
+        for effect_name, effect_options in entry.options.items():
+            cololight_light.add_custom_effect(
+                effect_name,
+                effect_options["color_scheme"],
+                effect_options["color"],
+                effect_options["cycle_speed"],
+                effect_options[CONF_MODE],
+            )
+
+    hass.data[DOMAIN][entry.entry_id] = cololight_light
     async_add_entities([coloLight(cololight_light, host, name)])
 
 
@@ -221,6 +237,9 @@ class coloLight(Light, RestoreEntity):
             self._effect = last_state.attributes.get("effect")
             self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
+
+    async def async_update(self):
+        self._effect_list = self._light.effects
 
 
 class ColourSchemeException(Exception):
