@@ -238,9 +238,6 @@ class coloLight(Light, RestoreEntity):
             self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
 
-    async def async_update(self):
-        self._effect_list = self._light.effects
-
 
 class ColourSchemeException(Exception):
     pass
