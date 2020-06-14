@@ -30,11 +30,4 @@ async def async_unload_entry(hass, entry):
 
 async def update_listener(hass, entry):
     """Handle options update."""
-    for effect_name, effect_options in entry.options.items():
-        hass.data[DOMAIN][entry.entry_id].add_custom_effect(
-            effect_name,
-            effect_options["color_scheme"],
-            effect_options["color"],
-            effect_options["cycle_speed"],
-            effect_options[CONF_MODE],
-        )
+    await hass.config_entries.async_reload(entry.entry_id)
