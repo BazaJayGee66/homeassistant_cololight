@@ -169,6 +169,49 @@ async def test_options_updating_effect(hass):
     }
 
 
+async def test_options_deleting_effect(hass):
+    """Test options for create effect"""
+    test_effects = {
+        "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1},
+        "test_2": {
+            "color_scheme": "Mood",
+            "color": "Green",
+            "cycle_speed": 1,
+            "mode": 1,
+        },
+    }
+
+    expected_effetcs = {
+        "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1},
+    }
+
+    entry = MockConfigEntry(
+        domain=cololight.DOMAIN, data=DEMO_USER_INPUT, unique_id=HOST
+    )
+    entry.add_to_hass(hass)
+
+    entry.options = test_effects
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["step_id"] == "init"
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], user_input={"select": "Delete"}
+    )
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["step_id"] == "options_delete_custom_effect"
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], user_input={"name": ["test_2"],},
+    )
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
+    assert entry.options == expected_effetcs
+
+
 async def test_end_to_end_with_options(hass):
     """Test an end to end flow, creating entity and add effects"""
     flow = await hass.config_entries.flow.async_init(

@@ -1,9 +1,11 @@
 """Config flow to configure Cololight component."""
 import voluptuous as vol
 
+import homeassistant.helpers.config_validation as cv
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
+
 
 from . import DOMAIN
 
@@ -49,11 +51,13 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             if user_input["select"] == "Create":
                 return await self.async_step_options_add_custom_effect()
+            elif user_input["select"] == "Delete":
+                return await self.async_step_options_delete_custom_effect()
 
         options = {
             vol.Optional(
                 "select", default=self.config_entry.options.get("select", "Create"),
-            ): vol.In(["Create"]),
+            ): vol.In(["Create", "Delete"]),
         }
 
         return self.async_show_form(step_id="init", data_schema=vol.Schema(options))
@@ -82,4 +86,21 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="options_add_custom_effect", data_schema=vol.Schema(options)
+        )
+
+    async def async_step_options_delete_custom_effect(self, user_input=None):
+        if user_input is not None:
+            for effect in user_input[CONF_NAME]:
+                del self.options[effect]
+            return self.async_create_entry(title="", data=self.options)
+
+        effects = dict(zip(self.options.keys(), self.options.keys()))
+        options = {
+            vol.Required(
+                CONF_NAME, default=self.config_entry.options.get(CONF_NAME),
+            ): cv.multi_select(effects),
+        }
+
+        return self.async_show_form(
+            step_id="options_delete_custom_effect", data_schema=vol.Schema(options)
         )

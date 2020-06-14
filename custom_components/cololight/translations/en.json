@@ -30,6 +30,12 @@
           "mode": "Mode"
         },
         "description": "Create Cololight effect"
+      },
+      "options_delete_custom_effect": {
+        "data": {
+          "name": "Select effect/s to delete"
+        },
+        "description": "Delete Cololight effects"
       }
     }
   }
