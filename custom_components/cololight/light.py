@@ -31,6 +31,7 @@ except ImportError:
         Light,
     )
 
+from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE, STATE_ON
 from homeassistant.helpers.restore_state import RestoreEntity
 import homeassistant.util.color as color_util
@@ -77,42 +78,20 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     if entry.options:
         for effect_name, effect_options in entry.options.items():
-            cololight_light.add_custom_effect(
-                effect_name,
-                effect_options["color_scheme"],
-                effect_options["color"],
-                effect_options["cycle_speed"],
-                effect_options[CONF_MODE],
-            )
-
-    hass.data[DOMAIN][entry.entry_id] = cololight_light
-    async_add_entities([coloLight(cololight_light, host, name)])
-
-
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the cololight light platform."""
-    host = config[CONF_HOST]
-    name = config[CONF_NAME]
-    custom_effects = config.get("custom_effects")
-
-    cololight_light = PyCololight(host)
-
-    if custom_effects:
-        for custom_effect in custom_effects:
             try:
                 cololight_light.add_custom_effect(
-                    custom_effect[CONF_NAME],
-                    custom_effect["color_scheme"],
-                    custom_effect["color"],
-                    custom_effect["cycle_speed"],
-                    custom_effect[CONF_MODE],
+                    effect_name,
+                    effect_options["color_scheme"],
+                    effect_options["color"],
+                    effect_options["cycle_speed"],
+                    effect_options[CONF_MODE],
                 )
             except ColourSchemeException:
                 _LOGGER.error(
                     "Invalid color scheme '%s' given in custom effect '%s'. "
                     "Valid color schemes include: %s",
-                    custom_effect["color_scheme"],
-                    custom_effect[CONF_NAME],
+                    effect_options["color_scheme"],
+                    effect_name,
                     cololight_light.custom_effect_colour_schemes(),
                 )
                 continue
@@ -120,12 +99,12 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                 _LOGGER.error(
                     "Invalid color '%s' given for color scheme '%s' in custom effect '%s'. "
                     "Valid colors for color scheme '%s' include: %s",
-                    custom_effect["color"],
-                    custom_effect["color_scheme"],
-                    custom_effect[CONF_NAME],
-                    custom_effect["color_scheme"],
+                    effect_options["color"],
+                    effect_options["color_scheme"],
+                    effect_name,
+                    effect_options["color_scheme"],
                     cololight_light.custom_effect_colour_scheme_colours(
-                        custom_effect["color_scheme"]
+                        effect_options["color_scheme"]
                     ),
                 )
                 continue
@@ -133,20 +112,30 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
                 _LOGGER.error(
                     "Invalid cycle speed '%s' given in custom effect '%s'. "
                     "Cycle speed must be between 1 and 32",
-                    custom_effect["cycle_speed"],
-                    custom_effect[CONF_NAME],
+                    effect_options["cycle_speed"],
+                    effect_name,
                 )
                 continue
             except ModeExecption:
                 _LOGGER.error(
                     "Invalid mode '%s' given in custom effect '%s'. "
                     "Mode must be between 1 and 27",
-                    custom_effect[CONF_MODE],
-                    custom_effect[CONF_NAME],
+                    effect_options[CONF_MODE],
+                    effect_name,
                 )
                 continue
 
+    hass.data[DOMAIN][entry.entry_id] = cololight_light
     async_add_entities([coloLight(cololight_light, host, name)])
+
+
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+
+    hass.async_create_task(
+        hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": SOURCE_IMPORT}, data=dict(config)
+        )
+    )
 
 
 class coloLight(Light, RestoreEntity):
