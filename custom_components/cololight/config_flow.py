@@ -30,12 +30,14 @@ class CololightConfigFlow(config_entries.ConfigFlow):
         if user_input is not None:
             await self.async_set_unique_id(user_input[CONF_HOST])
             self._abort_if_unique_id_configured()
-
             return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
         )
+
+    async def async_step_import(self, import_config):
+        return await self.async_step_user(user_input=import_config)
 
 
 class CololightOptionsFlowHandler(config_entries.OptionsFlow):

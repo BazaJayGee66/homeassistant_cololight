@@ -84,6 +84,7 @@ def setup_comp(mock_socket, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on(mock_send, hass):
     """Test the light turns of successfully."""
+    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN, SERVICE_TURN_ON, {ATTR_ENTITY_ID: ENTITY_1_LIGHT}, blocking=True,
@@ -101,6 +102,7 @@ async def test_turn_on(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on_with_brightness(mock_send, hass):
     """Test the light turns on to the specified brightness."""
+    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -121,6 +123,7 @@ async def test_turn_on_with_brightness(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on_with_effect(mock_send, hass):
     """Test the light turns on with effect."""
+    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -149,6 +152,7 @@ async def test_turn_on_with_effect(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on_with_colour(mock_send, hass):
     """Test the light turns on with colour."""
+    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -178,6 +182,7 @@ async def test_turn_on_with_colour(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_off(mock_send, hass):
     """Test the light turns off successfully."""
+    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN, SERVICE_TURN_OFF, {ATTR_ENTITY_ID: ENTITY_1_LIGHT}, blocking=True,
@@ -192,6 +197,8 @@ async def test_turn_off(mock_send, hass):
 
 
 async def test_light_has_effects(hass):
+    await hass.async_block_till_done()
+
     state = hass.states.get(ENTITY_1_LIGHT)
 
     expected_efects_list = [
@@ -213,6 +220,8 @@ async def test_light_has_effects(hass):
 
 
 async def test_light_adds_custom_effect(hass):
+    await hass.async_block_till_done()
+
     state = hass.states.get(ENTITY_2_LIGHT)
 
     expected_efects_list = [
@@ -235,6 +244,8 @@ async def test_light_adds_custom_effect(hass):
 
 
 async def test_light_handles_incorrect_custom_effect(hass):
+    await hass.async_block_till_done()
+
     state = hass.states.get(ENTITY_3_LIGHT)
 
     expected_efects_list = [

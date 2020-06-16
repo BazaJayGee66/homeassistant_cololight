@@ -2,7 +2,8 @@
 from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.const import CONF_MODE
+from homeassistant.core import callback
+from homeassistant.const import CONF_NAME
 
 DOMAIN = "cololight"
 
@@ -14,6 +15,7 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry):
     """Load the saved entities."""
+    import_options_from_config(hass, entry)
 
     entry.add_update_listener(update_listener)
 
@@ -31,3 +33,17 @@ async def async_unload_entry(hass, entry):
 async def update_listener(hass, entry):
     """Handle options update."""
     await hass.config_entries.async_reload(entry.entry_id)
+
+
+@callback
+def import_options_from_config(hass, entry):
+    options = dict(entry.options)
+    modified = False
+    if entry.data.get("custom_effects"):
+        for custom_effect in entry.data["custom_effects"]:
+            if custom_effect[CONF_NAME] not in entry.options:
+                options[custom_effect[CONF_NAME]] = custom_effect
+                modified = True
+
+    if modified:
+        hass.config_entries.async_update_entry(entry, options=options)
