@@ -25,7 +25,6 @@
         "data": {
           "name": "Name",
           "color_scheme": "Color Scheme",
-          "color": "Color",
           "cycle_speed": "Cycle Speed",
           "mode": "Mode"
         },

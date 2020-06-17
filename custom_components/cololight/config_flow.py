@@ -48,6 +48,21 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
 
+    def _get_color_schemes(self):
+        cololight = self.hass.data["cololight"][self.config_entry.entry_id]
+        color_schemes = []
+        for color_scheme in cololight.custom_effect_colour_schemes():
+            for color in cololight.custom_effect_colour_scheme_colours(color_scheme):
+                color_schemes.append(f"{color_scheme} | {color}")
+
+        return color_schemes
+
+    def _split_color_scheme(self, color_scheme):
+        split_color_scheme = color_scheme.split(" | ")
+        color_scheme = split_color_scheme[0]
+        color = split_color_scheme[1]
+        return color_scheme, color
+
     async def async_step_init(self, user_input=None):
         """Manage the Cololight options."""
         if user_input is not None:
@@ -66,11 +81,12 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_options_add_custom_effect(self, user_input=None):
         if user_input is not None:
+            color_scheme, color = self._split_color_scheme(user_input["color_scheme"])
             self.options.update(
                 {
                     user_input[CONF_NAME]: {
-                        "color_scheme": user_input["color_scheme"],
-                        "color": user_input["color"],
+                        "color_scheme": color_scheme,
+                        "color": color,
                         "cycle_speed": user_input["cycle_speed"],
                         CONF_MODE: user_input[CONF_MODE],
                     }
@@ -78,10 +94,11 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
             )
             return self.async_create_entry(title="", data=self.options)
 
+        color_schemes = self._get_color_schemes()
+
         options = {
             vol.Required(CONF_NAME): str,
-            vol.Required("color_scheme"): str,
-            vol.Required("color"): str,
+            vol.Optional("color_scheme",): vol.In(color_schemes),
             vol.Required("cycle_speed"): int,
             vol.Required(CONF_MODE): int,
         }

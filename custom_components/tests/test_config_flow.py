@@ -4,6 +4,8 @@ import sys
 
 import cololight
 
+from unittest.mock import patch
+
 # Link to homeassistant module
 sys.path.insert(1, "/homeassistant/core")
 from tests.conftest import hass, hass_storage
@@ -55,7 +57,11 @@ async def test_form_already_configured(hass):
     assert result["reason"] == "already_configured"
 
 
-async def test_options_creating_effect(hass):
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
+    return_value=["Mood | Green", "Mood | Red"],
+)
+async def test_options_creating_effect(mock_color_schemes, hass):
     """Test options for create effect"""
     entry = MockConfigEntry(
         domain=cololight.DOMAIN, data=DEMO_USER_INPUT, unique_id=HOST
@@ -78,8 +84,7 @@ async def test_options_creating_effect(hass):
         result["flow_id"],
         user_input={
             "name": "test",
-            "color_scheme": "Mood",
-            "color": "Green",
+            "color_scheme": "Mood | Green",
             "cycle_speed": 1,
             "mode": 1,
         },
@@ -100,8 +105,7 @@ async def test_options_creating_effect(hass):
         result["flow_id"],
         user_input={
             "name": "test_2",
-            "color_scheme": "Mood",
-            "color": "Green",
+            "color_scheme": "Mood | Green",
             "cycle_speed": 1,
             "mode": 1,
         },
@@ -123,7 +127,11 @@ async def test_options_creating_effect(hass):
     }
 
 
-async def test_options_updating_effect(hass):
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
+    return_value=["Mood | Green", "Mood | Red"],
+)
+async def test_options_updating_effect(mock_scheme_colors, hass):
     """Test options for create effect is updated if already existing"""
     entry = MockConfigEntry(
         domain=cololight.DOMAIN, data=DEMO_USER_INPUT, unique_id=HOST
@@ -138,8 +146,7 @@ async def test_options_updating_effect(hass):
         result["flow_id"],
         user_input={
             "name": "test",
-            "color_scheme": "Mood",
-            "color": "Green",
+            "color_scheme": "Mood | Green",
             "cycle_speed": 1,
             "mode": 1,
         },
@@ -157,8 +164,7 @@ async def test_options_updating_effect(hass):
         result["flow_id"],
         user_input={
             "name": "test",
-            "color_scheme": "Mood",
-            "color": "Red",
+            "color_scheme": "Mood | Red",
             "cycle_speed": 1,
             "mode": 1,
         },
@@ -233,8 +239,7 @@ async def test_end_to_end_with_options(hass):
         option_flow["flow_id"],
         user_input={
             "name": "test_effect",
-            "color_scheme": "Mood",
-            "color": "Green",
+            "color_scheme": "Mood | Green",
             "cycle_speed": 1,
             "mode": 1,
         },
