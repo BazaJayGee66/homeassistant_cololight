@@ -32,7 +32,10 @@ async def async_unload_entry(hass, entry):
 
 async def update_listener(hass, entry):
     """Handle options update."""
-    await hass.config_entries.async_reload(entry.entry_id)
+    await hass.config_entries.async_forward_entry_unload(entry, LIGHT_DOMAIN)
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(entry, LIGHT_DOMAIN)
+    )
 
 
 @callback
