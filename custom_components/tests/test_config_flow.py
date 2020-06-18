@@ -218,6 +218,56 @@ async def test_options_deleting_effect(hass):
     assert entry.options == expected_effetcs
 
 
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
+    return_value=["Mood | Green"],
+)
+async def test_options_has_error_if_invalid(mock_color_schemes, hass):
+    """Test options will show error if invalid"""
+    entry = MockConfigEntry(
+        domain=cololight.DOMAIN, data=DEMO_USER_INPUT, unique_id=HOST
+    )
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["step_id"] == "init"
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], user_input={"select": "Create"}
+    )
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["step_id"] == "options_add_custom_effect"
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={
+            "name": "test",
+            "color_scheme": "Mood | Green",
+            "cycle_speed": 50,
+            "mode": 1,
+        },
+    )
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["errors"] == {"cycle_speed": "invalid_cycle_speed"}
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={
+            "name": "test",
+            "color_scheme": "Mood | Green",
+            "cycle_speed": 1,
+            "mode": 50,
+        },
+    )
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["errors"] == {"mode": "invalid_mode"}
+
+
 async def test_end_to_end_with_options(hass):
     """Test an end to end flow, creating entity and add effects"""
     flow = await hass.config_entries.flow.async_init(

@@ -47,6 +47,7 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize Cololight options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
+        self._errors = {}
 
     def _get_color_schemes(self):
         cololight = self.hass.data["cololight"][self.config_entry.entry_id]
@@ -62,6 +63,15 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         color_scheme = split_color_scheme[0]
         color = split_color_scheme[1]
         return color_scheme, color
+
+    async def _is_valid(self, user_input):
+        if not 1 <= user_input["cycle_speed"] <= 32:
+            self._errors["cycle_speed"] = "invalid_cycle_speed"
+            return False
+        if not 1 <= user_input[CONF_MODE] <= 27:
+            self._errors[CONF_MODE] = "invalid_mode"
+            return False
+        return True
 
     async def async_step_init(self, user_input=None):
         """Manage the Cololight options."""
@@ -80,31 +90,41 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         return self.async_show_form(step_id="init", data_schema=vol.Schema(options))
 
     async def async_step_options_add_custom_effect(self, user_input=None):
+        self._errors = {}
         if user_input is not None:
-            color_scheme, color = self._split_color_scheme(user_input["color_scheme"])
-            self.options.update(
-                {
-                    user_input[CONF_NAME]: {
-                        "color_scheme": color_scheme,
-                        "color": color,
-                        "cycle_speed": user_input["cycle_speed"],
-                        CONF_MODE: user_input[CONF_MODE],
+            if await self._is_valid(user_input):
+                color_scheme, color = self._split_color_scheme(
+                    user_input["color_scheme"]
+                )
+                self.options.update(
+                    {
+                        user_input[CONF_NAME]: {
+                            "color_scheme": color_scheme,
+                            "color": color,
+                            "cycle_speed": user_input["cycle_speed"],
+                            CONF_MODE: user_input[CONF_MODE],
+                        }
                     }
-                }
-            )
-            return self.async_create_entry(title="", data=self.options)
+                )
+                return self.async_create_entry(title="", data=self.options)
+        else:
+            user_input = {}
 
         color_schemes = self._get_color_schemes()
 
         options = {
-            vol.Required(CONF_NAME): str,
-            vol.Optional("color_scheme",): vol.In(color_schemes),
-            vol.Required("cycle_speed"): int,
-            vol.Required(CONF_MODE): int,
+            vol.Required(CONF_NAME, default=user_input.get(CONF_NAME)): str,
+            vol.Required(
+                "color_scheme", default=user_input.get("color_scheme")
+            ): vol.In(color_schemes),
+            vol.Required("cycle_speed", default=user_input.get("cycle_speed", 1)): int,
+            vol.Required(CONF_MODE, default=user_input.get(CONF_MODE, 1)): int,
         }
 
         return self.async_show_form(
-            step_id="options_add_custom_effect", data_schema=vol.Schema(options)
+            step_id="options_add_custom_effect",
+            data_schema=vol.Schema(options),
+            errors=self._errors,
         )
 
     async def async_step_options_delete_custom_effect(self, user_input=None):
