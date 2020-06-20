@@ -1,7 +1,5 @@
 import sys
 
-# from unittest.mock import patch
-
 import cololight
 
 from unittest.mock import patch
@@ -12,7 +10,6 @@ from tests.conftest import hass, hass_storage
 from tests.common import MockConfigEntry
 
 from homeassistant import data_entry_flow
-from homeassistant.const import CONF_SCAN_INTERVAL
 
 
 NAME = "cololight_test"
