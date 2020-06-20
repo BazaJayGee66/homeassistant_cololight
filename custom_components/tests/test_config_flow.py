@@ -176,7 +176,7 @@ async def test_options_updating_effect(mock_scheme_colors, hass):
 
 
 async def test_options_deleting_effect(hass):
-    """Test options for create effect"""
+    """Test options for deleting effect"""
     test_effects = {
         "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1},
         "test_2": {
