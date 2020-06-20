@@ -67,11 +67,10 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
     async def _is_valid(self, user_input):
         if not 1 <= user_input["cycle_speed"] <= 32:
             self._errors["cycle_speed"] = "invalid_cycle_speed"
-            return False
         if not 1 <= user_input[CONF_MODE] <= 27:
             self._errors[CONF_MODE] = "invalid_mode"
-            return False
-        return True
+
+        return not self._errors
 
     async def async_step_init(self, user_input=None):
         """Manage the Cololight options."""
