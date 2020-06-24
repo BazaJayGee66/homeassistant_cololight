@@ -131,6 +131,18 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
 
+    current_entries = hass.config_entries.async_entries(DOMAIN)
+    entries_by_name = {entry.data[CONF_NAME]: entry for entry in current_entries}
+    name = config[CONF_NAME]
+    if name in entries_by_name and entries_by_name[name].source == SOURCE_IMPORT:
+        entry = entries_by_name[name]
+        data = config.copy()
+        options = dict(entry.options)
+        for custom_effect in data["custom_effects"]:
+            options[custom_effect[CONF_NAME]] = custom_effect
+
+        hass.config_entries.async_update_entry(entry, data=data, options=options)
+
     hass.async_create_task(
         hass.config_entries.flow.async_init(
             DOMAIN, context={"source": SOURCE_IMPORT}, data=dict(config)

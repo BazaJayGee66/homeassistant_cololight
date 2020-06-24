@@ -44,9 +44,8 @@ def import_options_from_config(hass, entry):
     modified = False
     if entry.data.get("custom_effects"):
         for custom_effect in entry.data["custom_effects"]:
-            if custom_effect[CONF_NAME] not in entry.options:
-                options[custom_effect[CONF_NAME]] = custom_effect
-                modified = True
+            options[custom_effect[CONF_NAME]] = custom_effect
+            modified = True
 
     if modified:
         hass.config_entries.async_update_entry(entry, options=options)
