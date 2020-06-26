@@ -39,6 +39,14 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 | custom_effects:cycle_speed  | int    | ✔        |           | Cycle speed of effect (1 - 32)          |
 | custom_effects:mode         | int    | ✔        |           | [Mode](MODES.md) of effect (1 - 27)     |
 
+#### Config Flow - UI
+
+In Configuration/Integrations click on the + button, select LifeSmart Cololight and configure the options on the form.
+
+Custom effects can be added/deleted in configuration options once the entity has been created.
+
+#### configuration.yaml
+
 Add a light to your configuration:
 
 ```yaml

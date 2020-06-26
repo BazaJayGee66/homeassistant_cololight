@@ -1,0 +1,45 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Host is already configured."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "host": "Host",
+          "name": "Name"
+        },
+        "title": "Setup Cololight"
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "select": "Select action"
+        },
+        "description": "Create/Delete Cololight effects"
+      },
+      "options_add_custom_effect": {
+        "data": {
+          "name": "Name",
+          "color_scheme": "Color Scheme",
+          "cycle_speed": "Cycle Speed",
+          "mode": "Mode"
+        },
+        "description": "Create Cololight effect"
+      },
+      "options_delete_custom_effect": {
+        "data": {
+          "name": "Select effect/s to delete"
+        },
+        "description": "Delete Cololight effects"
+      }
+    },
+    "error": {
+      "invalid_cycle_speed": "Cycle speed must be between 1 and 32",
+      "invalid_mode": "Mode must be between 1 and 27"
+    }
+  }
+}
