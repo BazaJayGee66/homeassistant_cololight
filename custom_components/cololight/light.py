@@ -200,6 +200,17 @@ class coloLight(Light, RestoreEntity):
     def hs_color(self) -> tuple:
         return self._hs_color
 
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {
+                (DOMAIN, self.unique_id)
+            },
+            "name": self.name,
+            "manufacturer": "LifeSmart",
+            "model": "Cololight",
+        }
+
     async def async_turn_on(self, **kwargs):
         hs_color = kwargs.get(ATTR_HS_COLOR)
         brightness = kwargs.get(ATTR_BRIGHTNESS)
