@@ -4,8 +4,6 @@ import cololight
 
 from unittest.mock import patch
 
-# Link to homeassistant module
-sys.path.insert(1, "/homeassistant/core")
 from tests.conftest import hass, hass_storage
 from tests.common import MockConfigEntry
 
