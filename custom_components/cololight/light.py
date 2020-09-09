@@ -181,6 +181,11 @@ class coloLight(Light, RestoreEntity):
         return self._on
 
     @property
+    def should_poll(self) -> bool:
+        """Turn off, as cololight doesn't share state info"""
+        return False
+
+    @property
     def supported_features(self) -> int:
         return self._supported_features
 
@@ -203,9 +208,7 @@ class coloLight(Light, RestoreEntity):
     @property
     def device_info(self):
         return {
-            "identifiers": {
-                (DOMAIN, self.unique_id)
-            },
+            "identifiers": {(DOMAIN, self.unique_id)},
             "name": self.name,
             "manufacturer": "LifeSmart",
             "model": "Cololight",
@@ -235,10 +238,12 @@ class coloLight(Light, RestoreEntity):
 
         self._light.on = coverted_brightness
         self._on = True
+        self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
+        self.async_write_ha_state()
 
     async def async_added_to_hass(self):
         """Handle entity about to be added to hass event."""
@@ -516,7 +521,9 @@ class PyCololight:
     def effect(self, effect):
         command = bytes.fromhex(
             "{}{}{}".format(
-                self.COMMAND_PREFIX, self.COMMAND_EFFECT, self._effects[effect],
+                self.COMMAND_PREFIX,
+                self.COMMAND_EFFECT,
+                self._effects[effect],
             )
         )
         self._effect = effect
