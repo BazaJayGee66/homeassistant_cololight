@@ -9,5 +9,4 @@ steps:
     plugins:
       - docker#v3.5.0:
           image: "cololight-devimage"
-          entrypoint: bash
           workdir: /workspaces/homeassistant_cololight
