@@ -1,0 +1,11 @@
+steps:
+  - label: ":parcel::docker: Build Test container"
+    command: docker build -f Dockerfile.dev -t cololight-devimage .
+
+  - wait
+
+  - label: ":bulb::hass: Run Tests"
+    command: pytest
+    plugins:
+      - docker#v3.5.0:
+          image: "cololight-devimag"
