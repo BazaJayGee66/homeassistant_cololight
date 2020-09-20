@@ -8,4 +8,6 @@ steps:
     command: pytest
     plugins:
       - docker#v3.5.0:
-          image: "cololight-devimag"
+          image: "cololight-devimage"
+          entrypoint: bash
+          workdir: /workspaces/homeassistant_cololight
