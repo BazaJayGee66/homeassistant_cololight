@@ -485,6 +485,23 @@ class PyCololight:
 
         return self.CUSTOM_EFFECT_MODES[mode - 1]
 
+    def _get_custom_effect_hex(self, colour_scheme, colour, cycle_speed, mode):
+        cycle_speed_hex = self._cycle_speed_hex(int(cycle_speed), int(mode))
+        colour_hex = self._colour_hex(colour_scheme, colour, int(mode))
+        mode_hex = self._mode_hex(int(mode))
+
+        if mode in [2]:
+            # Mode 2 has bytes arranged differently to other modes
+            custom_effect_hex = (
+                f"{mode_hex[0]}{cycle_speed_hex}{colour_hex}{mode_hex[1]}"
+            )
+        else:
+            custom_effect_hex = (
+                f"{mode_hex[0]}{colour_hex}{cycle_speed_hex}{mode_hex[1]}"
+            )
+
+        return custom_effect_hex
+
     @property
     def on(self):
         return self._on
@@ -553,26 +570,19 @@ class PyCololight:
     @property
     def effects(self):
         return list(self._effects.keys())
-
-    def get_custom_effect_hex(self, colour_scheme, colour, cycle_speed, mode):
-        cycle_speed_hex = self._cycle_speed_hex(int(cycle_speed), int(mode))
-        colour_hex = self._colour_hex(colour_scheme, colour, int(mode))
-        mode_hex = self._mode_hex(int(mode))
-
-        if mode in [2]:
-            # Mode 2 has bytes arranged differently to other modes
-            custom_effect_hex = (
-                f"{mode_hex[0]}{cycle_speed_hex}{colour_hex}{mode_hex[1]}"
+    
+    def set_custom_effect(self, colour_scheme, colour, cycle_speed, mode):
+        command = bytes.fromhex(
+            "{}{}{}".format(
+                self.COMMAND_PREFIX,
+                self.COMMAND_EFFECT,
+                self._get_custom_effect_hex(colour_scheme, colour, cycle_speed, mode),
             )
-        else:
-            custom_effect_hex = (
-                f"{mode_hex[0]}{colour_hex}{cycle_speed_hex}{mode_hex[1]}"
-            )
-
-        return custom_effect_hex
+        )
+        self._send(command)
 
     def add_custom_effect(self, name, colour_scheme, colour, cycle_speed, mode):
-        self._effects[name] = self.get_custom_effect_hex(colour_scheme, colour, cycle_speed, mode)
+        self._effects[name] = self._get_custom_effect_hex(colour_scheme, colour, cycle_speed, mode)
 
     def custom_effect_colour_schemes(self):
         return list(self.CUSTOM_EFFECT_COLOURS.keys())
