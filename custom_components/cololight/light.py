@@ -5,11 +5,17 @@ import socket
 
 import homeassistant.helpers.config_validation as cv
 
+EX_COLOR_SCHEME = "es_color_scheme"
+EX_COLOR = "es_color"
+EX_CYCLE_SPEED = "es_cycle_speed"
+EX_MODE = "es_mode"
+
 # Import the device class from the component that you want to support
 # H-A .110 and later
 try:
     from homeassistant.components.light import (
         PLATFORM_SCHEMA,
+        LIGHT_TURN_ON_SCHEMA,
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
         SUPPORT_EFFECT,
@@ -22,6 +28,7 @@ try:
 except ImportError:
     from homeassistant.components.light import (
         PLATFORM_SCHEMA,
+        LIGHT_TURN_ON_SCHEMA,
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
         SUPPORT_EFFECT,
@@ -65,6 +72,12 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         ),
     }
 )
+
+# Extend the Light Schema to pass in extra values
+LIGHT_TURN_ON_SCHEMA[EX_COLOR_SCHEME] = cv.string
+LIGHT_TURN_ON_SCHEMA[EX_COLOR] = cv.string
+LIGHT_TURN_ON_SCHEMA[EX_CYCLE_SPEED] = cv.positive_int
+LIGHT_TURN_ON_SCHEMA[EX_MODE] = cv.positive_int
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -218,6 +231,10 @@ class coloLight(Light, RestoreEntity):
         hs_color = kwargs.get(ATTR_HS_COLOR)
         brightness = kwargs.get(ATTR_BRIGHTNESS)
         effect = kwargs.get(ATTR_EFFECT)
+        color_scheme = kwargs.get(EX_COLOR_SCHEME)
+        color = kwargs.get(EX_COLOR)
+        cycle_speed = kwargs.get(EX_CYCLE_SPEED)
+        mode = kwargs.get(EX_MODE)
 
         rgb = color_util.color_hs_to_RGB(*hs_color) if hs_color else None
 
@@ -225,6 +242,10 @@ class coloLight(Light, RestoreEntity):
             self._hs_color = hs_color
             self._effect = None
             self._light.colour = rgb
+
+        if color_scheme and color and cycle_speed and mode:
+            effect = "lol"
+            self._light.add_custom_effect(effect, color_scheme, color, cycle_speed, mode)
 
         if effect:
             self._effect = effect
@@ -533,7 +554,7 @@ class PyCololight:
     def effects(self):
         return list(self._effects.keys())
 
-    def add_custom_effect(self, name, colour_scheme, colour, cycle_speed, mode):
+    def get_custom_effect_hex(self, colour_scheme, colour, cycle_speed, mode):
         cycle_speed_hex = self._cycle_speed_hex(int(cycle_speed), int(mode))
         colour_hex = self._colour_hex(colour_scheme, colour, int(mode))
         mode_hex = self._mode_hex(int(mode))
@@ -548,7 +569,10 @@ class PyCololight:
                 f"{mode_hex[0]}{colour_hex}{cycle_speed_hex}{mode_hex[1]}"
             )
 
-        self._effects[name] = custom_effect_hex
+        return custom_effect_hex
+
+    def add_custom_effect(self, name, colour_scheme, colour, cycle_speed, mode):
+        self._effects[name] = self.get_custom_effect_hex(colour_scheme, colour, cycle_speed, mode)
 
     def custom_effect_colour_schemes(self):
         return list(self.CUSTOM_EFFECT_COLOURS.keys())

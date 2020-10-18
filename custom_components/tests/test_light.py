@@ -98,6 +98,37 @@ async def test_turn_on(mock_send, hass):
 
 
 @patch("homeassistant.components.cololight.light.PyCololight._send")
+async def test_turn_on_custom(mock_send, hass):
+    """Test the light turns of successfully."""
+    await hass.async_block_till_done()
+
+    await hass.services.async_call(
+        LIGHT_DOMAIN,
+        SERVICE_TURN_ON,
+        {
+            ATTR_ENTITY_ID: ENTITY_1_LIGHT,
+            ATTR_BRIGHTNESS: 60,
+            "es_color_scheme": "Breath",
+            "es_color": "Red, Green, Blue",
+            "es_cycle_speed": "1",
+            "es_mode": "1",
+        },
+        blocking=True,
+    )
+
+    state = hass.states.get(ENTITY_1_LIGHT)
+
+    print(state)
+
+    mock_send.assert_called_with(
+        b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcf\x17"
+    )
+    assert state.state == STATE_ON
+    assert state.attributes.get(ATTR_BRIGHTNESS) == 60
+    assert state.attributes.get(ATTR_EFFECT) == "lol"
+
+
+@patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on_with_brightness(mock_send, hass):
     """Test the light turns on to the specified brightness."""
     await hass.async_block_till_done()
