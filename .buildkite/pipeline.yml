@@ -1,5 +1,6 @@
 steps:
   - label: ":parcel::docker: Build Test container"
+    concurrency: 1
     command: docker build -f Dockerfile.dev -t cololight-devimage .
 
   - wait
@@ -13,6 +14,7 @@ steps:
           workdir: /workspaces/homeassistant_cololight
 
   - block: ":rocket: Release"
+    branches: 'master'
     depends_on: test
     prompt: "Release details"
     fields:
@@ -23,4 +25,5 @@ steps:
         default: "# New Features\n# Fixes"
 
   - label: ":rocket::bulb:"
+    branches: 'master'
     command: ./scripts/release.sh
