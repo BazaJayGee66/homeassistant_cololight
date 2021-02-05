@@ -1,6 +1,7 @@
 steps:
   - label: ":parcel::docker: Build Test container"
     concurrency: 1
+    concurrency_group: "build_test_container"
     command: docker build -f Dockerfile.dev -t cololight-devimage .
 
   - wait
