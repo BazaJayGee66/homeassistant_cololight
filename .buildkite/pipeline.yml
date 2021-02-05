@@ -5,6 +5,7 @@ steps:
   - wait
 
   - label: ":bulb::hass: Run Tests"
+    key: tests
     command: pytest
     plugins:
       - docker#v3.5.0:
@@ -12,10 +13,14 @@ steps:
           workdir: /workspaces/homeassistant_cololight
 
   - block: ":rocket: Release"
+    depends_on: test
     prompt: "Release details"
     fields:
       - text: "Release Version"
         key: "release-version"
       - text: "Release Notes"
         key: "release-notes"
-        default: "# New Features \n# Fixes"
+        default: "# New Features\n# Fixes"
+
+  - label: ":rocket::bulb:"
+    command: ./scripts/release.sh
