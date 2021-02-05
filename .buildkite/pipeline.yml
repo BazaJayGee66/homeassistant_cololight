@@ -10,3 +10,12 @@ steps:
       - docker#v3.5.0:
           image: "cololight-devimage"
           workdir: /workspaces/homeassistant_cololight
+
+  - block: ":rocket: Release"
+    prompt: "Release details"
+    fields:
+      - text: "Release Version"
+        key: "release-version"
+      - text: "Release Notes"
+        key: "release-notes"
+        default: "# New Features \n# Fixes"
