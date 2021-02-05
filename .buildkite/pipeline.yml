@@ -7,7 +7,6 @@ steps:
   - wait
 
   - label: ":bulb::hass: Run Tests"
-    key: tests
     command: pytest
     plugins:
       - docker#v3.5.0:
@@ -16,7 +15,6 @@ steps:
 
   - block: ":rocket: Release"
     branches: 'master'
-    depends_on: test
     prompt: "Release details"
     fields:
       - text: "Release Version"
