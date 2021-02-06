@@ -19,10 +19,13 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find configuration.yaml).
 2. If you do not have a custom_components directory (folder) there, you need to create it.
-3. In the custom_components directory (folder) create a new folder called cololight.
-4. Download all the files from the cololight/ directory (folder) in this repository.
-5. Place the files you downloaded in the new directory (folder) you created.
-6. Restart Home Assistant
+3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
+```sh
+wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v1.0.0/cololight.zip
+unzip cololight.zip -d /path/to/custom_components
+rm cololight.zip
+```
+4. Restart Home Assistant
 
 ## Configuration
 
