@@ -21,7 +21,7 @@ steps:
         key: "release-version"
       - text: "Release Notes"
         key: "release-notes"
-        default: "# New Features\n# Fixes"
+        default: "## New Features\n\n## Fixes\n"
 
   - label: ":rocket::bulb:"
     branches: 'master'
