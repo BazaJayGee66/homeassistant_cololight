@@ -12,6 +12,6 @@ zip -r cololight.zip \
 
 gh release create \
     ${RELEASE_VERSION} \
-    'custom_components/cololight.zip' \
+    'cololight.zip' \
     -t ${RELEASE_VERSION} \
     -n "${RELEASE_NOTES}"
