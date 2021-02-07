@@ -37,7 +37,11 @@ def setup_comp(mock_socket, hass):
             LIGHT_DOMAIN,
             {
                 LIGHT_DOMAIN: [
-                    {"platform": "cololight", "name": LIGHT_1_NAME, "host": "1.1.1.1",},
+                    {
+                        "platform": "cololight",
+                        "name": LIGHT_1_NAME,
+                        "host": "1.1.1.1",
+                    },
                     {
                         "platform": "cololight",
                         "name": LIGHT_2_NAME,
@@ -85,7 +89,10 @@ async def test_turn_on(mock_send, hass):
     await hass.async_block_till_done()
 
     await hass.services.async_call(
-        LIGHT_DOMAIN, SERVICE_TURN_ON, {ATTR_ENTITY_ID: ENTITY_1_LIGHT}, blocking=True,
+        LIGHT_DOMAIN,
+        SERVICE_TURN_ON,
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT},
+        blocking=True,
     )
 
     state = hass.states.get(ENTITY_1_LIGHT)
@@ -183,7 +190,10 @@ async def test_turn_off(mock_send, hass):
     await hass.async_block_till_done()
 
     await hass.services.async_call(
-        LIGHT_DOMAIN, SERVICE_TURN_OFF, {ATTR_ENTITY_ID: ENTITY_1_LIGHT}, blocking=True,
+        LIGHT_DOMAIN,
+        SERVICE_TURN_OFF,
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT},
+        blocking=True,
     )
 
     state = hass.states.get(ENTITY_1_LIGHT)
