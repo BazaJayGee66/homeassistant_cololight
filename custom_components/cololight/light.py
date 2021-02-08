@@ -404,27 +404,29 @@ class PyCololight:
         ("06", "80"),
     ]
 
-    def __init__(self, host, port=8900):
+    DEFAULT_EFFECTS = {
+        "80s Club": "049a0000",
+        "Cherry Blossom": "04940800",
+        "Cocktail Parade": "05bd0690",
+        "Instagrammer": "03bc0190",
+        "Pensieve": "04c40600",
+        "Savasana": "04970400",
+        "Sunrise": "01c10a00",
+        "The Circus": "04810130",
+        "Unicorns": "049a0e00",
+        "Christmas": "068b0900",
+        "Rainbow Flow": "03810690",
+        "Music Mode": "07bd0990",
+    }
+
+    def __init__(self, host, port=8900, default_effects=True):
         self.host = host
         self.port = port
         self._on = False
         self._brightness = None
         self._colour = None
         self._effect = None
-        self._effects = {
-            "80s Club": "049a0000",
-            "Cherry Blossom": "04940800",
-            "Cocktail Parade": "05bd0690",
-            "Instagrammer": "03bc0190",
-            "Pensieve": "04c40600",
-            "Savasana": "04970400",
-            "Sunrise": "01c10a00",
-            "The Circus": "04810130",
-            "Unicorns": "049a0e00",
-            "Christmas": "068b0900",
-            "Rainbow Flow": "03810690",
-            "Music Mode": "07bd0990",
-        }
+        self._effects = self.DEFAULT_EFFECTS.copy() if default_effects else {}
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def _send(self, command):

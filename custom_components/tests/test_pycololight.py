@@ -233,3 +233,8 @@ class TestPyCololight:
 
         with pytest.raises(ModeExecption):
             light._mode_hex(0)
+
+    def test_excluding_defualt_effects(self):
+        light = PyCololight("1.1.1.1", default_effects=False)
+
+        assert light.effects == []
