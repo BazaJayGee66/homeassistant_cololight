@@ -532,6 +532,10 @@ class PyCololight:
         self._send(command)
 
     @property
+    def default_effects(self):
+        return list(self.DEFAULT_EFFECTS.keys())
+
+    @property
     def effects(self):
         return list(self._effects.keys())
 

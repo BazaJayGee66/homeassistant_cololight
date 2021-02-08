@@ -65,7 +65,7 @@ class TestPyCololight:
 
     def test_effects_returns_list_of_effects(self):
         light = PyCololight("1.1.1.1")
-        supported_efects = [
+        default_effects = [
             "80s Club",
             "Cherry Blossom",
             "Cocktail Parade",
@@ -80,7 +80,7 @@ class TestPyCololight:
             "Music Mode",
         ]
 
-        assert light.effects == supported_efects
+        assert light.effects == default_effects
 
     @patch("cololight.light.PyCololight._send")
     def test_turn_off(self, mock_send):
@@ -238,3 +238,23 @@ class TestPyCololight:
         light = PyCololight("1.1.1.1", default_effects=False)
 
         assert light.effects == []
+
+    def test_default_effects_returns_list_of_default_effects(self):
+        light = PyCololight("1.1.1.1")
+
+        default_effects = [
+            "80s Club",
+            "Cherry Blossom",
+            "Cocktail Parade",
+            "Instagrammer",
+            "Pensieve",
+            "Savasana",
+            "Sunrise",
+            "The Circus",
+            "Unicorns",
+            "Christmas",
+            "Rainbow Flow",
+            "Music Mode",
+        ]
+
+        assert light.default_effects == default_effects
