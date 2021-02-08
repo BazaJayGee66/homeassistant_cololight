@@ -16,6 +16,10 @@ HOST = "1.1.1.1"
 DEMO_USER_INPUT = {
     "name": NAME,
     "host": HOST,
+    "default_effects": [
+        "80s Club",
+        "Cherry Blossom",
+    ],
 }
 
 
@@ -200,7 +204,12 @@ async def test_options_deleting_effect(hass):
     }
 
     expected_effetcs = {
-        "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1},
+        "test": {
+            "color_scheme": "Mood",
+            "color": "Green",
+            "cycle_speed": 1,
+            "mode": 1,
+        },
     }
 
     entry = MockConfigEntry(

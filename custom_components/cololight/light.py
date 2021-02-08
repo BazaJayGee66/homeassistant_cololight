@@ -71,10 +71,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
     host = entry.data[CONF_HOST]
     name = entry.data[CONF_NAME]
 
-    cololight_light = PyCololight(host)
-
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
+
+    if entry.data.get("default_effects"):
+        cololight_light = PyCololight(host, default_effects=False)
+        cololight_light.include_default_effects(entry.data["default_effects"])
+    else:
+        cololight_light = PyCololight(host)
 
     if entry.options:
         for effect_name, effect_options in entry.options.items():

@@ -1,6 +1,8 @@
 """Config flow to configure Cololight component."""
 import voluptuous as vol
 
+from .light import PyCololight
+
 import homeassistant.helpers.config_validation as cv
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -9,11 +11,16 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 
 from . import DOMAIN
 
+default_effects = list(PyCololight.DEFAULT_EFFECTS.keys())
 
 DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Optional(CONF_NAME): str,
+        vol.Optional(
+            "default_effects",
+            default=default_effects,
+        ): cv.multi_select(default_effects),
     }
 )
 
