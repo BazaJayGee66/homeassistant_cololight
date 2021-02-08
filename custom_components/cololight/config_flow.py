@@ -10,7 +10,12 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 from . import DOMAIN
 
 
-DATA_SCHEMA = vol.Schema({vol.Required(CONF_HOST): str, vol.Optional(CONF_NAME): str,})
+DATA_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_HOST): str,
+        vol.Optional(CONF_NAME): str,
+    }
+)
 
 
 @config_entries.HANDLERS.register(DOMAIN)
@@ -82,7 +87,8 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
         options = {
             vol.Optional(
-                "select", default=self.config_entry.options.get("select", "Create"),
+                "select",
+                default=self.config_entry.options.get("select", "Create"),
             ): vol.In(["Create", "Delete"]),
         }
 
@@ -135,7 +141,8 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         effects = dict(zip(self.options.keys(), self.options.keys()))
         options = {
             vol.Required(
-                CONF_NAME, default=self.config_entry.options.get(CONF_NAME),
+                CONF_NAME,
+                default=self.config_entry.options.get(CONF_NAME),
             ): cv.multi_select(effects),
         }
 

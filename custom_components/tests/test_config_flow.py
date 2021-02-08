@@ -45,7 +45,9 @@ async def test_form_already_configured(hass):
     entry.add_to_hass(hass)
 
     result = await hass.config_entries.flow.async_init(
-        cololight.DOMAIN, context={"source": "user"}, data=DEMO_USER_INPUT,
+        cololight.DOMAIN,
+        context={"source": "user"},
+        data=DEMO_USER_INPUT,
     )
 
     assert result["type"] == "abort"
@@ -87,7 +89,12 @@ async def test_options_creating_effect(mock_color_schemes, hass):
 
     assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
     assert result["data"] == {
-        "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1,}
+        "test": {
+            "color_scheme": "Mood",
+            "color": "Green",
+            "cycle_speed": 1,
+            "mode": 1,
+        }
     }
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
@@ -147,7 +154,12 @@ async def test_options_updating_effect(mock_scheme_colors, hass):
         },
     )
     assert result["data"] == {
-        "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1,}
+        "test": {
+            "color_scheme": "Mood",
+            "color": "Green",
+            "cycle_speed": 1,
+            "mode": 1,
+        }
     }
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
@@ -166,7 +178,12 @@ async def test_options_updating_effect(mock_scheme_colors, hass):
     )
 
     assert result["data"] == {
-        "test": {"color_scheme": "Mood", "color": "Red", "cycle_speed": 1, "mode": 1,}
+        "test": {
+            "color_scheme": "Mood",
+            "color": "Red",
+            "cycle_speed": 1,
+            "mode": 1,
+        }
     }
 
 
@@ -206,7 +223,10 @@ async def test_options_deleting_effect(hass):
     assert result["step_id"] == "options_delete_custom_effect"
 
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], user_input={"name": ["test_2"],},
+        result["flow_id"],
+        user_input={
+            "name": ["test_2"],
+        },
     )
 
     assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
