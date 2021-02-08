@@ -258,3 +258,16 @@ class TestPyCololight:
         ]
 
         assert light.default_effects == default_effects
+
+    def test_include_default_effects_adds_given_default_effects(self):
+        light = PyCololight("1.1.1.1", default_effects=False)
+
+        effects = [
+            "Pensieve",
+            "Savasana",
+            "Sunrise",
+        ]
+
+        light.include_default_effects(effects)
+
+        assert light.effects == effects

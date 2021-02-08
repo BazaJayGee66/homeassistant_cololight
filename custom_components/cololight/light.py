@@ -272,6 +272,10 @@ class ModeExecption(Exception):
     pass
 
 
+class DefaultEffectExecption(Exception):
+    pass
+
+
 class PyCololight:
     COMMAND_PREFIX = "535a30300000000000"
     COMMAND_CONFIG = "20000000000000000000000000000000000100000000000000000004010301c"
@@ -538,6 +542,13 @@ class PyCololight:
     @property
     def effects(self):
         return list(self._effects.keys())
+
+    def include_default_effects(self, effects):
+        for effect in effects:
+            if effect not in self.DEFAULT_EFFECTS:
+                raise DefaultEffectExecption
+
+            self._effects[effect] = self.DEFAULT_EFFECTS[effect]
 
     def add_custom_effect(self, name, colour_scheme, colour, cycle_speed, mode):
         cycle_speed_hex = self._cycle_speed_hex(int(cycle_speed), int(mode))
