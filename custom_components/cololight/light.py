@@ -63,6 +63,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
                 )
             ],
         ),
+        vol.Optional("default_effects"): cv.ensure_list,
     }
 )
 
@@ -76,7 +77,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     if entry.data.get("default_effects"):
         cololight_light = PyCololight(host, default_effects=False)
-        cololight_light.include_default_effects(entry.data["default_effects"])
+        try:
+            cololight_light.include_default_effects(entry.data["default_effects"])
+        except DefaultEffectExecption:
+            _LOGGER.error(
+                "Invalid default effect given in default effects '%s'. "
+                "Valid default effects include: %s",
+                entry.data["default_effects"],
+                cololight_light.default_effects,
+            )
     else:
         cololight_light = PyCololight(host)
 

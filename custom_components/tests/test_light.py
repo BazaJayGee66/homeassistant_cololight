@@ -25,6 +25,10 @@ LIGHT_2_NAME = "cololight_custom_effect"
 ENTITY_2_LIGHT = f"light.{LIGHT_2_NAME}"
 LIGHT_3_NAME = "cololight_incorrect_custom_effect"
 ENTITY_3_LIGHT = f"light.{LIGHT_3_NAME}"
+LIGHT_4_NAME = "cololight_exclude_default_efects"
+ENTITY_4_LIGHT = f"light.{LIGHT_4_NAME}"
+LIGHT_5_NAME = "cololight_incorrect_default_efects"
+ENTITY_5_LIGHT = f"light.{LIGHT_5_NAME}"
 
 
 @pytest.fixture(autouse=True)
@@ -75,6 +79,34 @@ def setup_comp(mock_socket, hass):
                                 "cycle_speed": 1,
                                 "mode": 1,
                             },
+                        ],
+                    },
+                    {
+                        "platform": "cololight",
+                        "name": LIGHT_4_NAME,
+                        "host": "1.1.1.4",
+                        "custom_effects": [
+                            {
+                                "name": "Custom Effect",
+                                "color_scheme": "Mood",
+                                "color": "Green",
+                                "cycle_speed": 1,
+                                "mode": 1,
+                            },
+                        ],
+                        "default_effects": [
+                            "80s Club",
+                        ],
+                    },
+                    {
+                        "platform": "cololight",
+                        "name": LIGHT_5_NAME,
+                        "host": "1.1.1.5",
+                        "default_effects": [
+                            "80s Club",
+                            "Bad Effect",
+                            "Unicorns",
+                            "Another Bad Effect",
                         ],
                     },
                 ],
@@ -273,3 +305,23 @@ async def test_light_handles_incorrect_custom_effect(hass):
     ]
 
     assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
+
+
+async def test_light_has_only_specified_default_effects(hass):
+    await hass.async_block_till_done()
+
+    state = hass.states.get(ENTITY_4_LIGHT)
+
+    expected_efects_list = ["80s Club", "Custom Effect"]
+
+    assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
+
+
+async def test_light_handles_incorrect_default_effect(hass):
+    await hass.async_block_till_done()
+
+    state = hass.states.get(ENTITY_5_LIGHT)
+
+    assert state.attributes.get(ATTR_EFFECT_LIST) == [
+        "80s Club",
+    ]
