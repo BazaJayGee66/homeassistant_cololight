@@ -20,22 +20,35 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find configuration.yaml).
 2. If you do not have a custom_components directory (folder) there, you need to create it.
 3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
+
 ```sh
 wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v1.0.0/cololight.zip
 unzip cololight.zip -d /path/to/custom_components
 rm cololight.zip
 ```
+
 4. Restart Home Assistant
 
 ## Configuration
 
-### Options
+### Config Flow - UI
+
+In Configuration/Integrations click on the + button, select LifeSmart Cololight and configure the options on the form.
+
+Default Effects can be selected when creating the entity.
+
+Custom effects can be added/deleted in configuration options once the entity has been created.
+
+### configuration.yaml
+
+#### Options
 
 | Name                        | Type   | Required | Default   | Description                             |
 | --------------------------- | ------ | -------- | --------- | --------------------------------------- |
 | platform                    | string | ✔        |           | cololight                               |
 | host                        | string | ✔        |           | IP address of your Cololight            |
 | name                        | string | ✖        | ColoLight | Name of your entity                     |
+| default_effects             | list   | ✖        | All       | Default Cololight effects to add        |
 | custom_effects              | map    | ✖        |           | List of custom effects to add to entity |
 | custom_effects:name         | string | ✔        |           | Name of custom effect                   |
 | custom_effects:color_scheme | string | ✔        |           | Color Scheme of effect                  |
@@ -43,13 +56,10 @@ rm cololight.zip
 | custom_effects:cycle_speed  | int    | ✔        |           | Cycle speed of effect (1 - 32)          |
 | custom_effects:mode         | int    | ✔        |           | [Mode](MODES.md) of effect (1 - 27)     |
 
-#### Config Flow - UI
+> Valid default_effects:
+> ["80s Club", "Cherry Blossom", "Cocktail Parade", "Instagrammer", "Pensieve", "Savasana", "Sunrise", "The Circus", "Unicorns", "Christmas", "Rainbow Flow", "Music Mode", "Good Effect"]
 
-In Configuration/Integrations click on the + button, select LifeSmart Cololight and configure the options on the form.
-
-Custom effects can be added/deleted in configuration options once the entity has been created.
-
-#### configuration.yaml
+#### Example
 
 Add a light to your configuration:
 
@@ -58,6 +68,11 @@ light:
   - platform: cololight
     name: my_cololight
     host: 192.168.1.100
+    default_effects:
+      - 80s Club
+      - Cherry Blossom
+      - Cocktail Parade
+      - Instagrammer
     custom_effects:
       - name: My Cool Effect
         color_scheme: Mood
@@ -74,6 +89,10 @@ light:
 ## Credits
 
 Thanks to ["Projekt: ColoLight in FHEM"](https://haus-automatisierung.com/projekt/2019/04/05/projekt-cololight-fhem.html) for discovering how to talk with the Cololight
+
+## Feature Requests/Issue
+
+Please create an issue [here](https://github.com/BazaJayGee66/homeassistant_cololight/issues)
 
 ## Tests:
 
