@@ -5,6 +5,8 @@ RELEASE_NOTES=$(buildkite-agent meta-data get release-notes)
 
 echo "+++ :rocket: Releasing version ${RELEASE_VERSION}"
 
+touch custom_components/cololight/${RELEASE_VERSION}
+
 cd custom_components &&\
 zip -r cololight.zip \
     cololight \
