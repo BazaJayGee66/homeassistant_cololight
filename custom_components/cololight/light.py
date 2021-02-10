@@ -91,52 +91,53 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     if entry.options:
         for effect_name, effect_options in entry.options.items():
-            try:
-                cololight_light.add_custom_effect(
-                    effect_name,
-                    effect_options["color_scheme"],
-                    effect_options["color"],
-                    effect_options["cycle_speed"],
-                    effect_options[CONF_MODE],
-                )
-            except ColourSchemeException:
-                _LOGGER.error(
-                    "Invalid color scheme '%s' given in custom effect '%s'. "
-                    "Valid color schemes include: %s",
-                    effect_options["color_scheme"],
-                    effect_name,
-                    cololight_light.custom_effect_colour_schemes(),
-                )
-                continue
-            except ColourException:
-                _LOGGER.error(
-                    "Invalid color '%s' given for color scheme '%s' in custom effect '%s'. "
-                    "Valid colors for color scheme '%s' include: %s",
-                    effect_options["color"],
-                    effect_options["color_scheme"],
-                    effect_name,
-                    effect_options["color_scheme"],
-                    cololight_light.custom_effect_colour_scheme_colours(
-                        effect_options["color_scheme"]
-                    ),
-                )
-                continue
-            except CycleSpeedException:
-                _LOGGER.error(
-                    "Invalid cycle speed '%s' given in custom effect '%s'. "
-                    "Cycle speed must be between 1 and 32",
-                    effect_options["cycle_speed"],
-                    effect_name,
-                )
-                continue
-            except ModeExecption:
-                _LOGGER.error(
-                    "Invalid mode '%s' given in custom effect '%s'. "
-                    "Mode must be between 1 and 27",
-                    effect_options[CONF_MODE],
-                    effect_name,
-                )
-                continue
+            if effect_name != "default_effects":
+                try:
+                    cololight_light.add_custom_effect(
+                        effect_name,
+                        effect_options["color_scheme"],
+                        effect_options["color"],
+                        effect_options["cycle_speed"],
+                        effect_options[CONF_MODE],
+                    )
+                except ColourSchemeException:
+                    _LOGGER.error(
+                        "Invalid color scheme '%s' given in custom effect '%s'. "
+                        "Valid color schemes include: %s",
+                        effect_options["color_scheme"],
+                        effect_name,
+                        cololight_light.custom_effect_colour_schemes(),
+                    )
+                    continue
+                except ColourException:
+                    _LOGGER.error(
+                        "Invalid color '%s' given for color scheme '%s' in custom effect '%s'. "
+                        "Valid colors for color scheme '%s' include: %s",
+                        effect_options["color"],
+                        effect_options["color_scheme"],
+                        effect_name,
+                        effect_options["color_scheme"],
+                        cololight_light.custom_effect_colour_scheme_colours(
+                            effect_options["color_scheme"]
+                        ),
+                    )
+                    continue
+                except CycleSpeedException:
+                    _LOGGER.error(
+                        "Invalid cycle speed '%s' given in custom effect '%s'. "
+                        "Cycle speed must be between 1 and 32",
+                        effect_options["cycle_speed"],
+                        effect_name,
+                    )
+                    continue
+                except ModeExecption:
+                    _LOGGER.error(
+                        "Invalid mode '%s' given in custom effect '%s'. "
+                        "Mode must be between 1 and 27",
+                        effect_options[CONF_MODE],
+                        effect_name,
+                    )
+                    continue
 
     hass.data[DOMAIN][entry.entry_id] = cololight_light
     async_add_entities([coloLight(cololight_light, host, name)])

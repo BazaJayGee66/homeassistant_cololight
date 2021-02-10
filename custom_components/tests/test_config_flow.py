@@ -12,10 +12,21 @@ from homeassistant import data_entry_flow
 
 NAME = "cololight_test"
 HOST = "1.1.1.1"
+NAME_2 = "cololight_test_2"
+HOST_2 = "1.1.1.2"
 
 DEMO_USER_INPUT = {
     "name": NAME,
     "host": HOST,
+    "default_effects": [
+        "80s Club",
+        "Cherry Blossom",
+    ],
+}
+
+DEMO_USER_INPUT_2 = {
+    "name": NAME_2,
+    "host": HOST_2,
     "default_effects": [
         "80s Club",
         "Cherry Blossom",
@@ -191,7 +202,16 @@ async def test_options_updating_effect(mock_scheme_colors, hass):
     }
 
 
-async def test_options_deleting_effect(hass):
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_effects",
+    return_value={
+        "80s Club": "80s Club",
+        "Cherry Blossom": "Cherry Blossom",
+        "test": "test",
+        "test_2": "test_2",
+    },
+)
+async def test_options_deleting_custom_effect(mock_effects, hass):
     """Test options for deleting effect"""
     test_effects = {
         "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1},
@@ -240,6 +260,34 @@ async def test_options_deleting_effect(hass):
 
     assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
     assert entry.options == expected_effetcs
+
+
+async def test_options_deleting_default_effect(hass):
+    """Test options for deleting effect"""
+    flow = await hass.config_entries.flow.async_init(
+        cololight.DOMAIN, context={"source": "user"}
+    )
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"], user_input=DEMO_USER_INPUT
+    )
+
+    await hass.async_block_till_done()
+
+    option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
+
+    option_flow = await hass.config_entries.options.async_configure(
+        option_flow["flow_id"], user_input={"select": "Delete"}
+    )
+
+    await hass.config_entries.options.async_configure(
+        option_flow["flow_id"],
+        user_input={
+            "name": ["Cherry Blossom"],
+        },
+    )
+
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][entry["result"].entry_id].effects == ["80s Club"]
 
 
 @patch(
@@ -293,12 +341,12 @@ async def test_options_has_error_if_invalid(mock_color_schemes, hass):
 
 
 async def test_end_to_end_with_options(hass):
-    """Test an end to end flow, creating entity and add effects"""
+    """Test an end to end flow, creating entity and add effects and deleting effects"""
     flow = await hass.config_entries.flow.async_init(
         cololight.DOMAIN, context={"source": "user"}
     )
     entry = await hass.config_entries.flow.async_configure(
-        flow["flow_id"], user_input=DEMO_USER_INPUT
+        flow["flow_id"], user_input=DEMO_USER_INPUT_2
     )
 
     await hass.async_block_till_done()
@@ -321,3 +369,37 @@ async def test_end_to_end_with_options(hass):
 
     await hass.async_block_till_done()
     assert "test_effect" in hass.data["cololight"][entry["result"].entry_id].effects
+
+    option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
+
+    option_flow = await hass.config_entries.options.async_configure(
+        option_flow["flow_id"], user_input={"select": "Delete"}
+    )
+
+    await hass.config_entries.options.async_configure(
+        option_flow["flow_id"],
+        user_input={
+            "name": ["Cherry Blossom"],
+        },
+    )
+
+    await hass.async_block_till_done()
+    assert (
+        "Cherry Blossom" not in hass.data["cololight"][entry["result"].entry_id].effects
+    )
+
+    option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
+
+    option_flow = await hass.config_entries.options.async_configure(
+        option_flow["flow_id"], user_input={"select": "Delete"}
+    )
+
+    await hass.config_entries.options.async_configure(
+        option_flow["flow_id"],
+        user_input={
+            "name": ["test_effect"],
+        },
+    )
+
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][entry["result"].entry_id].effects == ["80s Club"]

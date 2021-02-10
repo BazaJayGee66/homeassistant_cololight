@@ -76,6 +76,10 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         color = split_color_scheme[1]
         return color_scheme, color
 
+    def _get_effects(self):
+        cololight = self.hass.data["cololight"][self.config_entry.entry_id]
+        return dict(zip(cololight.effects, cololight.effects))
+
     async def _is_valid(self, user_input):
         if not 1 <= user_input["cycle_speed"] <= 32:
             self._errors["cycle_speed"] = "invalid_cycle_speed"
@@ -142,10 +146,16 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_options_delete_custom_effect(self, user_input=None):
         if user_input is not None:
             for effect in user_input[CONF_NAME]:
-                del self.options[effect]
+                if self.options.get(effect):
+                    del self.options[effect]
+                else:
+                    self.config_entry.data["default_effects"].remove(effect)
+                    self.options["default_effects"] = self.config_entry.data[
+                        "default_effects"
+                    ]
             return self.async_create_entry(title="", data=self.options)
 
-        effects = dict(zip(self.options.keys(), self.options.keys()))
+        effects = self._get_effects()
         options = {
             vol.Required(
                 CONF_NAME,
