@@ -249,7 +249,7 @@ async def test_options_deleting_custom_effect(mock_effects, hass):
     )
 
     assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    assert result["step_id"] == "options_delete_custom_effect"
+    assert result["step_id"] == "options_delete_effect"
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],

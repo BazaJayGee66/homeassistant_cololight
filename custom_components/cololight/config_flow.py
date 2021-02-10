@@ -94,7 +94,7 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
             if user_input["select"] == "Create":
                 return await self.async_step_options_add_custom_effect()
             elif user_input["select"] == "Delete":
-                return await self.async_step_options_delete_custom_effect()
+                return await self.async_step_options_delete_effect()
 
         options = {
             vol.Optional(
@@ -143,7 +143,7 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
             errors=self._errors,
         )
 
-    async def async_step_options_delete_custom_effect(self, user_input=None):
+    async def async_step_options_delete_effect(self, user_input=None):
         if user_input is not None:
             for effect in user_input[CONF_NAME]:
                 if self.options.get(effect):
@@ -164,5 +164,5 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         }
 
         return self.async_show_form(
-            step_id="options_delete_custom_effect", data_schema=vol.Schema(options)
+            step_id="options_delete_effect", data_schema=vol.Schema(options)
         )

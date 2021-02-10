@@ -31,7 +31,7 @@
         },
         "description": "Create Cololight effect"
       },
-      "options_delete_custom_effect": {
+      "options_delete_effect": {
         "data": {
           "name": "Select effect/s to delete"
         },
