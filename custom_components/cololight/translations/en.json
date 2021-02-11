@@ -20,7 +20,7 @@
         "data": {
           "select": "Select action"
         },
-        "description": "Create/Delete Cololight effects"
+        "description": "Create/Delete/Restore Cololight effects"
       },
       "options_add_custom_effect": {
         "data": {
@@ -36,6 +36,12 @@
           "name": "Select effect/s to delete"
         },
         "description": "Delete Cololight effects"
+      },
+      "options_restore_effect": {
+        "data": {
+          "name": "Select effect/s to restore"
+        },
+        "description": "Restore default Cololight effects"
       }
     },
     "error": {

@@ -11,7 +11,7 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 
 from . import DOMAIN
 
-default_effects = list(PyCololight.DEFAULT_EFFECTS.keys())
+DEFAULT_EFFECTS = list(PyCololight.DEFAULT_EFFECTS.keys())
 
 DATA_SCHEMA = vol.Schema(
     {
@@ -19,8 +19,8 @@ DATA_SCHEMA = vol.Schema(
         vol.Optional(CONF_NAME): str,
         vol.Optional(
             "default_effects",
-            default=default_effects,
-        ): cv.multi_select(default_effects),
+            default=DEFAULT_EFFECTS,
+        ): cv.multi_select(DEFAULT_EFFECTS),
     }
 )
 
@@ -80,6 +80,13 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         cololight = self.hass.data["cololight"][self.config_entry.entry_id]
         return dict(zip(cololight.effects, cololight.effects))
 
+    def _get_removed_effects(self):
+        cololight = self.hass.data["cololight"][self.config_entry.entry_id]
+        effects = cololight.effects
+        default_effects = DEFAULT_EFFECTS
+        removed_effects = list(set(default_effects) - set(effects))
+        return dict(zip(removed_effects, removed_effects))
+
     async def _is_valid(self, user_input):
         if not 1 <= user_input["cycle_speed"] <= 32:
             self._errors["cycle_speed"] = "invalid_cycle_speed"
@@ -95,12 +102,14 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
                 return await self.async_step_options_add_custom_effect()
             elif user_input["select"] == "Delete":
                 return await self.async_step_options_delete_effect()
+            elif user_input["select"] == "Restore":
+                return await self.async_step_options_restore_effect()
 
         options = {
             vol.Optional(
                 "select",
                 default=self.config_entry.options.get("select", "Create"),
-            ): vol.In(["Create", "Delete"]),
+            ): vol.In(["Create", "Delete", "Restore"]),
         }
 
         return self.async_show_form(step_id="init", data_schema=vol.Schema(options))
@@ -165,4 +174,25 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="options_delete_effect", data_schema=vol.Schema(options)
+        )
+
+    async def async_step_options_restore_effect(self, user_input=None):
+        if user_input is not None:
+            for effect in user_input[CONF_NAME]:
+                self.config_entry.data["default_effects"].append(effect)
+
+            self.options["restored_effects"] = self.config_entry.data["default_effects"]
+
+            return self.async_create_entry(title="", data=self.options)
+
+        effects = self._get_removed_effects()
+        options = {
+            vol.Required(
+                CONF_NAME,
+                default=self.config_entry.options.get(CONF_NAME),
+            ): cv.multi_select(effects),
+        }
+
+        return self.async_show_form(
+            step_id="options_restore_effect", data_schema=vol.Schema(options)
         )

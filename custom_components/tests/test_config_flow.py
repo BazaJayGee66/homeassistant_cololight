@@ -33,6 +33,15 @@ DEMO_USER_INPUT_2 = {
     ],
 }
 
+DEMO_USER_INPUT_3 = {
+    "name": NAME,
+    "host": HOST,
+    "default_effects": [
+        "80s Club",
+        "Cherry Blossom",
+    ],
+}
+
 
 async def test_form(hass):
     """Test config entry configured successfully."""
@@ -290,6 +299,38 @@ async def test_options_deleting_default_effect(hass):
     assert hass.data["cololight"][entry["result"].entry_id].effects == ["80s Club"]
 
 
+async def test_options_restoring_default_effect(hass):
+    """Test options for restoring effect"""
+    flow = await hass.config_entries.flow.async_init(
+        cololight.DOMAIN, context={"source": "user"}
+    )
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"], user_input=DEMO_USER_INPUT_3
+    )
+
+    await hass.async_block_till_done()
+
+    option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
+
+    option_flow = await hass.config_entries.options.async_configure(
+        option_flow["flow_id"], user_input={"select": "Restore"}
+    )
+
+    await hass.config_entries.options.async_configure(
+        option_flow["flow_id"],
+        user_input={
+            "name": ["Unicorns"],
+        },
+    )
+
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][entry["result"].entry_id].effects == [
+        "80s Club",
+        "Cherry Blossom",
+        "Unicorns",
+    ]
+
+
 @patch(
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
     return_value=["Mood | Green"],
@@ -403,3 +444,23 @@ async def test_end_to_end_with_options(hass):
 
     await hass.async_block_till_done()
     assert hass.data["cololight"][entry["result"].entry_id].effects == ["80s Club"]
+
+    option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
+
+    option_flow = await hass.config_entries.options.async_configure(
+        option_flow["flow_id"], user_input={"select": "Restore"}
+    )
+
+    await hass.config_entries.options.async_configure(
+        option_flow["flow_id"],
+        user_input={
+            "name": ["Savasana", "Unicorns"],
+        },
+    )
+
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][entry["result"].entry_id].effects == [
+        "80s Club",
+        "Savasana",
+        "Unicorns",
+    ]
