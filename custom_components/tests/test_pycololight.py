@@ -271,3 +271,44 @@ class TestPyCololight:
         light.include_default_effects(effects)
 
         assert light.effects == effects
+
+    def test_counter_returns_boolen_count(self):
+        light = PyCololight("1.1.1.1")
+
+        assert light._count == 1
+
+        light._switch_count()
+        assert light._count == 2
+
+        light._switch_count()
+        assert light._count == 1
+
+    def test_get_config_returns_config_for_command(self):
+        light = PyCololight("1.1.1.1")
+
+        first_command_call = light._get_config("command")
+        second_command_call = light._get_config("command")
+
+        assert (
+            first_command_call
+            == "20000000000000000000000000000000000100000000000000000004010301c"
+        )
+        assert (
+            second_command_call
+            == "20000000000000000000000000000000000200000000000000000004010301c"
+        )
+
+    def test_get_config_returns_config_for_effect(self):
+        light = PyCololight("1.1.1.1")
+
+        first_effect_call = light._get_config("effect")
+        second_effect_call = light._get_config("effect")
+
+        assert (
+            first_effect_call
+            == "23000000000000000000000000000000000100000000000000000004010602ff"
+        )
+        assert (
+            second_effect_call
+            == "23000000000000000000000000000000000200000000000000000004010602ff"
+        )

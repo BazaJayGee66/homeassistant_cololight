@@ -292,8 +292,6 @@ class DefaultEffectExecption(Exception):
 
 class PyCololight:
     COMMAND_PREFIX = "535a30300000000000"
-    COMMAND_CONFIG = "20000000000000000000000000000000000100000000000000000004010301c"
-    COMMAND_EFFECT = "23000000000000000000000000000000000100000000000000000004010602ff"
     CUSTOM_EFFECT_COLOURS = {
         "Breath": {
             "decimal": 128,
@@ -440,6 +438,7 @@ class PyCololight:
     def __init__(self, host, port=8900, default_effects=True):
         self.host = host
         self.port = port
+        self._count = 1
         self._on = False
         self._brightness = None
         self._colour = None
@@ -447,8 +446,22 @@ class PyCololight:
         self._effects = self.DEFAULT_EFFECTS.copy() if default_effects else {}
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+    def _switch_count(self):
+        if self._count == 1:
+            self._count = 2
+        else:
+            self._count = 1
+
     def _send(self, command):
         self._sock.sendto(command, (self.host, self.port))
+
+    def _get_config(self, config_type):
+        if config_type == "command":
+            command_config = f"20000000000000000000000000000000000{self.count}00000000000000000004010301c"
+            return command_config
+        elif config_type == "effect":
+            effect_config = f"23000000000000000000000000000000000{self.count}00000000000000000004010602ff"
+            return effect_config
 
     def _cycle_speed_hex(self, cycle_speed, mode):
         if not 1 <= cycle_speed <= 32:
@@ -485,6 +498,12 @@ class PyCololight:
         return self.CUSTOM_EFFECT_MODES[mode - 1]
 
     @property
+    def count(self):
+        count = self._count
+        self._switch_count()
+        return count
+
+    @property
     def on(self):
         return self._on
 
@@ -496,7 +515,7 @@ class PyCololight:
         else:
             self._on = False
             command = bytes.fromhex(
-                "{}{}{}".format(self.COMMAND_PREFIX, self.COMMAND_CONFIG, "e1e")
+                "{}{}{}".format(self.COMMAND_PREFIX, self._get_config("command"), "e1e")
             )
             self._send(command)
 
@@ -510,7 +529,7 @@ class PyCololight:
         command = bytes.fromhex(
             "{}{}{}{:02x}".format(
                 self.COMMAND_PREFIX,
-                self.COMMAND_CONFIG,
+                self._get_config("command"),
                 brightness_prefix,
                 int(brightness),
             )
@@ -527,7 +546,7 @@ class PyCololight:
         colour_prefix = "00"
         command = bytes.fromhex(
             "{}{}{}{:02x}{:02x}{:02x}".format(
-                self.COMMAND_PREFIX, self.COMMAND_EFFECT, colour_prefix, *colour
+                self.COMMAND_PREFIX, self._get_config("effect"), colour_prefix, *colour
             )
         )
         self._colour = colour
@@ -542,7 +561,7 @@ class PyCololight:
         command = bytes.fromhex(
             "{}{}{}".format(
                 self.COMMAND_PREFIX,
-                self.COMMAND_EFFECT,
+                self._get_config("effect"),
                 self._effects[effect],
             )
         )
