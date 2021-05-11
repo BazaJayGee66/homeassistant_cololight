@@ -6,7 +6,7 @@ import cololight
 
 from unittest.mock import patch, call
 
-from tests.conftest import hass, hass_storage
+from tests.conftest import hass, hass_storage, load_registries
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
