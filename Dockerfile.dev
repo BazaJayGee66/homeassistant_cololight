@@ -18,6 +18,7 @@ WORKDIR /usr/src
 
 # Setup hass-release
 RUN git clone --depth 1 https://github.com/home-assistant/hass-release \
+    && pip3 install cryptography==3.3.2 \
     && pip3 install -e hass-release/
 
 WORKDIR /homeassistant
