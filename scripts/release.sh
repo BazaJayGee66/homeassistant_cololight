@@ -16,4 +16,5 @@ gh release create \
     ${RELEASE_VERSION} \
     'cololight.zip' \
     -t ${RELEASE_VERSION} \
-    -n "${RELEASE_NOTES}"
+    -n "${RELEASE_NOTES}" \
+    --repo 'BazaJayGee66/homeassistant_cololight'
