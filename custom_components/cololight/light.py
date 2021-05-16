@@ -310,10 +310,11 @@ class PyCololight:
             ),
         },
         "Shadow": {
-            "decimal": 139,
+            "decimal": 138,
             "colours": (
                 "Red, Yellow",
                 "Red, Green",
+                "Red, Purple",
                 "Red, Blue",
                 "Green, Yellow",
                 "Green, Azure",
