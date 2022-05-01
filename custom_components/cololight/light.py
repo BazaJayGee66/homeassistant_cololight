@@ -196,8 +196,7 @@ class coloLight(Light, RestoreEntity):
 
     @property
     def should_poll(self) -> bool:
-        """Turn off, as cololight doesn't share state info"""
-        return False
+        return True
 
     @property
     def supported_features(self) -> int:
@@ -268,7 +267,17 @@ class coloLight(Light, RestoreEntity):
             self._effect = last_state.attributes.get("effect")
             self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
-
+    
+    def update(self):
+        self._light._sock.sendto(bytes.fromhex("535a303000000000001e000000000000000000000000000000000200000000000000000003020101"), (self._host, self._port))
+        data, address = self._light._sock.recvfrom(4096)
+        if data[40] == 207:#0xcf
+            self._on = True
+        elif data[40] == 206:#0xce
+            self._on = False
+        else:
+            return #if value is not 0xcf(on) or 0xce(off) stop the update and dont change anything
+        self._brightness = (data[41]/100)*255 #data[41] gives back value between 0 and 100, now will scale between 0 and 255
 
 class ColourSchemeException(Exception):
     pass
