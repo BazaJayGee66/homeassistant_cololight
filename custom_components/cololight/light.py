@@ -269,19 +269,16 @@ class coloLight(Light, RestoreEntity):
             self._hs_color = last_state.attributes.get("hs_color")
     
     def update(self):
-        try:
-            self._light._sock.sendto(bytes.fromhex("535a303000000000001e000000000000000000000000000000000200000000000000000003020101"), (self._host, self._port))
-            data = self._light._sock.recvfrom(4096)[0]
-            if not data: return
-            if data[40] == 207:#0xcf
-                self._on = True
-            elif data[40] == 206:#0xce
-                self._on = False
-            else:
-                return #if value is not 0xcf(on) or 0xce(off) stop the update then dont change anything
-            self._brightness = (data[41]/100)*255 #data[41] gives back value between 0 and 100, now will scale between 0 and 255
-        except:
-            return #return function if sending or reciving is not successful or timeout of 4 seconds is reached
+        self._light._sock.sendto(bytes.fromhex("535a303000000000001e000000000000000000000000000000000200000000000000000003020101"), (self._host, self._port))
+        data = self._light._sock.recvfrom(4096)[0]
+        if not data: return
+        if data[40] == 207:#0xcf
+            self._on = True
+        elif data[40] == 206:#0xce
+           self._on = False
+        else:
+            return #if value is not 0xcf(on) or 0xce(off) stop the update then dont change anything
+        self._brightness = (data[41]/100)*255 #data[41] gives back value between 0 and 100, now will scale between 0 and 255
 
 class ColourSchemeException(Exception):
     pass
