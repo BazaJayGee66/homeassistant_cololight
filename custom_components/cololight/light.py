@@ -251,12 +251,10 @@ class coloLight(Light, RestoreEntity):
 
         self._light.on = coverted_brightness
         self._on = True
-        self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
-        self.async_write_ha_state()
 
     async def async_added_to_hass(self):
         """Handle entity about to be added to hass event."""
@@ -268,7 +266,7 @@ class coloLight(Light, RestoreEntity):
             self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
     
-    def update(self):
+    async def async_update(self):
         self._light._sock.sendto(bytes.fromhex("535a303000000000001e000000000000000000000000000000000200000000000000000003020101"), (self._host, self._port))
         data = self._light._sock.recvfrom(4096)[0]
         if not data: return
