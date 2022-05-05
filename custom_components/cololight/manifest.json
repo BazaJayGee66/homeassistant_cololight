@@ -3,7 +3,7 @@
   "name": "LifeSmart Cololight",
   "config_flow": true,
   "documentation": "https://github.com/BazaJayGee66/homeassistant_cololight",
-  "version": "v1.2.1",
+  "version": "v1.3.0",
   "dependencies": [],
   "codeowners": [],
   "requirements": []

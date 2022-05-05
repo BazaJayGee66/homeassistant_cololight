@@ -2,6 +2,7 @@
 import logging
 import voluptuous as vol
 import socket
+from datetime import timedelta
 
 import homeassistant.helpers.config_validation as cv
 
@@ -43,6 +44,8 @@ _LOGGER = logging.getLogger(__name__)
 DEFAULT_NAME = "ColoLight"
 
 ICON = "mdi:hexagon-multiple"
+
+SCAN_INTERVAL = timedelta(seconds=30)
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -164,6 +167,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     )
 
 
+
 class coloLight(Light, RestoreEntity):
     def __init__(self, light, host, name):
         self._light = light
@@ -176,6 +180,7 @@ class coloLight(Light, RestoreEntity):
         self._on = False
         self._brightness = 255
         self._hs_color = None
+        self._canUpdate = True
 
     @property
     def name(self):
@@ -251,10 +256,12 @@ class coloLight(Light, RestoreEntity):
 
         self._light.on = coverted_brightness
         self._on = True
+        self._canUpdate = False#disable next update because light is not switched state to on and will return off state
 
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
+        self._canUpdate = False#disable next update because light is not switched state to off and will return on state
 
     async def async_added_to_hass(self):
         """Handle entity about to be added to hass event."""
@@ -265,34 +272,38 @@ class coloLight(Light, RestoreEntity):
             self._effect = last_state.attributes.get("effect")
             self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
-    
+
     async def async_update(self):
-        self._light._sock.sendto(bytes.fromhex("535a303000000000001e000000000000000000000000000000000200000000000000000003020101"), (self._host, self._port))
-        data = self._light._sock.recvfrom(4096)[0]
-        if not data: return
-        if data[40] == 207:#0xcf
-            self._on = True
-        elif data[40] == 206:#0xce
-           self._on = False
+        if self._canUpdate == True:#after setting the light on or off from home assistant. Home assistant will ask directly for a update, but the light has not switched state so the update function will recive the old state and that trows home assistant off. Now if you turn the light on or off. _canUpdate wil be set to False and the first update will be skipped
+            try:
+                self._light._sock.sendto(bytes.fromhex("535a303000000000001e000000000000000000000000000000000200000000000000000003020101"), (self._host, self._port))
+                data =self._light._sock.recvfrom(4096)[0]
+                if not data: return#return if timeout occurs
+                if data[40] == 207:#0xcf
+                    self._on = True
+                    self._brightness = (data[41]/100)*255 #data[41] gives back value between 0 and 100, now will scale between 0 and 255 and only when cololight is on because if light is offline brightness will not always return the correct value
+                elif data[40] == 206:#0xce
+                   self._on = False
+                   #no brightness update because it will always default to 30 if cololight is turned off
+                else:
+                    return #if value is not 0xcf(on) or 0xce(off) stop the update then dont change anything. Because cololight will sometimes return a random data.
+            except:
+                _LOGGER.error("Error with update status of Cololight")
         else:
-            return #if value is not 0xcf(on) or 0xce(off) stop the update then dont change anything
-        self._brightness = (data[41]/100)*255 #data[41] gives back value between 0 and 100, now will scale between 0 and 255
+            self._canUpdate = True
+
 
 class ColourSchemeException(Exception):
     pass
 
-
 class ColourException(Exception):
     pass
-
 
 class CycleSpeedException(Exception):
     pass
 
-
 class ModeExecption(Exception):
     pass
-
 
 class DefaultEffectExecption(Exception):
     pass
@@ -454,7 +465,6 @@ class PyCololight:
         self._effect = None
         self._effects = self.DEFAULT_EFFECTS.copy() if default_effects else {}
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self._sock.settimeout(4)#wait max 4 seconds for message
 
     def _switch_count(self):
         if self._count == 1:
