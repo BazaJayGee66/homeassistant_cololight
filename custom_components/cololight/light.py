@@ -282,7 +282,7 @@ class coloLight(Light, RestoreEntity):
                     self._brightness = round(self._light.brightness * 2.55)
 
             except:
-                _LOGGER.error("Error with update status of Cololight")
+                _LOGGER.error("Error with update status of Cololight. Device may be offline.")
         else:
             self._canUpdate = True
 
@@ -472,6 +472,7 @@ class PyCololight:
 
     def _socket_connect(self):
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock.settimeout(4)
 
     def _socket_close(self):
         self._sock.close()
