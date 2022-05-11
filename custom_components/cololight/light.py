@@ -167,7 +167,6 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     )
 
 
-
 class coloLight(Light, RestoreEntity):
     def __init__(self, light, host, name):
         self._light = light
@@ -256,12 +255,12 @@ class coloLight(Light, RestoreEntity):
 
         self._light.on = coverted_brightness
         self._on = True
-        self._canUpdate = False#disable next update because light is not switched state to on and will return off state
+        self._canUpdate = False  # disable next update because light is not switched state to on and will return off state
 
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
-        self._canUpdate = False#disable next update because light is not switched state to off and will return on state
+        self._canUpdate = False  # disable next update because light is not switched state to off and will return on state
 
     async def async_added_to_hass(self):
         """Handle entity about to be added to hass event."""
@@ -274,19 +273,14 @@ class coloLight(Light, RestoreEntity):
             self._hs_color = last_state.attributes.get("hs_color")
 
     async def async_update(self):
-        if self._canUpdate == True:#after setting the light on or off from home assistant. Home assistant will ask directly for a update, but the light has not switched state so the update function will recive the old state and that trows home assistant off. Now if you turn the light on or off. _canUpdate wil be set to False and the first update will be skipped
+        if self._canUpdate:
+            # after setting the light on or off from home assistant. Home assistant will ask directly for a update, but the light has not switched state so the update function will recive the old state and that trows home assistant off. Now if you turn the light on or off. _canUpdate wil be set to False and the first update will be skipped
             try:
-                self._light._sock.sendto(bytes.fromhex("535a303000000000001e000000000000000000000000000000000200000000000000000003020101"), (self._host, self._port))
-                data =self._light._sock.recvfrom(4096)[0]
-                if not data: return#return if timeout occurs
-                if data[40] == 207:#0xcf
-                    self._on = True
-                    self._brightness = (data[41]/100)*255 #data[41] gives back value between 0 and 100, now will scale between 0 and 255 and only when cololight is on because if light is offline brightness will not always return the correct value
-                elif data[40] == 206:#0xce
-                   self._on = False
-                   #no brightness update because it will always default to 30 if cololight is turned off
-                else:
-                    return #if value is not 0xcf(on) or 0xce(off) stop the update then dont change anything. Because cololight will sometimes return a random data.
+                self._light.state
+                self._on = self._light.on
+                if self._on:
+                    self._brightness = round(self._light.brightness * 2.55)
+
             except:
                 _LOGGER.error("Error with update status of Cololight")
         else:
@@ -296,14 +290,18 @@ class coloLight(Light, RestoreEntity):
 class ColourSchemeException(Exception):
     pass
 
+
 class ColourException(Exception):
     pass
+
 
 class CycleSpeedException(Exception):
     pass
 
+
 class ModeExecption(Exception):
     pass
+
 
 class DefaultEffectExecption(Exception):
     pass
@@ -475,6 +473,10 @@ class PyCololight:
     def _send(self, command):
         self._sock.sendto(command, (self.host, self.port))
 
+    def _receive(self):
+        data = self._sock.recvfrom(4096)[0]
+        return data
+
     def _get_config(self, config_type):
         if config_type == "command":
             command_config = f"20000000000000000000000000000000000{self.count}00000000000000000004010301c"
@@ -522,6 +524,24 @@ class PyCololight:
         count = self._count
         self._switch_count()
         return count
+
+    @property
+    def state(self):
+        self._send(
+            bytes.fromhex(
+                "535a303000000000001e000000000000000000000000000000000200000000000000000003020101"
+            )
+        )
+        data = self._receive()
+        if not data:
+            return  # return if timeout occurs
+        if data[40] == 207:  # 0xcf
+            self._on = True
+            self._brightness = data[41]
+        elif data[40] == 206:  # 0xce
+            self._on = False
+        else:
+            return  # if value is not 0xcf(on) or 0xce(off) stop the update then dont change anything. Because cololight will sometimes return a random data.
 
     @property
     def on(self):
