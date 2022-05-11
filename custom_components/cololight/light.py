@@ -462,7 +462,7 @@ class PyCololight:
         self._colour = None
         self._effect = None
         self._effects = self.DEFAULT_EFFECTS.copy() if default_effects else {}
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock = None
 
     def _switch_count(self):
         if self._count == 1:
@@ -470,11 +470,22 @@ class PyCololight:
         else:
             self._count = 1
 
-    def _send(self, command):
+    def _socket_connect(self):
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    def _socket_close(self):
+        self._sock.close()
+
+    def _send(self, command, response=False):
+        self._socket_connect()
         self._sock.sendto(command, (self.host, self.port))
+
+        if not response:
+            self._socket_close()
 
     def _receive(self):
         data = self._sock.recvfrom(4096)[0]
+        self._socket_close()
         return data
 
     def _get_config(self, config_type):
@@ -530,7 +541,8 @@ class PyCololight:
         self._send(
             bytes.fromhex(
                 "535a303000000000001e000000000000000000000000000000000200000000000000000003020101"
-            )
+            ),
+            response=True,
         )
         data = self._receive()
         if not data:
