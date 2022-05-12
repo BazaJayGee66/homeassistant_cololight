@@ -179,11 +179,16 @@ class coloLight(Light, RestoreEntity):
         self._on = False
         self._brightness = 255
         self._hs_color = None
+        self._available = True
         self._canUpdate = True
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def available(self):
+        return self._available
 
     @property
     def icon(self):
@@ -281,8 +286,13 @@ class coloLight(Light, RestoreEntity):
                 if self._on:
                     self._brightness = round(self._light.brightness * 2.55)
 
+                self._available = True
+
+            except TimeoutException:
+                self._available = False
+
             except:
-                _LOGGER.error("Error with update status of Cololight. Device may be offline.")
+                _LOGGER.error("Error with update status of Cololight.")
         else:
             self._canUpdate = True
 
@@ -304,6 +314,10 @@ class ModeExecption(Exception):
 
 
 class DefaultEffectExecption(Exception):
+    pass
+
+
+class TimeoutException(Exception):
     pass
 
 
@@ -485,9 +499,12 @@ class PyCololight:
             self._socket_close()
 
     def _receive(self):
-        data = self._sock.recvfrom(4096)[0]
-        self._socket_close()
-        return data
+        try:
+            data = self._sock.recvfrom(4096)[0]
+            self._socket_close()
+            return data
+        except socket.timeout:
+            raise TimeoutException
 
     def _get_config(self, config_type):
         if config_type == "command":
