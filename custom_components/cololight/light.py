@@ -2,6 +2,7 @@
 import logging
 import voluptuous as vol
 import socket
+from datetime import timedelta
 
 import homeassistant.helpers.config_validation as cv
 
@@ -43,6 +44,8 @@ _LOGGER = logging.getLogger(__name__)
 DEFAULT_NAME = "ColoLight"
 
 ICON = "mdi:hexagon-multiple"
+
+SCAN_INTERVAL = timedelta(seconds=30)
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
@@ -176,10 +179,16 @@ class coloLight(Light, RestoreEntity):
         self._on = False
         self._brightness = 255
         self._hs_color = None
+        self._available = True
+        self._canUpdate = True
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def available(self):
+        return self._available
 
     @property
     def icon(self):
@@ -196,8 +205,7 @@ class coloLight(Light, RestoreEntity):
 
     @property
     def should_poll(self) -> bool:
-        """Turn off, as cololight doesn't share state info"""
-        return False
+        return True
 
     @property
     def supported_features(self) -> int:
@@ -252,12 +260,12 @@ class coloLight(Light, RestoreEntity):
 
         self._light.on = coverted_brightness
         self._on = True
-        self.async_write_ha_state()
+        self._canUpdate = False  # disable next update because light is not switched state to on and will return off state
 
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
-        self.async_write_ha_state()
+        self._canUpdate = False  # disable next update because light is not switched state to off and will return on state
 
     async def async_added_to_hass(self):
         """Handle entity about to be added to hass event."""
@@ -268,6 +276,25 @@ class coloLight(Light, RestoreEntity):
             self._effect = last_state.attributes.get("effect")
             self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
+
+    async def async_update(self):
+        if self._canUpdate:
+            # after setting the light on or off from home assistant. Home assistant will ask directly for a update, but the light has not switched state so the update function will recive the old state and that trows home assistant off. Now if you turn the light on or off. _canUpdate wil be set to False and the first update will be skipped
+            try:
+                self._light.state
+                self._on = self._light.on
+                if self._on:
+                    self._brightness = round(self._light.brightness * 2.55)
+
+                self._available = True
+
+            except TimeoutException:
+                self._available = False
+
+            except:
+                _LOGGER.error("Error with update status of Cololight.")
+        else:
+            self._canUpdate = True
 
 
 class ColourSchemeException(Exception):
@@ -287,6 +314,10 @@ class ModeExecption(Exception):
 
 
 class DefaultEffectExecption(Exception):
+    pass
+
+
+class TimeoutException(Exception):
     pass
 
 
@@ -445,7 +476,7 @@ class PyCololight:
         self._colour = None
         self._effect = None
         self._effects = self.DEFAULT_EFFECTS.copy() if default_effects else {}
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock = None
 
     def _switch_count(self):
         if self._count == 1:
@@ -453,8 +484,27 @@ class PyCololight:
         else:
             self._count = 1
 
-    def _send(self, command):
+    def _socket_connect(self):
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock.settimeout(4)
+
+    def _socket_close(self):
+        self._sock.close()
+
+    def _send(self, command, response=False):
+        self._socket_connect()
         self._sock.sendto(command, (self.host, self.port))
+
+        if not response:
+            self._socket_close()
+
+    def _receive(self):
+        try:
+            data = self._sock.recvfrom(4096)[0]
+            self._socket_close()
+            return data
+        except socket.timeout:
+            raise TimeoutException
 
     def _get_config(self, config_type):
         if config_type == "command":
@@ -503,6 +553,25 @@ class PyCololight:
         count = self._count
         self._switch_count()
         return count
+
+    @property
+    def state(self):
+        self._send(
+            bytes.fromhex(
+                "535a303000000000001e000000000000000000000000000000000200000000000000000003020101"
+            ),
+            response=True,
+        )
+        data = self._receive()
+        if not data:
+            return  # return if timeout occurs
+        if data[40] == 207:  # 0xcf
+            self._on = True
+            self._brightness = data[41]
+        elif data[40] == 206:  # 0xce
+            self._on = False
+        else:
+            return  # if value is not 0xcf(on) or 0xce(off) stop the update then dont change anything. Because cololight will sometimes return a random data.
 
     @property
     def on(self):
