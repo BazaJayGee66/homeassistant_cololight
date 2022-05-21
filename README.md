@@ -22,7 +22,7 @@ Custom component to support [LifeSmart Cololight](http://www.cololight.com/) in 
 3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
 
 ```sh
-wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v1.2.3/cololight.zip
+wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v1.3.0/cololight.zip
 unzip cololight.zip -d /path/to/custom_components
 rm cololight.zip
 ```
