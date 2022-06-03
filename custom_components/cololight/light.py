@@ -148,6 +148,13 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
 
+    _LOGGER.warning(
+        "Configuration for the cololight integration in YAML is deprecated and "
+        "is set to be removed in later releases "
+        "(https://github.com/BazaJayGee66/homeassistant_cololight/issues/24); "
+        "Your existing configuration has been imported into the UI automatically "
+        "and can be safely removed from your configuration.yaml file."
+    )
     current_entries = hass.config_entries.async_entries(DOMAIN)
     entries_by_name = {entry.data[CONF_NAME]: entry for entry in current_entries}
     name = config[CONF_NAME]
