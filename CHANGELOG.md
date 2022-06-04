@@ -1,3 +1,12 @@
+# v1.3.1
+
+## New Features
+
+## Fixes
+
+- Update Update manifest.json with codeowners and issue_tracker
+- Add warning for deprecated yaml configuration
+
 # v1.3.0
 
 ## New Features
