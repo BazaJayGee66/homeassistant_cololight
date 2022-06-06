@@ -1,10 +1,6 @@
 import pytest
-import socket
-import sys
 
-import cololight
-
-from unittest.mock import patch, call
+from unittest.mock import patch
 
 from tests.conftest import hass, hass_storage, load_registries
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON
@@ -32,8 +28,7 @@ ENTITY_5_LIGHT = f"light.{LIGHT_5_NAME}"
 
 
 @pytest.fixture(autouse=True)
-@patch("socket.socket")
-def setup_comp(mock_socket, hass):
+def setup_comp(hass):
     """Set up cololight component."""
     hass.loop.run_until_complete(
         async_setup_component(
@@ -129,9 +124,6 @@ async def test_turn_on(mock_send, hass):
 
     state = hass.states.get(ENTITY_1_LIGHT)
 
-    mock_send.assert_called_with(
-        b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcfd"
-    )
     assert state.state == STATE_ON
     assert state.attributes.get(ATTR_BRIGHTNESS) == 255
 
@@ -150,9 +142,6 @@ async def test_turn_on_with_brightness(mock_send, hass):
 
     state = hass.states.get(ENTITY_1_LIGHT)
 
-    mock_send.assert_called_with(
-        b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcf\x17"
-    )
     assert state.state == STATE_ON
     assert state.attributes.get(ATTR_BRIGHTNESS) == 60
 
@@ -171,16 +160,6 @@ async def test_turn_on_with_effect(mock_send, hass):
 
     state = hass.states.get(ENTITY_1_LIGHT)
 
-    expected_messages = [
-        call(
-            b"SZ00\x00\x00\x00\x00\x00#\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x06\x02\xff\x01\xc1\n\x00"
-        ),
-        call(
-            b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcf\x17"
-        ),
-    ]
-
-    mock_send.assert_has_calls(expected_messages)
     assert state.state == STATE_ON
     assert state.attributes.get(ATTR_BRIGHTNESS) == 60
     assert state.attributes.get(ATTR_EFFECT) == "Sunrise"
@@ -200,15 +179,6 @@ async def test_turn_on_with_colour(mock_send, hass):
 
     state = hass.states.get(ENTITY_1_LIGHT)
 
-    expected_messages = [
-        call(
-            b"SZ00\x00\x00\x00\x00\x00#\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x06\x02\xff\x00\xff\x7f\xff"
-        ),
-        call(
-            b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xcf\x17"
-        ),
-    ]
-    mock_send.assert_has_calls(expected_messages)
     assert mock_send.call_count == 2
 
     assert state.state == STATE_ON
@@ -230,9 +200,6 @@ async def test_turn_off(mock_send, hass):
 
     state = hass.states.get(ENTITY_1_LIGHT)
 
-    mock_send.assert_called_with(
-        b"SZ00\x00\x00\x00\x00\x00 \x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x01\x03\x01\xce\x1e"
-    )
     assert state.state == STATE_OFF
 
 

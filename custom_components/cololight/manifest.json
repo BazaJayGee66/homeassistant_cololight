@@ -4,8 +4,8 @@
   "config_flow": true,
   "documentation": "https://github.com/BazaJayGee66/homeassistant_cololight",
   "issue_tracker": "https://github.com/BazaJayGee66/homeassistant_cololight/issues",
-  "version": "v1.3.1",
+  "version": "v1.3.2",
   "dependencies": [],
   "codeowners": ["@BazaJayGee66"],
-  "requirements": []
+  "requirements": ["pycololight==2.0.0"]
 }
