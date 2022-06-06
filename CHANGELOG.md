@@ -1,3 +1,11 @@
+# v1.3.2
+
+## New Features
+
+## Fixes
+
+- Import pycololight, and remove class, as code has been migrated to [pycololight](https://github.com/BazaJayGee66/pycololight)
+
 # v1.3.1
 
 ## New Features
@@ -42,6 +50,7 @@
 # v1.2.0
 
 ## New Features
+
 - Allow deleting all effects through the UI, not just custom effects
 - Allow restoring default effects through the UI
 
@@ -50,6 +59,7 @@
 # v1.1.0
 
 ## New Features
+
 - Select which default Cololight effects to include when creating the entity via the UI
 - Set which default Cololight effects to include when creating the entity via config yaml
 
@@ -60,6 +70,7 @@
 Initial Release
 
 ## New Features
+
 - Configure through yaml config
 - Configure through UI
 - Brightness
