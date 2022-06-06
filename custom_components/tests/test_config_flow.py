@@ -1,5 +1,3 @@
-import sys
-
 import cololight
 
 from unittest.mock import patch

@@ -31,6 +31,9 @@ RUN git clone --depth 1 https://github.com/home-assistant/core.git && \
     pip3 install -r core/requirements.txt && \
     pip3 install sqlalchemy==1.4.36 fnvhash==0.1.0 lru-dict==1.1.7
 
+# Add pycololight requirement
+RUN pip3 install pycololight==2.0.0
+
 WORKDIR /workspaces
 
 RUN ln -s /workspaces/homeassistant_cololight/custom_components/cololight /homeassistant/core/homeassistant/components/cololight
