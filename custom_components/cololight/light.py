@@ -158,34 +158,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([coloLight(cololight_light, host, name)])
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-
-    _LOGGER.warning(
-        "Configuration for the cololight integration in YAML is deprecated and "
-        "is set to be removed in later releases "
-        "(https://github.com/BazaJayGee66/homeassistant_cololight/issues/24); "
-        "Your existing configuration has been imported into the UI automatically "
-        "and can be safely removed from your configuration.yaml file."
-    )
-    current_entries = hass.config_entries.async_entries(DOMAIN)
-    entries_by_name = {entry.data[CONF_NAME]: entry for entry in current_entries}
-    name = config[CONF_NAME]
-    if name in entries_by_name and entries_by_name[name].source == SOURCE_IMPORT:
-        entry = entries_by_name[name]
-        data = config.copy()
-        options = dict(entry.options)
-        for custom_effect in data["custom_effects"]:
-            options[custom_effect[CONF_NAME]] = custom_effect
-
-        hass.config_entries.async_update_entry(entry, data=data, options=options)
-
-    hass.async_create_task(
-        hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": SOURCE_IMPORT}, data=dict(config)
-        )
-    )
-
-
 class coloLight(Light, RestoreEntity):
     def __init__(self, light, host, name):
         self._light = light

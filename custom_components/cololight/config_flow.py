@@ -49,9 +49,6 @@ class CololightConfigFlow(config_entries.ConfigFlow):
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
         )
 
-    async def async_step_import(self, import_config):
-        return await self.async_step_user(user_input=import_config)
-
 
 class CololightOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle Cololight options."""
