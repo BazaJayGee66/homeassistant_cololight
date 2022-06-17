@@ -8,9 +8,16 @@
         "data": {
           "host": "Host",
           "name": "Name",
-          "default_effects": "Default Effects"
+          "device": "Device"
         },
         "title": "Setup Cololight"
+      },
+      "device_effects": {
+        "data": {
+          "default_effects": "Default Effects"
+        },
+        "title": "Effects to include",
+        "description": "Select effects to be included for device.\nThese can be added/deleted later in configuration options.\n\n**Custom effects** can also be created in configuration options once the device has been created."
       }
     }
   },

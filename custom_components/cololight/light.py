@@ -84,14 +84,13 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 async def async_setup_entry(hass, entry, async_add_entities):
     host = entry.data[CONF_HOST]
     name = entry.data[CONF_NAME]
+    device = entry.data["device"]
 
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
     if entry.data.get("default_effects"):
-        cololight_light = PyCololight(
-            device="hexagon", host=host, default_effects=False
-        )
+        cololight_light = PyCololight(device=device, host=host, default_effects=False)
         try:
             cololight_light.restore_effects(entry.data["default_effects"])
         except DefaultEffectExecption:
@@ -102,7 +101,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
                 cololight_light.default_effects,
             )
     else:
-        cololight_light = PyCololight(device="hexagon", host=host)
+        cololight_light = PyCololight(device=device, host=host)
 
     if entry.options:
         for effect_name, effect_options in entry.options.items():

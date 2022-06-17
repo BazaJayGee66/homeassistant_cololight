@@ -14,14 +14,14 @@ from . import DOMAIN
 light = PyCololight(device="hexagon", host=None)
 DEFAULT_EFFECTS = light.default_effects
 
-DATA_SCHEMA = vol.Schema(
+DEVICE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
-        vol.Optional(CONF_NAME): str,
-        vol.Optional(
-            "default_effects",
-            default=DEFAULT_EFFECTS,
-        ): cv.multi_select(DEFAULT_EFFECTS),
+        vol.Required(CONF_NAME): str,
+        vol.Required(
+            "device",
+            default="hexagon",
+        ): vol.In(["hexagon"]),
     }
 )
 
@@ -31,6 +31,9 @@ class CololightConfigFlow(config_entries.ConfigFlow):
     """Cololight configuration flow."""
 
     VERSION = 1
+
+    def __init__(self):
+        self.device_data = None
 
     @staticmethod
     @callback
@@ -43,10 +46,29 @@ class CololightConfigFlow(config_entries.ConfigFlow):
         if user_input is not None:
             await self.async_set_unique_id(user_input[CONF_HOST])
             self._abort_if_unique_id_configured()
-            return self.async_create_entry(title=user_input[CONF_NAME], data=user_input)
+            self.device_data = user_input
+            return await self.async_step_device_effects()
 
         return self.async_show_form(
-            step_id="user", data_schema=DATA_SCHEMA, errors=errors
+            step_id="user", data_schema=DEVICE_SCHEMA, errors=errors
+        )
+
+    async def async_step_device_effects(self, user_input=None):
+        """Set which effects to add to device"""
+        if user_input is not None:
+            data = self.device_data
+            data.update(user_input)
+            return self.async_create_entry(title=data[CONF_NAME], data=data)
+
+        options = {
+            vol.Optional(
+                "default_effects",
+                default=DEFAULT_EFFECTS,
+            ): cv.multi_select(DEFAULT_EFFECTS),
+        }
+
+        return self.async_show_form(
+            step_id="device_effects", data_schema=vol.Schema(options)
         )
 
 

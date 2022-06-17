@@ -1,7 +1,7 @@
 from copy import deepcopy
-
 import pytest
 import cololight
+
 
 from unittest.mock import patch
 
@@ -10,17 +10,17 @@ from tests.common import MockConfigEntry
 
 from homeassistant import data_entry_flow
 
-
 NAME = "cololight_test"
 HOST = "1.1.1.1"
 
 DEMO_USER_INPUT = {
-    "name": NAME,
-    "host": HOST,
-    "default_effects": [
-        "80s Club",
-        "Cherry Blossom",
-    ],
+    "device_data": {"name": NAME, "host": HOST, "device": "hexagon"},
+    "effects_data": {
+        "default_effects": [
+            "80s Club",
+            "Cherry Blossom",
+        ],
+    },
 }
 
 
@@ -39,25 +39,35 @@ async def test_form(hass, demo_user_input):
     assert result["step_id"] == "user"
 
     result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], user_input=demo_user_input
+        result["flow_id"], user_input=demo_user_input["device_data"]
     )
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["step_id"] == "device_effects"
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        user_input=demo_user_input["effects_data"],
+    )
+
+    expected_data = demo_user_input["device_data"] | demo_user_input["effects_data"]
 
     assert result["type"] == "create_entry"
     assert result["title"] == NAME
-    assert result["data"] == demo_user_input
+    assert result["data"] == expected_data
 
 
 async def test_form_already_configured(hass, demo_user_input):
     """Test host is already configured."""
     entry = MockConfigEntry(
-        domain=cololight.DOMAIN, data=demo_user_input, unique_id=HOST
+        domain=cololight.DOMAIN, data=demo_user_input["device_data"], unique_id=HOST
     )
     entry.add_to_hass(hass)
 
     result = await hass.config_entries.flow.async_init(
         cololight.DOMAIN,
         context={"source": "user"},
-        data=demo_user_input,
+        data=demo_user_input["device_data"],
     )
 
     assert result["type"] == "abort"
@@ -263,7 +273,12 @@ async def test_options_deleting_default_effect(hass, demo_user_input):
         cololight.DOMAIN, context={"source": "user"}
     )
     entry = await hass.config_entries.flow.async_configure(
-        flow["flow_id"], user_input=demo_user_input
+        flow["flow_id"], user_input=demo_user_input["device_data"]
+    )
+
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"],
+        user_input=demo_user_input["effects_data"],
     )
 
     await hass.async_block_till_done()
@@ -291,7 +306,12 @@ async def test_options_restoring_default_effect(hass, demo_user_input):
         cololight.DOMAIN, context={"source": "user"}
     )
     entry = await hass.config_entries.flow.async_configure(
-        flow["flow_id"], user_input=demo_user_input
+        flow["flow_id"], user_input=demo_user_input["device_data"]
+    )
+
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"],
+        user_input=demo_user_input["effects_data"],
     )
 
     await hass.async_block_till_done()
@@ -324,7 +344,7 @@ async def test_options_restoring_default_effect(hass, demo_user_input):
 async def test_options_has_error_if_invalid(mock_color_schemes, hass, demo_user_input):
     """Test options will show error if invalid"""
     entry = MockConfigEntry(
-        domain=cololight.DOMAIN, data=DEMO_USER_INPUT, unique_id=HOST
+        domain=cololight.DOMAIN, data=demo_user_input, unique_id=HOST
     )
     entry.add_to_hass(hass)
 
@@ -373,7 +393,12 @@ async def test_end_to_end_with_options(hass, demo_user_input):
         cololight.DOMAIN, context={"source": "user"}
     )
     entry = await hass.config_entries.flow.async_configure(
-        flow["flow_id"], user_input=demo_user_input
+        flow["flow_id"], user_input=demo_user_input["device_data"]
+    )
+
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"],
+        user_input=demo_user_input["effects_data"],
     )
 
     await hass.async_block_till_done()

@@ -37,6 +37,7 @@ async def setup_comp(hass):
             "platform": "cololight",
             "name": LIGHT_1_NAME,
             "host": "1.1.1.1",
+            "device": "hexagon",
         },
         options={},
     )
@@ -49,6 +50,7 @@ async def setup_comp(hass):
             "platform": "cololight",
             "name": LIGHT_2_NAME,
             "host": "1.1.1.2",
+            "device": "hexagon",
         },
         options={
             "Test Effect": {
@@ -69,6 +71,7 @@ async def setup_comp(hass):
             "platform": "cololight",
             "name": LIGHT_3_NAME,
             "host": "1.1.1.3",
+            "device": "hexagon",
         },
         options={
             "Bad Effect": {
@@ -96,6 +99,7 @@ async def setup_comp(hass):
             "platform": "cololight",
             "name": LIGHT_4_NAME,
             "host": "1.1.1.4",
+            "device": "hexagon",
             "default_effects": [
                 "80s Club",
             ],
@@ -119,6 +123,7 @@ async def setup_comp(hass):
             "platform": "cololight",
             "name": LIGHT_5_NAME,
             "host": "1.1.1.5",
+            "device": "hexagon",
             "default_effects": [
                 "80s Club",
                 "Bad Effect",
