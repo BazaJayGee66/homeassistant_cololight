@@ -86,7 +86,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 async def async_setup_entry(hass, entry, async_add_entities):
     host = entry.data[CONF_HOST]
     name = entry.data[CONF_NAME]
-    device = entry.data["device"]
+    device = entry.data["device"] if "device" in entry.data else "hexagon"
 
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
