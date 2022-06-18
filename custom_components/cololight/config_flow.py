@@ -58,6 +58,7 @@ class CololightConfigFlow(config_entries.ConfigFlow):
         device = self.device_data["device"]
         light = PyCololight(device=device, host=None)
         default_effects = light.default_effects
+        dynamic_effects = light.dynamic_effects
 
         options = {
             vol.Optional(
@@ -65,6 +66,15 @@ class CololightConfigFlow(config_entries.ConfigFlow):
                 default=default_effects,
             ): cv.multi_select(default_effects),
         }
+
+        if dynamic_effects:
+            options.update(
+                {
+                    vol.Optional(
+                        "dynamic_effects",
+                    ): cv.multi_select(dynamic_effects),
+                }
+            )
 
         return self.async_show_form(
             step_id="device_effects", data_schema=vol.Schema(options)

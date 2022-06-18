@@ -23,10 +23,26 @@ DEMO_USER_INPUT = {
     },
 }
 
+DEMO_USER_INPUT_2 = {
+    "device_data": {"name": NAME, "host": HOST, "device": "strip"},
+    "effects_data": {
+        "default_effects": [
+            "80s Club",
+            "Cherry Blossom",
+        ],
+        "dynamic_effects": ["Graffiti", "Snow"],
+    },
+}
+
 
 @pytest.fixture
 def demo_user_input():
     return deepcopy(DEMO_USER_INPUT)
+
+
+@pytest.fixture
+def demo_user_input_2():
+    return deepcopy(DEMO_USER_INPUT_2)
 
 
 async def test_form(hass, demo_user_input):
@@ -51,6 +67,34 @@ async def test_form(hass, demo_user_input):
     )
 
     expected_data = demo_user_input["device_data"] | demo_user_input["effects_data"]
+
+    assert result["type"] == "create_entry"
+    assert result["title"] == NAME
+    assert result["data"] == expected_data
+
+
+async def test_form_strip(hass, demo_user_input_2):
+    """Test config entry configured successfully."""
+
+    result = await hass.config_entries.flow.async_init(
+        cololight.DOMAIN, context={"source": "user"}
+    )
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["step_id"] == "user"
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], user_input=demo_user_input_2["device_data"]
+    )
+
+    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["step_id"] == "device_effects"
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"],
+        user_input=demo_user_input_2["effects_data"],
+    )
+
+    expected_data = demo_user_input_2["device_data"] | demo_user_input_2["effects_data"]
 
     assert result["type"] == "create_entry"
     assert result["title"] == NAME
