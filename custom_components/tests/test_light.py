@@ -26,6 +26,8 @@ LIGHT_4_NAME = "cololight_exclude_default_efects"
 ENTITY_4_LIGHT = f"light.{LIGHT_4_NAME}"
 LIGHT_5_NAME = "cololight_incorrect_default_efects"
 ENTITY_5_LIGHT = f"light.{LIGHT_5_NAME}"
+LIGHT_6_NAME = "cololight_test_strip"
+ENTITY_6_LIGHT = f"light.{LIGHT_6_NAME}"
 
 
 @pytest.fixture(autouse=True)
@@ -135,8 +137,20 @@ async def setup_comp(hass):
     entry_5.add_to_hass(hass)
     await hass.config_entries.async_setup(entry_5.entry_id)
 
-    await hass.async_block_till_done()
+    entry_6 = MockConfigEntry(
+        domain="cololight",
+        data={
+            "platform": "cololight",
+            "name": LIGHT_6_NAME,
+            "host": "1.1.1.6",
+            "device": "strip",
+        },
+        options={},
+    )
+    entry_6.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry_6.entry_id)
 
+    await hass.async_block_till_done()
     return
 
 
@@ -312,3 +326,12 @@ async def test_light_handles_incorrect_default_effect(hass):
     assert state.attributes.get(ATTR_EFFECT_LIST) == [
         "80s Club",
     ]
+
+
+async def test_icon(hass):
+
+    state_hexagon = hass.states.get(ENTITY_1_LIGHT)
+    state_strip = hass.states.get(ENTITY_6_LIGHT)
+
+    assert state_hexagon.attributes.get("icon") == "mdi:hexagon-multiple"
+    assert state_strip.attributes.get("icon") == "mdi:led-strip-variant"

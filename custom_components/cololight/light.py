@@ -53,7 +53,9 @@ _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_NAME = "ColoLight"
 
-ICON = "mdi:hexagon-multiple"
+DEFAULT_ICON = "mdi:hexagon-multiple"
+HEXAGON_ICON = "mdi:hexagon-multiple"
+STRIP_ICON = "mdi:led-strip-variant"
 
 SCAN_INTERVAL = timedelta(seconds=30)
 
@@ -182,7 +184,14 @@ class coloLight(Light, RestoreEntity):
 
     @property
     def icon(self):
-        return ICON
+        icon = DEFAULT_ICON
+
+        if self._light.device == "hexagon":
+            icon = HEXAGON_ICON
+        if self._light.device == "strip":
+            icon = STRIP_ICON
+
+        return icon
 
     @property
     def unique_id(self):
