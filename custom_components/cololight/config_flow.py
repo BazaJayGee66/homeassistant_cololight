@@ -11,20 +11,6 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 
 from . import DOMAIN
 
-light = PyCololight(device="hexagon", host=None)
-DEFAULT_EFFECTS = light.default_effects
-
-DEVICE_SCHEMA = vol.Schema(
-    {
-        vol.Required(CONF_HOST): str,
-        vol.Required(CONF_NAME): str,
-        vol.Required(
-            "device",
-            default="hexagon",
-        ): vol.In(["hexagon"]),
-    }
-)
-
 
 @config_entries.HANDLERS.register(DOMAIN)
 class CololightConfigFlow(config_entries.ConfigFlow):
@@ -49,9 +35,18 @@ class CololightConfigFlow(config_entries.ConfigFlow):
             self.device_data = user_input
             return await self.async_step_device_effects()
 
-        return self.async_show_form(
-            step_id="user", data_schema=DEVICE_SCHEMA, errors=errors
+        options = vol.Schema(
+            {
+                vol.Required(CONF_HOST): str,
+                vol.Required(CONF_NAME): str,
+                vol.Required(
+                    "device",
+                    default="hexagon",
+                ): vol.In(["hexagon"]),
+            }
         )
+
+        return self.async_show_form(step_id="user", data_schema=options, errors=errors)
 
     async def async_step_device_effects(self, user_input=None):
         """Set which effects to add to device"""
@@ -60,11 +55,15 @@ class CololightConfigFlow(config_entries.ConfigFlow):
             data.update(user_input)
             return self.async_create_entry(title=data[CONF_NAME], data=data)
 
+        device = self.device_data["device"]
+        light = PyCololight(device=device, host=None)
+        default_effects = light.default_effects
+
         options = {
             vol.Optional(
                 "default_effects",
-                default=DEFAULT_EFFECTS,
-            ): cv.multi_select(DEFAULT_EFFECTS),
+                default=default_effects,
+            ): cv.multi_select(default_effects),
         }
 
         return self.async_show_form(
@@ -103,7 +102,7 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
     def _get_removed_effects(self):
         cololight = self.hass.data["cololight"][self.config_entry.entry_id]
         effects = cololight.effects
-        default_effects = DEFAULT_EFFECTS
+        default_effects = cololight.default_effects
         removed_effects = list(set(default_effects) - set(effects))
         return dict(zip(removed_effects, removed_effects))
 
