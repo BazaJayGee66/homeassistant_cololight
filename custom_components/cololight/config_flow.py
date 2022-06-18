@@ -42,7 +42,7 @@ class CololightConfigFlow(config_entries.ConfigFlow):
                 vol.Required(
                     "device",
                     default="hexagon",
-                ): vol.In(["hexagon"]),
+                ): vol.In(["hexagon", "strip"]),
             }
         )
 
