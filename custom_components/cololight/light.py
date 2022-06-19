@@ -1,7 +1,6 @@
 """Platform for LifeSmart ColoLight Light integration."""
 import logging
 import voluptuous as vol
-import socket
 from datetime import timedelta
 
 from pycololight import (
@@ -42,7 +41,6 @@ except ImportError:
         Light,
     )
 
-from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE, STATE_ON
 from homeassistant.helpers.restore_state import RestoreEntity
 import homeassistant.util.color as color_util
