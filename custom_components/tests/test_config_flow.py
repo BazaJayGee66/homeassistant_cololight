@@ -72,6 +72,12 @@ async def test_form(hass, demo_user_input):
     assert result["title"] == NAME
     assert result["data"] == expected_data
 
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][result["result"].entry_id].effects == [
+        "80s Club",
+        "Cherry Blossom",
+    ]
+
 
 async def test_form_strip(hass, demo_user_input_2):
     """Test config entry configured successfully."""
@@ -99,6 +105,14 @@ async def test_form_strip(hass, demo_user_input_2):
     assert result["type"] == "create_entry"
     assert result["title"] == NAME
     assert result["data"] == expected_data
+
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][result["result"].entry_id].effects == [
+        "80s Club",
+        "Cherry Blossom",
+        "Graffiti",
+        "Snow",
+    ]
 
 
 async def test_form_already_configured(hass, demo_user_input):

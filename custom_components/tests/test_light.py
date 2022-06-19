@@ -24,8 +24,6 @@ LIGHT_3_NAME = "cololight_incorrect_custom_effect"
 ENTITY_3_LIGHT = f"light.{LIGHT_3_NAME}"
 LIGHT_4_NAME = "cololight_exclude_default_efects"
 ENTITY_4_LIGHT = f"light.{LIGHT_4_NAME}"
-LIGHT_5_NAME = "cololight_incorrect_default_efects"
-ENTITY_5_LIGHT = f"light.{LIGHT_5_NAME}"
 LIGHT_6_NAME = "cololight_test_strip"
 ENTITY_6_LIGHT = f"light.{LIGHT_6_NAME}"
 
@@ -40,6 +38,11 @@ async def setup_comp(hass):
             "name": LIGHT_1_NAME,
             "host": "1.1.1.1",
             "device": "hexagon",
+            "default_effects": [
+                "Pensieve",
+                "Savasana",
+                "Sunrise",
+            ],
         },
         options={},
     )
@@ -53,6 +56,11 @@ async def setup_comp(hass):
             "name": LIGHT_2_NAME,
             "host": "1.1.1.2",
             "device": "hexagon",
+            "default_effects": [
+                "Unicorns",
+                "Rainbow Flow",
+                "Music Mode",
+            ],
         },
         options={
             "Test Effect": {
@@ -74,6 +82,10 @@ async def setup_comp(hass):
             "name": LIGHT_3_NAME,
             "host": "1.1.1.3",
             "device": "hexagon",
+            "default_effects": [
+                "80s Club",
+                "Cherry Blossom",
+            ],
         },
         options={
             "Bad Effect": {
@@ -119,24 +131,6 @@ async def setup_comp(hass):
     entry_4.add_to_hass(hass)
     await hass.config_entries.async_setup(entry_4.entry_id)
 
-    entry_5 = MockConfigEntry(
-        domain="cololight",
-        data={
-            "platform": "cololight",
-            "name": LIGHT_5_NAME,
-            "host": "1.1.1.5",
-            "device": "hexagon",
-            "default_effects": [
-                "80s Club",
-                "Bad Effect",
-                "Unicorns",
-                "Another Bad Effect",
-            ],
-        },
-    )
-    entry_5.add_to_hass(hass)
-    await hass.config_entries.async_setup(entry_5.entry_id)
-
     entry_6 = MockConfigEntry(
         domain="cololight",
         data={
@@ -144,6 +138,7 @@ async def setup_comp(hass):
             "name": LIGHT_6_NAME,
             "host": "1.1.1.6",
             "device": "strip",
+            "default_effects": [],
         },
         options={},
     )
@@ -247,18 +242,9 @@ async def test_light_has_effects(hass):
     state = hass.states.get(ENTITY_1_LIGHT)
 
     expected_efects_list = [
-        "80s Club",
-        "Cherry Blossom",
-        "Cocktail Parade",
-        "Instagrammer",
         "Pensieve",
         "Savasana",
         "Sunrise",
-        "The Circus",
-        "Unicorns",
-        "Christmas",
-        "Rainbow Flow",
-        "Music Mode",
     ]
 
     assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
@@ -269,16 +255,7 @@ async def test_light_adds_custom_effect(hass):
     state = hass.states.get(ENTITY_2_LIGHT)
 
     expected_efects_list = [
-        "80s Club",
-        "Cherry Blossom",
-        "Cocktail Parade",
-        "Instagrammer",
-        "Pensieve",
-        "Savasana",
-        "Sunrise",
-        "The Circus",
         "Unicorns",
-        "Christmas",
         "Rainbow Flow",
         "Music Mode",
         "Test Effect",
@@ -294,16 +271,6 @@ async def test_light_handles_incorrect_custom_effect(hass):
     expected_efects_list = [
         "80s Club",
         "Cherry Blossom",
-        "Cocktail Parade",
-        "Instagrammer",
-        "Pensieve",
-        "Savasana",
-        "Sunrise",
-        "The Circus",
-        "Unicorns",
-        "Christmas",
-        "Rainbow Flow",
-        "Music Mode",
         "Good Effect",
     ]
 
@@ -317,15 +284,6 @@ async def test_light_has_only_specified_default_effects(hass):
     expected_efects_list = ["80s Club", "Custom Effect"]
 
     assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
-
-
-async def test_light_handles_incorrect_default_effect(hass):
-
-    state = hass.states.get(ENTITY_5_LIGHT)
-
-    assert state.attributes.get(ATTR_EFFECT_LIST) == [
-        "80s Club",
-    ]
 
 
 async def test_icon(hass):

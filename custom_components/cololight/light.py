@@ -5,7 +5,6 @@ from datetime import timedelta
 
 from pycololight import (
     PyCololight,
-    DefaultEffectExecption,
     ColourSchemeException,
     ColourException,
     CycleSpeedException,
@@ -85,23 +84,23 @@ async def async_setup_entry(hass, entry, async_add_entities):
     host = entry.data[CONF_HOST]
     name = entry.data[CONF_NAME]
     device = entry.data["device"] if "device" in entry.data else "hexagon"
+    effects = []
 
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
     if entry.data.get("default_effects"):
-        cololight_light = PyCololight(device=device, host=host, default_effects=False)
-        try:
-            cololight_light.restore_effects(entry.data["default_effects"])
-        except DefaultEffectExecption:
-            _LOGGER.error(
-                "Invalid default effect given in default effects '%s'. "
-                "Valid default effects include: %s",
-                entry.data["default_effects"],
-                cololight_light.default_effects,
-            )
-    else:
-        cololight_light = PyCololight(device=device, host=host)
+        effects.extend(entry.data["default_effects"])
+
+    if entry.data.get("dynamic_effects"):
+        effects.extend(entry.data["dynamic_effects"])
+
+    cololight_light = PyCololight(
+        device=device, host=host, default_effects=False, dynamic_effects=False
+    )
+
+    if effects:
+        cololight_light.restore_effects(effects)
 
     if entry.options:
         for effect_name, effect_options in entry.options.items():
