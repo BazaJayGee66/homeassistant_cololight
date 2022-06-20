@@ -47,7 +47,8 @@
       },
       "options_restore_effect": {
         "data": {
-          "name": "Select effect/s to restore"
+          "default_effects": "Select default effect/s to restore",
+          "dynamic_effects": "Select dynamic effect/s to restore"
         },
         "description": "Restore default Cololight effects"
       }

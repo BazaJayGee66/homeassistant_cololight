@@ -136,7 +136,12 @@ async def test_form_already_configured(hass, demo_user_input):
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
     return_value=["Mood | Green", "Mood | Red"],
 )
-async def test_options_creating_effect(mock_color_schemes, hass, demo_user_input):
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+)
+async def test_options_creating_effect(
+    mock_cololight, mock_color_schemes, hass, demo_user_input
+):
     """Test options for create effect"""
     entry = MockConfigEntry(
         domain=cololight.DOMAIN, data=demo_user_input, unique_id=HOST
@@ -211,7 +216,12 @@ async def test_options_creating_effect(mock_color_schemes, hass, demo_user_input
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
     return_value=["Mood | Green", "Mood | Red"],
 )
-async def test_options_updating_effect(mock_scheme_colors, hass, demo_user_input):
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+)
+async def test_options_updating_effect(
+    mock_cololight, mock_scheme_colors, hass, demo_user_input
+):
     """Test options for create effect is updated if already existing"""
     entry = MockConfigEntry(
         domain=cololight.DOMAIN, data=demo_user_input, unique_id=HOST
@@ -274,7 +284,12 @@ async def test_options_updating_effect(mock_scheme_colors, hass, demo_user_input
         "test_2": "test_2",
     },
 )
-async def test_options_deleting_custom_effect(mock_effects, hass, demo_user_input):
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+)
+async def test_options_deleting_custom_effect(
+    mock_cololight, mock_effects, hass, demo_user_input
+):
     """Test options for deleting effect"""
     test_effects = {
         "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1},
@@ -383,7 +398,7 @@ async def test_options_restoring_default_effect(hass, demo_user_input):
     await hass.config_entries.options.async_configure(
         option_flow["flow_id"],
         user_input={
-            "name": ["Unicorns"],
+            "default_effects": ["Unicorns"],
         },
     )
 
@@ -395,11 +410,54 @@ async def test_options_restoring_default_effect(hass, demo_user_input):
     ]
 
 
+async def test_options_restoring_dynamic_effect(hass, demo_user_input_2):
+    """Test options for restoring effect"""
+    # await hass.async_block_till_done()
+    flow = await hass.config_entries.flow.async_init(
+        cololight.DOMAIN, context={"source": "user"}
+    )
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"], user_input=demo_user_input_2["device_data"]
+    )
+
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"],
+        user_input=demo_user_input_2["effects_data"],
+    )
+
+    await hass.async_block_till_done()
+
+    option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
+
+    option_flow = await hass.config_entries.options.async_configure(
+        option_flow["flow_id"], user_input={"select": "Restore"}
+    )
+
+    await hass.config_entries.options.async_configure(
+        option_flow["flow_id"],
+        user_input={"dynamic_effects": ["Color train"]},
+    )
+
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][entry["result"].entry_id].effects == [
+        "80s Club",
+        "Cherry Blossom",
+        "Graffiti",
+        "Snow",
+        "Color train",
+    ]
+
+
 @patch(
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
     return_value=["Mood | Green"],
 )
-async def test_options_has_error_if_invalid(mock_color_schemes, hass, demo_user_input):
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+)
+async def test_options_has_error_if_invalid(
+    mock_cololight, mock_color_schemes, hass, demo_user_input
+):
     """Test options will show error if invalid"""
     entry = MockConfigEntry(
         domain=cololight.DOMAIN, data=demo_user_input, unique_id=HOST
@@ -523,7 +581,7 @@ async def test_end_to_end_with_options(hass, demo_user_input):
     await hass.config_entries.options.async_configure(
         option_flow["flow_id"],
         user_input={
-            "name": ["Savasana", "Unicorns"],
+            "default_effects": ["Savasana", "Unicorns"],
         },
     )
 

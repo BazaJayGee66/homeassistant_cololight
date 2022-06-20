@@ -88,13 +88,18 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         """Initialize Cololight options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
+        self.cololight = None
         self._errors = {}
 
+    def _get_cololight(self):
+        self.cololight = self.hass.data["cololight"][self.config_entry.entry_id]
+
     def _get_color_schemes(self):
-        cololight = self.hass.data["cololight"][self.config_entry.entry_id]
         color_schemes = []
-        for color_scheme in cololight.custom_effect_colour_schemes():
-            for color in cololight.custom_effect_colour_scheme_colours(color_scheme):
+        for color_scheme in self.cololight.custom_effect_colour_schemes():
+            for color in self.cololight.custom_effect_colour_scheme_colours(
+                color_scheme
+            ):
                 color_schemes.append(f"{color_scheme} | {color}")
 
         return color_schemes
@@ -106,14 +111,16 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         return color_scheme, color
 
     def _get_effects(self):
-        cololight = self.hass.data["cololight"][self.config_entry.entry_id]
-        return dict(zip(cololight.effects, cololight.effects))
+        return dict(zip(self.cololight.effects, self.cololight.effects))
 
-    def _get_removed_effects(self):
-        cololight = self.hass.data["cololight"][self.config_entry.entry_id]
-        effects = cololight.effects
-        default_effects = cololight.default_effects
-        removed_effects = list(set(default_effects) - set(effects))
+    def _get_removed_effects(self, effects_type):
+        effects = self.cololight.effects
+        device_effects = []
+        if effects_type == "default":
+            device_effects = self.cololight.default_effects
+        if effects_type == "dynamic":
+            device_effects = self.cololight.dynamic_effects
+        removed_effects = list(set(device_effects) - set(effects))
         return dict(zip(removed_effects, removed_effects))
 
     async def _is_valid(self, user_input):
@@ -127,6 +134,8 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
     async def async_step_init(self, user_input=None):
         """Manage the Cololight options."""
         if user_input is not None:
+            self._get_cololight()
+
             if user_input["select"] == "Create":
                 return await self.async_step_options_add_custom_effect()
             elif user_input["select"] == "Delete":
@@ -207,19 +216,28 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_options_restore_effect(self, user_input=None):
         if user_input is not None:
-            for effect in user_input[CONF_NAME]:
+            for effect in user_input["default_effects"]:
                 self.config_entry.data["default_effects"].append(effect)
+
+            for effect in user_input["dynamic_effects"]:
+                self.config_entry.data["dynamic_effects"].append(effect)
 
             self.options["restored_effects"] = self.config_entry.data["default_effects"]
 
             return self.async_create_entry(title="", data=self.options)
 
-        effects = self._get_removed_effects()
+        default_effects = self._get_removed_effects("default")
+        dynamic_effects = self._get_removed_effects("dynamic")
+
         options = {
-            vol.Required(
-                CONF_NAME,
-                default=self.config_entry.options.get(CONF_NAME),
-            ): cv.multi_select(effects),
+            vol.Optional(
+                "default_effects",
+                default=[],
+            ): cv.multi_select(default_effects),
+            vol.Optional(
+                "dynamic_effects",
+                default=[],
+            ): cv.multi_select(dynamic_effects),
         }
 
         return self.async_show_form(
