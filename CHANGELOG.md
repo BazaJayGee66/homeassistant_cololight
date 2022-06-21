@@ -8,6 +8,7 @@
 ## Fixes
 
 - Default device to hexagon if cololight was setup prior to `v2.0.0`
+- Update configuration options to be a menu
 
 ## Breaking Changes
 

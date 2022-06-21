@@ -133,26 +133,13 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         """Manage the Cololight options."""
-        if user_input is not None:
-            self._get_cololight()
+        self._get_cololight()
+        return self.async_show_menu(
+            step_id="init",
+            menu_options=["create_effect", "remove_effect", "restore_effect"],
+        )
 
-            if user_input["select"] == "Create":
-                return await self.async_step_options_add_custom_effect()
-            elif user_input["select"] == "Delete":
-                return await self.async_step_options_delete_effect()
-            elif user_input["select"] == "Restore":
-                return await self.async_step_options_restore_effect()
-
-        options = {
-            vol.Optional(
-                "select",
-                default=self.config_entry.options.get("select", "Create"),
-            ): vol.In(["Create", "Delete", "Restore"]),
-        }
-
-        return self.async_show_form(step_id="init", data_schema=vol.Schema(options))
-
-    async def async_step_options_add_custom_effect(self, user_input=None):
+    async def async_step_create_effect(self, user_input=None):
         self._errors = {}
         if user_input is not None:
             if await self._is_valid(user_input):
@@ -185,12 +172,12 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         }
 
         return self.async_show_form(
-            step_id="options_add_custom_effect",
+            step_id="create_effect",
             data_schema=vol.Schema(options),
             errors=self._errors,
         )
 
-    async def async_step_options_delete_effect(self, user_input=None):
+    async def async_step_remove_effect(self, user_input=None):
         if user_input is not None:
             for effect in user_input[CONF_NAME]:
                 if self.options.get(effect):
@@ -211,10 +198,10 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         }
 
         return self.async_show_form(
-            step_id="options_delete_effect", data_schema=vol.Schema(options)
+            step_id="remove_effect", data_schema=vol.Schema(options)
         )
 
-    async def async_step_options_restore_effect(self, user_input=None):
+    async def async_step_restore_effect(self, user_input=None):
         if user_input is not None:
             for effect in user_input["default_effects"]:
                 self.config_entry.data["default_effects"].append(effect)
@@ -241,5 +228,5 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         }
 
         return self.async_show_form(
-            step_id="options_restore_effect", data_schema=vol.Schema(options)
+            step_id="restore_effect", data_schema=vol.Schema(options)
         )

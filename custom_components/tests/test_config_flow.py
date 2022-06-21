@@ -150,15 +150,15 @@ async def test_options_creating_effect(
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == data_entry_flow.RESULT_TYPE_MENU
     assert result["step_id"] == "init"
 
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], user_input={"select": "Create"}
+        result["flow_id"], user_input={"next_step_id": "create_effect"}
     )
 
     assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    assert result["step_id"] == "options_add_custom_effect"
+    assert result["step_id"] == "create_effect"
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
@@ -183,7 +183,7 @@ async def test_options_creating_effect(
     result = await hass.config_entries.options.async_init(entry.entry_id)
 
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], user_input={"select": "Create"}
+        result["flow_id"], user_input={"next_step_id": "create_effect"}
     )
 
     result = await hass.config_entries.options.async_configure(
@@ -230,7 +230,7 @@ async def test_options_updating_effect(
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], user_input={"select": "Create"}
+        result["flow_id"], user_input={"next_step_id": "create_effect"}
     )
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
@@ -252,7 +252,7 @@ async def test_options_updating_effect(
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], user_input={"select": "Create"}
+        result["flow_id"], user_input={"next_step_id": "create_effect"}
     )
 
     result = await hass.config_entries.options.async_configure(
@@ -319,15 +319,15 @@ async def test_options_deleting_custom_effect(
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == data_entry_flow.RESULT_TYPE_MENU
     assert result["step_id"] == "init"
 
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], user_input={"select": "Delete"}
+        result["flow_id"], user_input={"next_step_id": "remove_effect"}
     )
 
     assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    assert result["step_id"] == "options_delete_effect"
+    assert result["step_id"] == "remove_effect"
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
@@ -359,7 +359,7 @@ async def test_options_deleting_default_effect(hass, demo_user_input):
     option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
 
     option_flow = await hass.config_entries.options.async_configure(
-        option_flow["flow_id"], user_input={"select": "Delete"}
+        option_flow["flow_id"], user_input={"next_step_id": "remove_effect"}
     )
 
     await hass.config_entries.options.async_configure(
@@ -392,7 +392,7 @@ async def test_options_restoring_default_effect(hass, demo_user_input):
     option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
 
     option_flow = await hass.config_entries.options.async_configure(
-        option_flow["flow_id"], user_input={"select": "Restore"}
+        option_flow["flow_id"], user_input={"next_step_id": "restore_effect"}
     )
 
     await hass.config_entries.options.async_configure(
@@ -430,7 +430,7 @@ async def test_options_restoring_dynamic_effect(hass, demo_user_input_2):
     option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
 
     option_flow = await hass.config_entries.options.async_configure(
-        option_flow["flow_id"], user_input={"select": "Restore"}
+        option_flow["flow_id"], user_input={"next_step_id": "restore_effect"}
     )
 
     await hass.config_entries.options.async_configure(
@@ -466,15 +466,15 @@ async def test_options_has_error_if_invalid(
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == data_entry_flow.RESULT_TYPE_MENU
     assert result["step_id"] == "init"
 
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], user_input={"select": "Create"}
+        result["flow_id"], user_input={"next_step_id": "create_effect"}
     )
 
     assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
-    assert result["step_id"] == "options_add_custom_effect"
+    assert result["step_id"] == "create_effect"
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
@@ -522,7 +522,7 @@ async def test_end_to_end_with_options(hass, demo_user_input):
     option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
 
     option_flow = await hass.config_entries.options.async_configure(
-        option_flow["flow_id"], user_input={"select": "Create"}
+        option_flow["flow_id"], user_input={"next_step_id": "create_effect"}
     )
 
     await hass.config_entries.options.async_configure(
@@ -541,7 +541,7 @@ async def test_end_to_end_with_options(hass, demo_user_input):
     option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
 
     option_flow = await hass.config_entries.options.async_configure(
-        option_flow["flow_id"], user_input={"select": "Delete"}
+        option_flow["flow_id"], user_input={"next_step_id": "remove_effect"}
     )
 
     await hass.config_entries.options.async_configure(
@@ -559,7 +559,7 @@ async def test_end_to_end_with_options(hass, demo_user_input):
     option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
 
     option_flow = await hass.config_entries.options.async_configure(
-        option_flow["flow_id"], user_input={"select": "Delete"}
+        option_flow["flow_id"], user_input={"next_step_id": "remove_effect"}
     )
 
     await hass.config_entries.options.async_configure(
@@ -575,7 +575,7 @@ async def test_end_to_end_with_options(hass, demo_user_input):
     option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
 
     option_flow = await hass.config_entries.options.async_configure(
-        option_flow["flow_id"], user_input={"select": "Restore"}
+        option_flow["flow_id"], user_input={"next_step_id": "restore_effect"}
     )
 
     await hass.config_entries.options.async_configure(

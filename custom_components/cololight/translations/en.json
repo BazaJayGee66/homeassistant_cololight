@@ -18,19 +18,21 @@
           "dynamic_effects": "Dynamic Effects"
         },
         "title": "Effects to include",
-        "description": "Select effects to be included for device.\nThese can be added/deleted later in configuration options.\n\n**Custom effects** can also be created in configuration options once the device has been created."
+        "description": "Select effects to be included for device.\nThese can be added/removed later in configuration options.\n\n**Custom effects** can also be created in configuration options once the device has been created."
       }
     }
   },
   "options": {
     "step": {
       "init": {
-        "data": {
-          "select": "Select action"
+        "menu_options": {
+          "create_effect": "Create custom effect",
+          "remove_effect": "Remove effects",
+          "restore_effect": "Restore default/dynamic effects"
         },
-        "description": "Create/Delete/Restore Cololight effects"
+        "description": "Create/Remove/Restore Cololight effects"
       },
-      "options_add_custom_effect": {
+      "create_effect": {
         "data": {
           "name": "Name",
           "color_scheme": "Color Scheme",
@@ -39,13 +41,13 @@
         },
         "description": "Create Cololight effect"
       },
-      "options_delete_effect": {
+      "remove_effect": {
         "data": {
-          "name": "Select effect/s to delete"
+          "name": "Select effect/s to remove"
         },
         "description": "Delete Cololight effects"
       },
-      "options_restore_effect": {
+      "restore_effect": {
         "data": {
           "default_effects": "Select default effect/s to restore",
           "dynamic_effects": "Select dynamic effect/s to restore"
