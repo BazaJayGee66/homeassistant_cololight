@@ -203,30 +203,49 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_restore_effect(self, user_input=None):
         if user_input is not None:
-            for effect in user_input["default_effects"]:
-                self.config_entry.data["default_effects"].append(effect)
+            if user_input.get("default_effects"):
+                for effect in user_input["default_effects"]:
+                    self.config_entry.data["default_effects"].append(effect)
 
-            for effect in user_input["dynamic_effects"]:
-                self.config_entry.data["dynamic_effects"].append(effect)
+            if user_input.get("dynamic_effects"):
+                for effect in user_input["dynamic_effects"]:
+                    self.config_entry.data["dynamic_effects"].append(effect)
 
-            self.options["restored_effects"] = self.config_entry.data["default_effects"]
+            self.options["restored_effects"] = user_input
+
+            print(self.config_entry.data)
 
             return self.async_create_entry(title="", data=self.options)
 
         default_effects = self._get_removed_effects("default")
         dynamic_effects = self._get_removed_effects("dynamic")
 
-        options = {
-            vol.Optional(
-                "default_effects",
-                default=[],
-            ): cv.multi_select(default_effects),
-            vol.Optional(
-                "dynamic_effects",
-                default=[],
-            ): cv.multi_select(dynamic_effects),
-        }
+        options = {}
+
+        if not default_effects and not dynamic_effects:
+            options["no_effects"] = ""
+
+        if default_effects:
+            options.update(
+                {
+                    vol.Optional(
+                        "default_effects",
+                        default=[],
+                    ): cv.multi_select(default_effects),
+                }
+            )
+
+        if dynamic_effects:
+            options.update(
+                {
+                    vol.Optional(
+                        "dynamic_effects",
+                        default=[],
+                    ): cv.multi_select(dynamic_effects),
+                }
+            )
 
         return self.async_show_form(
-            step_id="restore_effect", data_schema=vol.Schema(options)
+            step_id="restore_effect",
+            data_schema=vol.Schema(options),
         )

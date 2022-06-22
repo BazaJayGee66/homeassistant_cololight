@@ -50,9 +50,10 @@
       "restore_effect": {
         "data": {
           "default_effects": "Select default effect/s to restore",
-          "dynamic_effects": "Select dynamic effect/s to restore"
+          "dynamic_effects": "Select dynamic effect/s to restore",
+          "no_effects": "No effects found to restore"
         },
-        "description": "Restore default Cololight effects"
+        "description": "Restore default/dynamic Cololight effects"
       }
     },
     "error": {

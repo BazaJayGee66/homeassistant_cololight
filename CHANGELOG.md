@@ -9,6 +9,7 @@
 
 - Default device to hexagon if cololight was setup prior to `v2.0.0`
 - Update configuration options to be a menu
+- Update restore effect option, to have a message if no effects found to restore
 
 ## Breaking Changes
 
