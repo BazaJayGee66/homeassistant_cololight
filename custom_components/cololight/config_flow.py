@@ -183,10 +183,14 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
                 if self.options.get(effect):
                     del self.options[effect]
                 else:
-                    self.config_entry.data["default_effects"].remove(effect)
-                    self.options["default_effects"] = self.config_entry.data[
-                        "default_effects"
-                    ]
+                    if effect in self.config_entry.data["default_effects"]:
+                        self.config_entry.data["default_effects"].remove(effect)
+
+                    if self.config_entry.data.get("dynamic_effects"):
+                        if effect in self.config_entry.data["dynamic_effects"]:
+                            self.config_entry.data["dynamic_effects"].remove(effect)
+
+                    self.options["removed_effects"] = user_input[CONF_NAME]
             return self.async_create_entry(title="", data=self.options)
 
         effects = self._get_effects()
@@ -212,8 +216,6 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
                     self.config_entry.data["dynamic_effects"].append(effect)
 
             self.options["restored_effects"] = user_input
-
-            print(self.config_entry.data)
 
             return self.async_create_entry(title="", data=self.options)
 

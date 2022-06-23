@@ -287,10 +287,10 @@ async def test_options_updating_effect(
 @patch(
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
-async def test_options_deleting_custom_effect(
+async def test_options_removing_custom_effect(
     mock_cololight, mock_effects, hass, demo_user_input
 ):
-    """Test options for deleting effect"""
+    """Test options for removing effect"""
     test_effects = {
         "test": {"color_scheme": "Mood", "color": "Green", "cycle_speed": 1, "mode": 1},
         "test_2": {
@@ -336,12 +336,14 @@ async def test_options_deleting_custom_effect(
         },
     )
 
+    await hass.async_block_till_done()
+
     assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
     assert entry.options == expected_effetcs
 
 
-async def test_options_deleting_default_effect(hass, demo_user_input):
-    """Test options for deleting effect"""
+async def test_options_removing_default_effect(hass, demo_user_input):
+    """Test options for removing effect"""
     flow = await hass.config_entries.flow.async_init(
         cololight.DOMAIN, context={"source": "user"}
     )
@@ -371,6 +373,43 @@ async def test_options_deleting_default_effect(hass, demo_user_input):
 
     await hass.async_block_till_done()
     assert hass.data["cololight"][entry["result"].entry_id].effects == ["80s Club"]
+
+
+async def test_options_removing_dynamic_effect(hass, demo_user_input_2):
+    """Test options for removing effect"""
+    flow = await hass.config_entries.flow.async_init(
+        cololight.DOMAIN, context={"source": "user"}
+    )
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"], user_input=demo_user_input_2["device_data"]
+    )
+
+    entry = await hass.config_entries.flow.async_configure(
+        flow["flow_id"],
+        user_input=demo_user_input_2["effects_data"],
+    )
+
+    await hass.async_block_till_done()
+
+    option_flow = await hass.config_entries.options.async_init(entry["result"].entry_id)
+
+    option_flow = await hass.config_entries.options.async_configure(
+        option_flow["flow_id"], user_input={"next_step_id": "remove_effect"}
+    )
+
+    await hass.config_entries.options.async_configure(
+        option_flow["flow_id"],
+        user_input={
+            "name": ["Graffiti"],
+        },
+    )
+
+    await hass.async_block_till_done()
+    assert hass.data["cololight"][entry["result"].entry_id].effects == [
+        "80s Club",
+        "Cherry Blossom",
+        "Snow",
+    ]
 
 
 async def test_options_restoring_default_effect(hass, demo_user_input):
@@ -412,7 +451,6 @@ async def test_options_restoring_default_effect(hass, demo_user_input):
 
 async def test_options_restoring_dynamic_effect(hass, demo_user_input_2):
     """Test options for restoring effect"""
-    # await hass.async_block_till_done()
     flow = await hass.config_entries.flow.async_init(
         cololight.DOMAIN, context={"source": "user"}
     )
@@ -504,7 +542,7 @@ async def test_options_has_error_if_invalid(
 
 
 async def test_end_to_end_with_options(hass, demo_user_input):
-    """Test an end to end flow, creating entity and add effects and deleting effects"""
+    """Test an end to end flow, creating entity and add effects and removing effects"""
     flow = await hass.config_entries.flow.async_init(
         cololight.DOMAIN, context={"source": "user"}
     )

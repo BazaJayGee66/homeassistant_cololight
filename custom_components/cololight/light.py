@@ -104,7 +104,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     if entry.options:
         for effect_name, effect_options in entry.options.items():
-            if effect_name not in ["default_effects", "restored_effects"]:
+            if effect_name not in ["removed_effects", "restored_effects"]:
                 try:
                     cololight_light.add_custom_effect(
                         effect_name,
