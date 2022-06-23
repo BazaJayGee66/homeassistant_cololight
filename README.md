@@ -40,15 +40,15 @@ After installation, adding Cololight to your Home Assistant instance can be done
 
 [![Add Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start?domain=cololight)
 
-> ### Host
+> #### Host
 >
 > The host address of the cololight device (eg, `192.168.1.50`).
 >
-> ### Name
+> #### Name
 >
 > Name to give the device in Home Assistant.
 >
-> ### Device
+> #### Device
 >
 > The Cololight device type.
 
@@ -58,31 +58,27 @@ After installation, adding Cololight to your Home Assistant instance can be done
 
 Create a custom effect for the Cololight device in Home Assistant.
 
-> ### Name
+> #### Name
 >
-> Name of the effect.
+> Name of the effect. _(Using the same name as an existing effect, will override that effect)_
 >
-> _(Using the same name as an existing effect, will override that effect)_
->
-> ### Color Scheme
+> #### Color Scheme
 >
 > Color scheme of the effect.
 >
-> ### Cycle Speed
+> #### Cycle Speed
 >
 > Cycle speed of the effect.
 >
-> ### Mode
+> #### Mode
 >
-> Mode of the effect.
->
-> _(Modes can be found [here](https://github.com/BazaJayGee66/pycololight/blob/main/MODES.md))_
+> Mode of the effect. _(Modes can be found [here](https://github.com/BazaJayGee66/pycololight/blob/main/MODES.md))_
 
 ### Remove Effects
 
 Remove saved effects for the Cololight device in Home Assistant.
 
-> ### Name
+> #### Effects
 >
 > List of effects to be removed.
 
@@ -90,13 +86,13 @@ Remove saved effects for the Cololight device in Home Assistant.
 
 Restore default or dynamic effects for the Cololight device in Home Assistant.
 
-> ### Deafult effects
+> #### Deafult effects
 >
-> List of deafult effects to restore.
+> List of deafult effects of the Cololight device to restore.
 >
-> ### Dynamic effects
+> #### Dynamic effects
 >
-> List of dynamic effects to restore.
+> List of dynamic effects of the Cololight device to restore.
 
 ## Credits
 
