@@ -1,6 +1,5 @@
 """Platform for LifeSmart ColoLight Light integration."""
 import logging
-import voluptuous as vol
 from datetime import timedelta
 
 from pycololight import (
@@ -12,13 +11,10 @@ from pycololight import (
     UnavailableException,
 )
 
-import homeassistant.helpers.config_validation as cv
-
 # Import the device class from the component that you want to support
 # H-A .110 and later
 try:
     from homeassistant.components.light import (
-        PLATFORM_SCHEMA,
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
         SUPPORT_EFFECT,
@@ -30,7 +26,6 @@ try:
 # Legacy
 except ImportError:
     from homeassistant.components.light import (
-        PLATFORM_SCHEMA,
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
         SUPPORT_EFFECT,
@@ -55,29 +50,6 @@ HEXAGON_ICON = "mdi:hexagon-multiple"
 STRIP_ICON = "mdi:led-strip-variant"
 
 SCAN_INTERVAL = timedelta(seconds=30)
-
-# Validation of the user's configuration
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_HOST): cv.string,
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional("custom_effects", default=[]): vol.All(
-            cv.ensure_list,
-            [
-                vol.Schema(
-                    {
-                        vol.Required(CONF_NAME): cv.string,
-                        vol.Required("color_scheme"): cv.string,
-                        vol.Required("color"): cv.string,
-                        vol.Required("cycle_speed"): cv.positive_int,
-                        vol.Required(CONF_MODE): cv.positive_int,
-                    }
-                )
-            ],
-        ),
-        vol.Optional("default_effects"): cv.ensure_list,
-    }
-)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
