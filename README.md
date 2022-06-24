@@ -54,6 +54,12 @@ After installation, adding Cololight to your Home Assistant instance can be done
 
 ## Extra Configuration
 
+You can configure extra Cololight options through the integration options flow by clicking `CONFIGURE` under the integration.
+
+![extra_configuration](images/cololight_options.png)
+
+---
+
 ### Create Custom Effects
 
 Create a custom effect for the Cololight device in Home Assistant.
@@ -74,6 +80,8 @@ Create a custom effect for the Cololight device in Home Assistant.
 >
 > Mode of the effect. _(Modes can be found [here](https://github.com/BazaJayGee66/pycololight/blob/main/MODES.md))_
 
+---
+
 ### Remove Effects
 
 Remove saved effects for the Cololight device in Home Assistant.
@@ -81,6 +89,8 @@ Remove saved effects for the Cololight device in Home Assistant.
 > #### Effects
 >
 > List of effects to be removed.
+
+---
 
 ### Restore Effects
 
