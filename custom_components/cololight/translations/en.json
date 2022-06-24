@@ -10,7 +10,7 @@
           "name": "Name",
           "device": "Device"
         },
-        "title": "Setup Cololight"
+        "title": "Setup Cololight device"
       },
       "device_effects": {
         "data": {
@@ -18,7 +18,7 @@
           "dynamic_effects": "Dynamic Effects"
         },
         "title": "Effects to include",
-        "description": "Select effects to be included for device.\nThese can be added/removed later in configuration options.\n\n**Custom effects** can also be created in configuration options once the device has been created."
+        "description": "Select effects to be included for device.\nThese can be added/removed later in integration options.\n\n**Custom effects** can also be created in integration options once the device has been created.\nMore details [here](https://github.com/BazaJayGee66/homeassistant_cololight/tree/master#extra-configuration)"
       }
     }
   },
@@ -39,21 +39,21 @@
           "cycle_speed": "Cycle Speed",
           "mode": "Mode"
         },
-        "description": "Create Cololight effect"
+        "description": "Create a custom effect for the Cololight device.\n\n[Mode values](https://github.com/BazaJayGee66/pycololight/blob/main/MODES.md)"
       },
       "remove_effect": {
         "data": {
           "name": "Select effect/s to remove"
         },
-        "description": "Delete Cololight effects"
+        "description": "Remove saved effects for the Cololight device."
       },
       "restore_effect": {
         "data": {
           "default_effects": "Select default effect/s to restore",
           "dynamic_effects": "Select dynamic effect/s to restore",
-          "no_effects": "No effects found to restore"
+          "no_effects": "No effects found to restore."
         },
-        "description": "Restore default/dynamic Cololight effects"
+        "description": "Restore default or dynamic effects for the Cololight device"
       }
     },
     "error": {
