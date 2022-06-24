@@ -56,7 +56,7 @@ After installation, adding Cololight to your Home Assistant instance can be done
 
 You can configure extra Cololight options through the integration options flow by clicking `CONFIGURE` under the integration.
 
-![extra_configuration](images/cololight_options.png?raw=true)
+<img src="images/cololight_options.png?raw=true" alt="Extra Configuratio" width="150"/>
 
 ### Create Custom Effects
 
