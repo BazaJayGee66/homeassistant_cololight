@@ -54,9 +54,9 @@ After installation, adding Cololight to your Home Assistant instance can be done
 
 ## Extra Configuration
 
-You can configure extra Cololight options through the integration options flow by clicking `CONFIGURE` under the integration.
+You can configure additional Cololight options through the integration options flow by clicking `CONFIGURE` under the integration.
 
-<img src="images/cololight_options.png?raw=true" alt="Extra Configuratio" width="150"/>
+<img src="images/cololight_options.png?raw=true" alt="Extra Configuratio" width="250"/>
 
 ### Create Custom Effects
 
@@ -98,10 +98,14 @@ Restore default or dynamic effects for the Cololight device in Home Assistant.
 >
 > List of dynamic effects of the Cololight device to restore.
 
-## Credits
-
-Thanks to ["Projekt: ColoLight in FHEM"](https://haus-automatisierung.com/projekt/2019/04/05/projekt-cololight-fhem.html) for discovering how to talk with the Cololight
-
 ## Feature Requests/Issue
 
-Please create an issue [here](https://github.com/BazaJayGee66/homeassistant_cololight/issues)
+Please create an issue [here](https://github.com/BazaJayGee66/homeassistant_cololight/issues).
+
+## Sponsor
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/BazaJayGee66)
+
+## Credits
+
+Thanks to ["Projekt: ColoLight in FHEM"](https://haus-automatisierung.com/projekt/2019/04/05/projekt-cololight-fhem.html) for discovering how to talk with the Cololight.
