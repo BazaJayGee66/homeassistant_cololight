@@ -102,7 +102,7 @@ Restore default or dynamic effects for the Cololight device in Home Assistant.
 
 Please create an issue [here](https://github.com/BazaJayGee66/homeassistant_cololight/issues).
 
-For contriuting, have a look [here](CONTRIBUTING.md)
+For contriuting, have a look [here](CONTRIBUTING.md).
 
 ## Sponsor
 
