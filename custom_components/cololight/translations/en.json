@@ -58,7 +58,7 @@
     },
     "error": {
       "invalid_cycle_speed": "Cycle speed must be between 1 and 32",
-      "invalid_mode": "Mode must be between 1 and 27"
+      "invalid_mode": "Mode must be between 1 and {max_mode}"
     }
   }
 }

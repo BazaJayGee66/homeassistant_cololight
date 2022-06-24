@@ -139,8 +139,12 @@ async def test_form_already_configured(hass, demo_user_input):
 @patch(
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
+    return_value=27,
+)
 async def test_options_creating_effect(
-    mock_cololight, mock_color_schemes, hass, demo_user_input
+    mock_max_mode, mock_cololight, mock_color_schemes, hass, demo_user_input
 ):
     """Test options for create effect"""
     entry = MockConfigEntry(
@@ -219,8 +223,12 @@ async def test_options_creating_effect(
 @patch(
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
+    return_value=27,
+)
 async def test_options_updating_effect(
-    mock_cololight, mock_scheme_colors, hass, demo_user_input
+    mock_max_mode, mock_cololight, mock_scheme_colors, hass, demo_user_input
 ):
     """Test options for create effect is updated if already existing"""
     entry = MockConfigEntry(
@@ -493,8 +501,12 @@ async def test_options_restoring_dynamic_effect(hass, demo_user_input_2):
 @patch(
     "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
+@patch(
+    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
+    return_value=27,
+)
 async def test_options_has_error_if_invalid(
-    mock_cololight, mock_color_schemes, hass, demo_user_input
+    mock_max_mode, mock_cololight, mock_color_schemes, hass, demo_user_input
 ):
     """Test options will show error if invalid"""
     entry = MockConfigEntry(

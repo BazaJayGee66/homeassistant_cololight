@@ -123,10 +123,20 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
         removed_effects = list(set(device_effects) - set(effects))
         return dict(zip(removed_effects, removed_effects))
 
+    async def _get_max_mode(self):
+        max_mode = 27
+        if self.cololight.device == "hexagon":
+            max_mode = 27
+        if self.cololight.device == "strip":
+            max_mode = 13
+        return max_mode
+
     async def _is_valid(self, user_input):
+        max_mode = await self._get_max_mode()
+
         if not 1 <= user_input["cycle_speed"] <= 32:
             self._errors["cycle_speed"] = "invalid_cycle_speed"
-        if not 1 <= user_input[CONF_MODE] <= 27:
+        if not 1 <= user_input[CONF_MODE] <= max_mode:
             self._errors[CONF_MODE] = "invalid_mode"
 
         return not self._errors
@@ -161,6 +171,7 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
             user_input = {}
 
         color_schemes = self._get_color_schemes()
+        max_mode = await self._get_max_mode()
 
         options = {
             vol.Required(CONF_NAME, default=user_input.get(CONF_NAME)): str,
@@ -175,6 +186,7 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="create_effect",
             data_schema=vol.Schema(options),
             errors=self._errors,
+            description_placeholders={"max_mode": max_mode},
         )
 
     async def async_step_remove_effect(self, user_input=None):
