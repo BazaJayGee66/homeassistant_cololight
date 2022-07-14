@@ -1,3 +1,20 @@
+# v2.0.0
+
+## New Features
+
+- Support adding strip device custom effect
+- Support adding strip device dynamic effects
+
+## Fixes
+
+- Default device to hexagon if cololight was setup prior to `v2.0.0`
+- Update configuration options to be a menu
+- Update restore effect option, to have a message if no effects found to restore
+
+## Breaking Changes
+
+- Remove deprecated yaml configuration [#24](https://github.com/BazaJayGee66/homeassistant_cololight/issues/24)
+
 # v1.3.2
 
 ## New Features

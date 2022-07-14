@@ -1,12 +1,9 @@
 """Platform for LifeSmart ColoLight Light integration."""
 import logging
-import voluptuous as vol
-import socket
 from datetime import timedelta
 
 from pycololight import (
     PyCololight,
-    DefaultEffectExecption,
     ColourSchemeException,
     ColourException,
     CycleSpeedException,
@@ -14,13 +11,10 @@ from pycololight import (
     UnavailableException,
 )
 
-import homeassistant.helpers.config_validation as cv
-
 # Import the device class from the component that you want to support
 # H-A .110 and later
 try:
     from homeassistant.components.light import (
-        PLATFORM_SCHEMA,
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
         SUPPORT_EFFECT,
@@ -32,7 +26,6 @@ try:
 # Legacy
 except ImportError:
     from homeassistant.components.light import (
-        PLATFORM_SCHEMA,
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
         SUPPORT_EFFECT,
@@ -42,7 +35,6 @@ except ImportError:
         Light,
     )
 
-from homeassistant.config_entries import SOURCE_IMPORT
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE, STATE_ON
 from homeassistant.helpers.restore_state import RestoreEntity
 import homeassistant.util.color as color_util
@@ -53,60 +45,42 @@ _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_NAME = "ColoLight"
 
-ICON = "mdi:hexagon-multiple"
+DEFAULT_ICON = "mdi:hexagon-multiple"
+HEXAGON_ICON = "mdi:hexagon-multiple"
+STRIP_ICON = "mdi:led-strip-variant"
 
 SCAN_INTERVAL = timedelta(seconds=30)
-
-# Validation of the user's configuration
-PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
-    {
-        vol.Required(CONF_HOST): cv.string,
-        vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-        vol.Optional("custom_effects", default=[]): vol.All(
-            cv.ensure_list,
-            [
-                vol.Schema(
-                    {
-                        vol.Required(CONF_NAME): cv.string,
-                        vol.Required("color_scheme"): cv.string,
-                        vol.Required("color"): cv.string,
-                        vol.Required("cycle_speed"): cv.positive_int,
-                        vol.Required(CONF_MODE): cv.positive_int,
-                    }
-                )
-            ],
-        ),
-        vol.Optional("default_effects"): cv.ensure_list,
-    }
-)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     host = entry.data[CONF_HOST]
     name = entry.data[CONF_NAME]
+    device = entry.data["device"] if "device" in entry.data else "hexagon"
+    effects = []
 
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
     if entry.data.get("default_effects"):
-        cololight_light = PyCololight(
-            device="hexagon", host=host, default_effects=False
-        )
-        try:
-            cololight_light.restore_effects(entry.data["default_effects"])
-        except DefaultEffectExecption:
-            _LOGGER.error(
-                "Invalid default effect given in default effects '%s'. "
-                "Valid default effects include: %s",
-                entry.data["default_effects"],
-                cololight_light.default_effects,
-            )
-    else:
-        cololight_light = PyCololight(device="hexagon", host=host)
+        effects.extend(entry.data["default_effects"])
+
+    if entry.data.get("dynamic_effects"):
+        effects.extend(entry.data["dynamic_effects"])
+
+    cololight_light = PyCololight(
+        device=device, host=host, default_effects=False, dynamic_effects=False
+    )
+
+    if effects:
+        cololight_light.restore_effects(effects)
 
     if entry.options:
         for effect_name, effect_options in entry.options.items():
-            if effect_name not in ["default_effects", "restored_effects"]:
+            if effect_name not in [
+                "removed_effects",
+                "restored_effects",
+                "default_effects",  # legacy options item
+            ]:
                 try:
                     cololight_light.add_custom_effect(
                         effect_name,
@@ -158,34 +132,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([coloLight(cololight_light, host, name)])
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-
-    _LOGGER.warning(
-        "Configuration for the cololight integration in YAML is deprecated and "
-        "is set to be removed in later releases "
-        "(https://github.com/BazaJayGee66/homeassistant_cololight/issues/24); "
-        "Your existing configuration has been imported into the UI automatically "
-        "and can be safely removed from your configuration.yaml file."
-    )
-    current_entries = hass.config_entries.async_entries(DOMAIN)
-    entries_by_name = {entry.data[CONF_NAME]: entry for entry in current_entries}
-    name = config[CONF_NAME]
-    if name in entries_by_name and entries_by_name[name].source == SOURCE_IMPORT:
-        entry = entries_by_name[name]
-        data = config.copy()
-        options = dict(entry.options)
-        for custom_effect in data["custom_effects"]:
-            options[custom_effect[CONF_NAME]] = custom_effect
-
-        hass.config_entries.async_update_entry(entry, data=data, options=options)
-
-    hass.async_create_task(
-        hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": SOURCE_IMPORT}, data=dict(config)
-        )
-    )
-
-
 class coloLight(Light, RestoreEntity):
     def __init__(self, light, host, name):
         self._light = light
@@ -211,7 +157,14 @@ class coloLight(Light, RestoreEntity):
 
     @property
     def icon(self):
-        return ICON
+        icon = DEFAULT_ICON
+
+        if self._light.device == "hexagon":
+            icon = HEXAGON_ICON
+        if self._light.device == "strip":
+            icon = STRIP_ICON
+
+        return icon
 
     @property
     def unique_id(self):

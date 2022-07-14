@@ -3,6 +3,7 @@ import pytest
 from unittest.mock import patch
 
 from tests.conftest import hass, hass_storage, load_registries
+from tests.common import MockConfigEntry
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
@@ -23,97 +24,134 @@ LIGHT_3_NAME = "cololight_incorrect_custom_effect"
 ENTITY_3_LIGHT = f"light.{LIGHT_3_NAME}"
 LIGHT_4_NAME = "cololight_exclude_default_efects"
 ENTITY_4_LIGHT = f"light.{LIGHT_4_NAME}"
-LIGHT_5_NAME = "cololight_incorrect_default_efects"
-ENTITY_5_LIGHT = f"light.{LIGHT_5_NAME}"
+LIGHT_6_NAME = "cololight_test_strip"
+ENTITY_6_LIGHT = f"light.{LIGHT_6_NAME}"
 
 
 @pytest.fixture(autouse=True)
-def setup_comp(hass):
+async def setup_comp(hass):
     """Set up cololight component."""
-    hass.loop.run_until_complete(
-        async_setup_component(
-            hass,
-            LIGHT_DOMAIN,
-            {
-                LIGHT_DOMAIN: [
-                    {
-                        "platform": "cololight",
-                        "name": LIGHT_1_NAME,
-                        "host": "1.1.1.1",
-                    },
-                    {
-                        "platform": "cololight",
-                        "name": LIGHT_2_NAME,
-                        "host": "1.1.1.2",
-                        "custom_effects": [
-                            {
-                                "name": "Test Effect",
-                                "color_scheme": "Mood",
-                                "color": "Green",
-                                "cycle_speed": 1,
-                                "mode": 1,
-                            }
-                        ],
-                    },
-                    {
-                        "platform": "cololight",
-                        "name": LIGHT_3_NAME,
-                        "host": "1.1.1.3",
-                        "custom_effects": [
-                            {
-                                "name": "Bad Effect",
-                                "color_scheme": "Bad",
-                                "color": "Green",
-                                "cycle_speed": 1,
-                                "mode": 1,
-                            },
-                            {
-                                "name": "Good Effect",
-                                "color_scheme": "Mood",
-                                "color": "Green",
-                                "cycle_speed": 1,
-                                "mode": 1,
-                            },
-                        ],
-                    },
-                    {
-                        "platform": "cololight",
-                        "name": LIGHT_4_NAME,
-                        "host": "1.1.1.4",
-                        "custom_effects": [
-                            {
-                                "name": "Custom Effect",
-                                "color_scheme": "Mood",
-                                "color": "Green",
-                                "cycle_speed": 1,
-                                "mode": 1,
-                            },
-                        ],
-                        "default_effects": [
-                            "80s Club",
-                        ],
-                    },
-                    {
-                        "platform": "cololight",
-                        "name": LIGHT_5_NAME,
-                        "host": "1.1.1.5",
-                        "default_effects": [
-                            "80s Club",
-                            "Bad Effect",
-                            "Unicorns",
-                            "Another Bad Effect",
-                        ],
-                    },
-                ],
-            },
-        )
+    entry_1 = MockConfigEntry(
+        domain="cololight",
+        data={
+            "platform": "cololight",
+            "name": LIGHT_1_NAME,
+            "host": "1.1.1.1",
+            "device": "hexagon",
+            "default_effects": [
+                "Pensieve",
+                "Savasana",
+                "Sunrise",
+            ],
+        },
+        options={},
     )
+    entry_1.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry_1.entry_id)
+
+    entry_2 = MockConfigEntry(
+        domain="cololight",
+        data={
+            "platform": "cololight",
+            "name": LIGHT_2_NAME,
+            "host": "1.1.1.2",
+            "device": "hexagon",
+            "default_effects": [
+                "Unicorns",
+                "Rainbow Flow",
+                "Music Mode",
+            ],
+        },
+        options={
+            "Test Effect": {
+                "name": "Test Effect",
+                "color_scheme": "Mood",
+                "color": "Green",
+                "cycle_speed": 1,
+                "mode": 1,
+            }
+        },
+    )
+    entry_2.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry_2.entry_id)
+
+    entry_3 = MockConfigEntry(
+        domain="cololight",
+        data={
+            "platform": "cololight",
+            "name": LIGHT_3_NAME,
+            "host": "1.1.1.3",
+            "device": "hexagon",
+            "default_effects": [
+                "80s Club",
+                "Cherry Blossom",
+            ],
+        },
+        options={
+            "Bad Effect": {
+                "name": "Bad Effect",
+                "color_scheme": "Bad",
+                "color": "Green",
+                "cycle_speed": 1,
+                "mode": 1,
+            },
+            "Good Effect": {
+                "name": "Good Effect",
+                "color_scheme": "Mood",
+                "color": "Green",
+                "cycle_speed": 1,
+                "mode": 1,
+            },
+        },
+    )
+    entry_3.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry_3.entry_id)
+
+    entry_4 = MockConfigEntry(
+        domain="cololight",
+        data={
+            "platform": "cololight",
+            "name": LIGHT_4_NAME,
+            "host": "1.1.1.4",
+            "device": "hexagon",
+            "default_effects": [
+                "80s Club",
+            ],
+        },
+        options={
+            "Custom Effect": {
+                "name": "Custom Effect",
+                "color_scheme": "Mood",
+                "color": "Green",
+                "cycle_speed": 1,
+                "mode": 1,
+            },
+        },
+    )
+    entry_4.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry_4.entry_id)
+
+    entry_6 = MockConfigEntry(
+        domain="cololight",
+        data={
+            "platform": "cololight",
+            "name": LIGHT_6_NAME,
+            "host": "1.1.1.6",
+            "device": "strip",
+            "default_effects": [],
+        },
+        options={},
+    )
+    entry_6.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry_6.entry_id)
+
+    await hass.async_block_till_done()
+    return
 
 
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on(mock_send, hass):
     """Test the light turns of successfully."""
-    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -131,7 +169,6 @@ async def test_turn_on(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on_with_brightness(mock_send, hass):
     """Test the light turns on to the specified brightness."""
-    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -149,7 +186,6 @@ async def test_turn_on_with_brightness(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on_with_effect(mock_send, hass):
     """Test the light turns on with effect."""
-    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -168,7 +204,6 @@ async def test_turn_on_with_effect(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_on_with_colour(mock_send, hass):
     """Test the light turns on with colour."""
-    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -189,7 +224,6 @@ async def test_turn_on_with_colour(mock_send, hass):
 @patch("homeassistant.components.cololight.light.PyCololight._send")
 async def test_turn_off(mock_send, hass):
     """Test the light turns off successfully."""
-    await hass.async_block_till_done()
 
     await hass.services.async_call(
         LIGHT_DOMAIN,
@@ -204,44 +238,24 @@ async def test_turn_off(mock_send, hass):
 
 
 async def test_light_has_effects(hass):
-    await hass.async_block_till_done()
 
     state = hass.states.get(ENTITY_1_LIGHT)
 
     expected_efects_list = [
-        "80s Club",
-        "Cherry Blossom",
-        "Cocktail Parade",
-        "Instagrammer",
         "Pensieve",
         "Savasana",
         "Sunrise",
-        "The Circus",
-        "Unicorns",
-        "Christmas",
-        "Rainbow Flow",
-        "Music Mode",
     ]
 
     assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
 
 
 async def test_light_adds_custom_effect(hass):
-    await hass.async_block_till_done()
 
     state = hass.states.get(ENTITY_2_LIGHT)
 
     expected_efects_list = [
-        "80s Club",
-        "Cherry Blossom",
-        "Cocktail Parade",
-        "Instagrammer",
-        "Pensieve",
-        "Savasana",
-        "Sunrise",
-        "The Circus",
         "Unicorns",
-        "Christmas",
         "Rainbow Flow",
         "Music Mode",
         "Test Effect",
@@ -251,23 +265,12 @@ async def test_light_adds_custom_effect(hass):
 
 
 async def test_light_handles_incorrect_custom_effect(hass):
-    await hass.async_block_till_done()
 
     state = hass.states.get(ENTITY_3_LIGHT)
 
     expected_efects_list = [
         "80s Club",
         "Cherry Blossom",
-        "Cocktail Parade",
-        "Instagrammer",
-        "Pensieve",
-        "Savasana",
-        "Sunrise",
-        "The Circus",
-        "Unicorns",
-        "Christmas",
-        "Rainbow Flow",
-        "Music Mode",
         "Good Effect",
     ]
 
@@ -275,7 +278,6 @@ async def test_light_handles_incorrect_custom_effect(hass):
 
 
 async def test_light_has_only_specified_default_effects(hass):
-    await hass.async_block_till_done()
 
     state = hass.states.get(ENTITY_4_LIGHT)
 
@@ -284,11 +286,10 @@ async def test_light_has_only_specified_default_effects(hass):
     assert state.attributes.get(ATTR_EFFECT_LIST) == expected_efects_list
 
 
-async def test_light_handles_incorrect_default_effect(hass):
-    await hass.async_block_till_done()
+async def test_icon(hass):
 
-    state = hass.states.get(ENTITY_5_LIGHT)
+    state_hexagon = hass.states.get(ENTITY_1_LIGHT)
+    state_strip = hass.states.get(ENTITY_6_LIGHT)
 
-    assert state.attributes.get(ATTR_EFFECT_LIST) == [
-        "80s Club",
-    ]
+    assert state_hexagon.attributes.get("icon") == "mdi:hexagon-multiple"
+    assert state_strip.attributes.get("icon") == "mdi:led-strip-variant"

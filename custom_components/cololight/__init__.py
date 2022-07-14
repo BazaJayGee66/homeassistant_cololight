@@ -15,7 +15,6 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry):
     """Load the saved entities."""
-    import_options_from_config(hass, entry)
 
     entry.add_update_listener(update_listener)
 
@@ -36,16 +35,3 @@ async def update_listener(hass, entry):
     hass.async_create_task(
         hass.config_entries.async_forward_entry_setup(entry, LIGHT_DOMAIN)
     )
-
-
-@callback
-def import_options_from_config(hass, entry):
-    options = dict(entry.options)
-    modified = False
-    if entry.data.get("custom_effects"):
-        for custom_effect in entry.data["custom_effects"]:
-            options[custom_effect[CONF_NAME]] = custom_effect
-            modified = True
-
-    if modified:
-        hass.config_entries.async_update_entry(entry, options=options)
