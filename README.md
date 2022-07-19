@@ -1,14 +1,13 @@
-# Home Assistant Cololight
-
 [![Build status](https://badge.buildkite.com/03f664e487145ff4bfd75d66c94e6cecb26051e7479ccb0279.svg)](https://buildkite.com/goodwin/homeassistant-cololight)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+# Home Assistant Cololight
 
 The Cololight custom integration allows you to control [LifeSmart Cololight](http://www.cololight.com/) devices in Home Assistnat.
 
 Supported devices include:
 
 - Cololight Hexagon
-- Cololight Strip
+- Cololight LED Strip
 
 ## Installation
 
