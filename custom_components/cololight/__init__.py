@@ -3,9 +3,10 @@ from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
 from homeassistant.core import callback
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_NAME, Platform
 
 DOMAIN = "cololight"
+PLATFORMS = [Platform.LIGHT]
 
 
 async def async_setup(hass, config):
@@ -16,22 +17,25 @@ async def async_setup(hass, config):
 async def async_setup_entry(hass: HomeAssistantType, entry: ConfigEntry):
     """Load the saved entities."""
 
-    entry.add_update_listener(update_listener)
+    entry.async_on_unload(entry.add_update_listener(update_listener))
 
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, LIGHT_DOMAIN)
-    )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
     return True
 
 
 async def async_unload_entry(hass, entry):
     """Unload a config entry."""
-    return await hass.config_entries.async_forward_entry_unload(entry, LIGHT_DOMAIN)
+
+    unload_ok = await hass.config_entries.async_forward_entry_unload(
+        entry, LIGHT_DOMAIN
+    )
+
+    if unload_ok:
+        hass.data[DOMAIN].pop(entry.entry_id)
+    return unload_ok
 
 
 async def update_listener(hass, entry):
     """Handle options update."""
-    await hass.config_entries.async_forward_entry_unload(entry, LIGHT_DOMAIN)
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, LIGHT_DOMAIN)
-    )
+    await hass.config_entries.async_reload(entry.entry_id)

@@ -1,3 +1,9 @@
+# v2.0.1
+
+## Fixes
+
+- Let HA know the integration is `local_polling`, so that polling can be disabled via the integration system options
+
 # v2.0.0
 
 ## New Features

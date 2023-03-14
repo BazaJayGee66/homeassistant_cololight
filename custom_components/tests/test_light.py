@@ -238,7 +238,6 @@ async def test_turn_off(mock_send, hass):
 
 
 async def test_light_has_effects(hass):
-
     state = hass.states.get(ENTITY_1_LIGHT)
 
     expected_efects_list = [
@@ -251,7 +250,6 @@ async def test_light_has_effects(hass):
 
 
 async def test_light_adds_custom_effect(hass):
-
     state = hass.states.get(ENTITY_2_LIGHT)
 
     expected_efects_list = [
@@ -265,7 +263,6 @@ async def test_light_adds_custom_effect(hass):
 
 
 async def test_light_handles_incorrect_custom_effect(hass):
-
     state = hass.states.get(ENTITY_3_LIGHT)
 
     expected_efects_list = [
@@ -278,7 +275,6 @@ async def test_light_handles_incorrect_custom_effect(hass):
 
 
 async def test_light_has_only_specified_default_effects(hass):
-
     state = hass.states.get(ENTITY_4_LIGHT)
 
     expected_efects_list = ["80s Club", "Custom Effect"]
@@ -287,7 +283,6 @@ async def test_light_has_only_specified_default_effects(hass):
 
 
 async def test_icon(hass):
-
     state_hexagon = hass.states.get(ENTITY_1_LIGHT)
     state_strip = hass.states.get(ENTITY_6_LIGHT)
 
