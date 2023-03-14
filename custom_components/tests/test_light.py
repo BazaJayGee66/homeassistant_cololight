@@ -2,7 +2,7 @@ import pytest
 
 from unittest.mock import patch
 
-from tests.conftest import hass, hass_storage, load_registries
+from tests.conftest import hass, hass_storage, load_registries, hass_fixture_setup
 from tests.common import MockConfigEntry
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON
 from homeassistant.components.light import (
