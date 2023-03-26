@@ -9,6 +9,7 @@ Supported devices include:
 
 - Cololight Hexagon
 - Cololight LED Strip
+- Cololight MIX
 
 ## Installation
 
