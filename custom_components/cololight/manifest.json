@@ -4,9 +4,9 @@
   "config_flow": true,
   "documentation": "https://github.com/BazaJayGee66/homeassistant_cololight",
   "issue_tracker": "https://github.com/BazaJayGee66/homeassistant_cololight/issues",
-  "version": "v2.0.1",
+  "version": "v2.0.2-beta",
   "dependencies": [],
   "iot_class": "local_polling",
   "codeowners": ["@BazaJayGee66"],
-  "requirements": ["pycololight==2.0.0"]
+  "requirements": ["pycololight==2.1.0"]
 }

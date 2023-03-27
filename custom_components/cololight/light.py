@@ -68,7 +68,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
         effects.extend(entry.data["dynamic_effects"])
 
     cololight_light = PyCololight(
-        device=device, host=host, default_effects=False, dynamic_effects=False
+        device=device,
+        host=host,
+        timeout=0.3,
+        default_effects=False,
+        dynamic_effects=False,
     )
 
     if effects:
