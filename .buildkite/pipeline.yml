@@ -14,7 +14,7 @@ steps:
           workdir: /workspaces/homeassistant_cololight
 
   - block: ":rocket: Release"
-    branches: 'master'
+    #branches: 'master'
     prompt: "Release details"
     fields:
       - text: "Release Version"
@@ -24,5 +24,5 @@ steps:
         default: "## New Features\n\n## Fixes\n"
 
   - label: ":rocket::bulb:"
-    branches: 'master'
+    #branches: 'master'
     command: ./scripts/release.sh
