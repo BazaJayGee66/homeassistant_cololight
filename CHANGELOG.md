@@ -1,3 +1,9 @@
+# v2.0.2-beta
+
+## Fixes
+
+- Reduce device timeout, to fix observed HA lag when device is unavailable
+
 # v2.0.1
 
 ## Fixes

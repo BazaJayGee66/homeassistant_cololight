@@ -13,6 +13,7 @@ zip -r cololight.zip \
     -x "*/__pycache__/*"
 
 gh release create \
+    --prerelease \
     ${RELEASE_VERSION} \
     'cololight.zip' \
     -t ${RELEASE_VERSION} \
