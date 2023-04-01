@@ -150,6 +150,7 @@ class coloLight(Light, RestoreEntity):
         self._hs_color = None
         self._available = True
         self._canUpdate = True
+        self._unavailable_count = 0
 
     @property
     def name(self):
@@ -263,11 +264,16 @@ class coloLight(Light, RestoreEntity):
                     self._brightness = round(self._light.brightness * 2.55)
 
                 self._available = True
+                self._unavailable_count = 0
 
             except UnavailableException:
-                self._available = False
+                if self._unavailable_count >= 1:
+                    self._available = False
+                    _LOGGER.debug("Cololight Unavailable: %s", self._name)
+                else:
+                    self._unavailable_count += 1
 
             except:
-                _LOGGER.error("Error with update status of Cololight.")
+                _LOGGER.error("Error with update status of Cololight: %s", self._name)
         else:
             self._canUpdate = True
