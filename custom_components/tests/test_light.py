@@ -17,7 +17,7 @@ from homeassistant.components.light import (
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
 )
-from homeassistant.setup import async_setup_component
+
 from homeassistant.util.dt import utcnow
 
 LIGHT_1_NAME = "cololight_test"
