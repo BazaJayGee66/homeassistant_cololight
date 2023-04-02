@@ -149,7 +149,7 @@ class coloLight(Light, RestoreEntity):
         self._brightness = 255
         self._hs_color = None
         self._available = True
-        self._canUpdate = True
+        self._can_update = True
         self._unavailable_count = 0
 
     @property
@@ -237,12 +237,12 @@ class coloLight(Light, RestoreEntity):
 
         self._light.on = coverted_brightness
         self._on = True
-        self._canUpdate = False  # disable next update because light is not switched state to on and will return off state
+        self._can_update = False  # disable next update because light is not switched state to on and will return off state
 
     async def async_turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
-        self._canUpdate = False  # disable next update because light is not switched state to off and will return on state
+        self._can_update = False  # disable next update because light is not switched state to off and will return on state
 
     async def async_added_to_hass(self):
         """Handle entity about to be added to hass event."""
@@ -255,8 +255,8 @@ class coloLight(Light, RestoreEntity):
             self._hs_color = last_state.attributes.get("hs_color")
 
     async def async_update(self):
-        if self._canUpdate:
-            # after setting the light on or off from home assistant. Home assistant will ask directly for a update, but the light has not switched state so the update function will recive the old state and that trows home assistant off. Now if you turn the light on or off. _canUpdate wil be set to False and the first update will be skipped
+        if self._can_update:
+            # after setting the light on or off from home assistant. Home assistant will ask directly for a update, but the light has not switched state so the update function will recive the old state and that trows home assistant off. Now if you turn the light on or off. _can_update wil be set to False and the first update will be skipped
             try:
                 self._light.state
                 self._on = self._light.on
@@ -276,4 +276,4 @@ class coloLight(Light, RestoreEntity):
             except:
                 _LOGGER.error("Error with update status of Cololight: %s", self._name)
         else:
-            self._canUpdate = True
+            self._can_update = True
