@@ -2,8 +2,7 @@
 from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import HomeAssistantType
-from homeassistant.core import callback
-from homeassistant.const import CONF_NAME, Platform
+from homeassistant.const import Platform
 
 DOMAIN = "cololight"
 PLATFORMS = [Platform.LIGHT]
