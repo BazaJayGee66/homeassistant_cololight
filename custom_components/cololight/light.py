@@ -252,18 +252,21 @@ class coloLight(Light, RestoreEntity):
     async def async_update(self):
         if self._canUpdate:
             # after setting the light on or off from home assistant. Home assistant will ask directly for a update, but the light has not switched state so the update function will recive the old state and that trows home assistant off. Now if you turn the light on or off. _canUpdate wil be set to False and the first update will be skipped
-            try:
-                self._light.state
-                self._on = self._light.on
-                if self._on:
-                    self._brightness = round(self._light.brightness * 2.55)
-
-                self._available = True
-
-            except UnavailableException:
-                self._available = False
-
-            except:
-                _LOGGER.error("Error with update status of Cololight.")
+            await self.hass.async_add_executor_job(self._update_state)
         else:
             self._canUpdate = True
+
+    def _update_state(self):
+        try:
+            self._light.state
+            self._on = self._light.on
+            if self._on:
+                self._brightness = round(self._light.brightness * 2.55)
+
+            self._available = True
+
+        except UnavailableException:
+            self._available = False
+
+        except:
+            _LOGGER.error("Error with update status of Cololight: %s", self._name)
