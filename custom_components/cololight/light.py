@@ -261,6 +261,7 @@ class coloLight(Light, RestoreEntity):
             self._can_update = True
 
     def _update_state(self):
+        _LOGGER.debug("Updating cololight: %s", self._name)
         try:
             self._light.state
             self._on = self._light.on
@@ -271,6 +272,7 @@ class coloLight(Light, RestoreEntity):
 
         except UnavailableException:
             self._available = False
+            _LOGGER.debug("Cololight unavailable: %s", self._name)
 
         except:
             _LOGGER.error("Error with update status of Cololight: %s", self._name)
