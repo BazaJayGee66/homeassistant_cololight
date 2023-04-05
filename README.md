@@ -1,5 +1,6 @@
 [![Build status](https://badge.buildkite.com/03f664e487145ff4bfd75d66c94e6cecb26051e7479ccb0279.svg)](https://buildkite.com/goodwin/homeassistant-cololight)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+
 # Home Assistant Cololight
 
 The Cololight custom integration allows you to control [LifeSmart Cololight](http://www.cololight.com/) devices in Home Assistnat.
@@ -26,7 +27,7 @@ Supported devices include:
 3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
 
 ```sh
-wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v2.0.0/cololight.zip
+wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v2.0.2/cololight.zip
 unzip cololight.zip -d /path/to/custom_components
 rm cololight.zip
 ```
