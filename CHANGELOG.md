@@ -2,7 +2,7 @@
 
 ## Fixes
 
-- Prevent cololight device from locking HA causing lag, when cololight device is unavailable
+- Prevent cololight device from locking HA causing lag, when cololight device is unavailable. ([#32](https://github.com/BazaJayGee66/homeassistant_cololight/pull/32))
 
 # v2.0.1
 
