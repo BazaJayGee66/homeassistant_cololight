@@ -1,3 +1,9 @@
+# v2.0.2
+
+## Fixes
+
+- Prevent cololight device from locking HA causing lag, when cololight device is unavailable
+
 # v2.0.1
 
 ## Fixes
