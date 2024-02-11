@@ -17,10 +17,10 @@ try:
     from homeassistant.components.light import (
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
-        SUPPORT_EFFECT,
         ATTR_HS_COLOR,
         ATTR_BRIGHTNESS,
         ATTR_EFFECT,
+        LightEntityFeature,
         LightEntity as Light,
     )
 # Legacy
@@ -28,10 +28,10 @@ except ImportError:
     from homeassistant.components.light import (
         SUPPORT_COLOR,
         SUPPORT_BRIGHTNESS,
-        SUPPORT_EFFECT,
         ATTR_HS_COLOR,
         ATTR_BRIGHTNESS,
         ATTR_EFFECT,
+        LightEntityFeature,
         Light,
     )
 
@@ -142,7 +142,7 @@ class coloLight(Light, RestoreEntity):
         self._host = host
         self._port = 8900
         self._name = name
-        self._supported_features = SUPPORT_BRIGHTNESS | SUPPORT_COLOR | SUPPORT_EFFECT
+        self._supported_features = SUPPORT_BRIGHTNESS | SUPPORT_COLOR | LightEntityFeature.EFFECT
         self._effect_list = light.effects
         self._effect = None
         self._on = False
