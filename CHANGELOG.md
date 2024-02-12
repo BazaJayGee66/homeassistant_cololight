@@ -1,3 +1,9 @@
+# v2.0.3
+
+## Fixes
+
+- Replace deprecated light SUPPORT_EFFECT, with new EntityFeature enum ([#38](https://github.com/BazaJayGee66/homeassistant_cololight/pull/38))
+
 # v2.0.2
 
 ## Fixes
