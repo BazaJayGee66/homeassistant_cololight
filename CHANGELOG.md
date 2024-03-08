@@ -1,3 +1,9 @@
+# v2.0.4
+
+## Fixes
+
+- Replace deprecated light SUPPORT_COLOR, with new ColorMode ([#40](https://github.com/BazaJayGee66/homeassistant_cololight/pull/40))
+
 # v2.0.3
 
 ## Fixes
