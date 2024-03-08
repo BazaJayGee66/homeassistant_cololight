@@ -15,24 +15,22 @@ from pycololight import (
 # H-A .110 and later
 try:
     from homeassistant.components.light import (
-        SUPPORT_COLOR,
-        SUPPORT_BRIGHTNESS,
         ATTR_HS_COLOR,
         ATTR_BRIGHTNESS,
         ATTR_EFFECT,
         LightEntityFeature,
         LightEntity as Light,
+        ColorMode,
     )
 # Legacy
 except ImportError:
     from homeassistant.components.light import (
-        SUPPORT_COLOR,
-        SUPPORT_BRIGHTNESS,
         ATTR_HS_COLOR,
         ATTR_BRIGHTNESS,
         ATTR_EFFECT,
         LightEntityFeature,
         Light,
+        ColorMode,
     )
 
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE, STATE_ON
@@ -137,12 +135,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class coloLight(Light, RestoreEntity):
+
+    _attr_supported_color_modes = {ColorMode.HS}
+    _attr_supported_features = LightEntityFeature.EFFECT
+
     def __init__(self, light, host, name):
         self._light = light
         self._host = host
         self._port = 8900
         self._name = name
-        self._supported_features = SUPPORT_BRIGHTNESS | SUPPORT_COLOR | LightEntityFeature.EFFECT
         self._effect_list = light.effects
         self._effect = None
         self._on = False
@@ -184,8 +185,8 @@ class coloLight(Light, RestoreEntity):
         return True
 
     @property
-    def supported_features(self) -> int:
-        return self._supported_features
+    def color_mode(self) -> ColorMode:
+        return ColorMode.HS
 
     @property
     def effect_list(self):
@@ -250,8 +251,10 @@ class coloLight(Light, RestoreEntity):
         if last_state:
             self._on = last_state.state == STATE_ON
             self._effect = last_state.attributes.get("effect")
-            self._brightness = last_state.attributes.get("brightness", 255)
             self._hs_color = last_state.attributes.get("hs_color")
+
+            brightness = last_state.attributes.get("brightness")
+            self._brightness = 255 if brightness is None else brightness
 
     async def async_update(self):
         if self._can_update:
