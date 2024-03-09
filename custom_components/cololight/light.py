@@ -197,6 +197,14 @@ class coloLight(Light, RestoreEntity):
         return self._effect
 
     @property
+    def extra_state_attributes(self):
+        return {
+            "set_effect": self._effect,
+            "set_hs_color": self._hs_color,
+            "set_brightness": self._brightness
+        }
+
+    @property
     def brightness(self) -> int:
         return self._brightness
 
@@ -250,10 +258,10 @@ class coloLight(Light, RestoreEntity):
         last_state = await self.async_get_last_state()
         if last_state:
             self._on = last_state.state == STATE_ON
-            self._effect = last_state.attributes.get("effect")
-            self._hs_color = last_state.attributes.get("hs_color")
+            self._effect = last_state.attributes.get("set_effect")
+            self._hs_color = last_state.attributes.get("set_hs_color")
 
-            brightness = last_state.attributes.get("brightness")
+            brightness = last_state.attributes.get("set_brightness")
             self._brightness = 255 if brightness is None else brightness
 
     async def async_update(self):
