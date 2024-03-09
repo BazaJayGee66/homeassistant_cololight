@@ -1,3 +1,9 @@
+# v2.0.5
+
+## Fixes
+
+- Retain device state after HA restart ([#42](https://github.com/BazaJayGee66/homeassistant_cololight/pull/42))
+
 # v2.0.4
 
 ## Fixes
