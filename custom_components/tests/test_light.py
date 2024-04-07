@@ -165,6 +165,7 @@ async def test_turn_on(mock_send, hass):
     state = hass.states.get(ENTITY_1_LIGHT)
 
     assert state.state == STATE_ON
+    assert state.attributes.get("color_mode") == "hs"
     assert state.attributes.get(ATTR_BRIGHTNESS) == 255
 
 
@@ -182,6 +183,7 @@ async def test_turn_on_with_brightness(mock_send, hass):
     state = hass.states.get(ENTITY_1_LIGHT)
 
     assert state.state == STATE_ON
+    assert state.attributes.get("color_mode") == "hs"
     assert state.attributes.get(ATTR_BRIGHTNESS) == 60
 
 
@@ -199,6 +201,7 @@ async def test_turn_on_with_effect(mock_send, hass):
     state = hass.states.get(ENTITY_1_LIGHT)
 
     assert state.state == STATE_ON
+    assert state.attributes.get("color_mode") == "brightness"
     assert state.attributes.get(ATTR_BRIGHTNESS) == 60
     assert state.attributes.get(ATTR_EFFECT) == "Sunrise"
 
@@ -219,6 +222,7 @@ async def test_turn_on_with_colour(mock_send, hass):
     assert mock_send.call_count == 2
 
     assert state.state == STATE_ON
+    assert state.attributes.get("color_mode") == "hs"
     assert state.attributes.get(ATTR_BRIGHTNESS) == 60
     assert state.attributes.get(ATTR_HS_COLOR) == (300, 50)
 
