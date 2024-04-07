@@ -1,3 +1,9 @@
+# v2.0.6
+
+## Fixes
+
+- Resolves incorrect color mode when using effects, which prevented HA scenes from using effects ([#44](https://github.com/BazaJayGee66/homeassistant_cololight/pull/44))
+
 # v2.0.5
 
 ## Fixes
