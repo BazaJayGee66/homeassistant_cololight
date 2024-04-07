@@ -186,7 +186,10 @@ class coloLight(Light, RestoreEntity):
 
     @property
     def color_mode(self) -> ColorMode:
-        return ColorMode.HS
+        if self._effect:
+            return ColorMode.BRIGHTNESS
+        else:
+            return ColorMode.HS
 
     @property
     def effect_list(self):
