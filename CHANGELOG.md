@@ -1,3 +1,9 @@
+# v2.0.7
+
+## Fixes
+
+- Remove deprecated alias HomeAssistantType ([#45](https://github.com/BazaJayGee66/homeassistant_cololight/pull/45))
+
 # v2.0.6
 
 ## Fixes

@@ -28,7 +28,7 @@ Supported devices include:
 3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
 
 ```sh
-wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v2.0.2/cololight.zip
+wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v2.0.7/cololight.zip
 unzip cololight.zip -d /path/to/custom_components
 rm cololight.zip
 ```
