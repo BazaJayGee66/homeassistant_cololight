@@ -1,3 +1,10 @@
+# v2.0.8
+
+## Fixes
+
+- Resolved an issue in the options flow that prevented Create/Remove/Restore actions for Cololight effects
+- Improved README documentation with clearer extra configuration steps
+
 # v2.0.7
 
 ## Fixes
