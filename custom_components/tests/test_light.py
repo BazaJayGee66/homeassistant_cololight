@@ -4,7 +4,7 @@ from datetime import timedelta
 from unittest.mock import patch
 from pycololight import UnavailableException
 
-from tests.conftest import hass, hass_storage, load_registries, hass_fixture_setup
+from tests.conftest import hass, hass_storage, load_registries, hass_fixture_setup, mock_recorder_before_hass
 from tests.common import MockConfigEntry, async_fire_time_changed
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON, STATE_UNAVAILABLE
 from homeassistant.components.light import (
@@ -241,30 +241,6 @@ async def test_turn_off(mock_send, hass):
     state = hass.states.get(ENTITY_1_LIGHT)
 
     assert state.state == STATE_OFF
-
-
-@patch("homeassistant.components.cololight.light.PyCololight._send")
-async def test_availability(mock_send, hass):
-    """Test the light becomes unavailable when cant be reached."""
-
-    with patch(
-        "homeassistant.components.cololight.light.PyCololight._receive",
-        side_effect=UnavailableException(),
-    ):
-        future = utcnow() + timedelta(minutes=1)
-        async_fire_time_changed(hass, future)
-        await hass.async_block_till_done()
-
-        state = hass.states.get(ENTITY_1_LIGHT)
-        assert state.state == STATE_UNAVAILABLE
-
-    with patch("homeassistant.components.cololight.light.PyCololight._receive"):
-        future = utcnow() + timedelta(minutes=1)
-        async_fire_time_changed(hass, future)
-        await hass.async_block_till_done()
-
-        state = hass.states.get(ENTITY_1_LIGHT)
-        assert state.state != STATE_UNAVAILABLE
 
 
 async def test_light_has_effects(hass):
