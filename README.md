@@ -1,5 +1,6 @@
 [![Build status](https://badge.buildkite.com/03f664e487145ff4bfd75d66c94e6cecb26051e7479ccb0279.svg)](https://buildkite.com/goodwin/homeassistant-cololight)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+<img src="https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.cololight.total">
 
 # Home Assistant Cololight
 
@@ -55,9 +56,14 @@ After installation, adding Cololight to your Home Assistant instance can be done
 
 ## Extra Configuration
 
-You can configure additional Cololight options through the integration options flow by clicking `CONFIGURE` under the integration.
+Additional Cololight options can be configured through the Home Assistant user interface by following these steps:
 
-<img src="images/cololight_options.png?raw=true" alt="Extra Configuratio" width="250"/>
+1. Open your Home Assistant instance.
+2. Go to [Settings → Devices & services](https://my.home-assistant.io/redirect/integrations).
+3. Locate and select the **Cololight** integration.
+4. Click the cog icon (⚙️) on the device you want to update.
+
+<img src="images/cololight_options.png?raw=true" alt="Extra Configuration" width="500"/>
 
 ### Create Custom Effects
 
