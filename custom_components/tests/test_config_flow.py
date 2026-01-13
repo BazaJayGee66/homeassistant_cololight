@@ -5,10 +5,10 @@ import cololight
 
 from unittest.mock import patch
 
-from tests.conftest import hass, hass_storage, load_registries, hass_fixture_setup
+from tests.conftest import hass, hass_storage, load_registries, hass_fixture_setup, mock_recorder_before_hass
 from tests.common import MockConfigEntry
 
-from homeassistant import data_entry_flow
+from homeassistant.data_entry_flow import FlowResultType
 
 NAME = "cololight_test"
 HOST = "1.1.1.1"
@@ -51,14 +51,14 @@ async def test_form(hass, demo_user_input):
     result = await hass.config_entries.flow.async_init(
         cololight.DOMAIN, context={"source": "user"}
     )
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "user"
 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], user_input=demo_user_input["device_data"]
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "device_effects"
 
     result = await hass.config_entries.flow.async_configure(
@@ -68,7 +68,7 @@ async def test_form(hass, demo_user_input):
 
     expected_data = demo_user_input["device_data"] | demo_user_input["effects_data"]
 
-    assert result["type"] == "create_entry"
+    assert result["type"] == FlowResultType.CREATE_ENTRY
     assert result["title"] == NAME
     assert result["data"] == expected_data
 
@@ -85,14 +85,14 @@ async def test_form_strip(hass, demo_user_input_2):
     result = await hass.config_entries.flow.async_init(
         cololight.DOMAIN, context={"source": "user"}
     )
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "user"
 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], user_input=demo_user_input_2["device_data"]
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "device_effects"
 
     result = await hass.config_entries.flow.async_configure(
@@ -102,7 +102,7 @@ async def test_form_strip(hass, demo_user_input_2):
 
     expected_data = demo_user_input_2["device_data"] | demo_user_input_2["effects_data"]
 
-    assert result["type"] == "create_entry"
+    assert result["type"] == FlowResultType.CREATE_ENTRY
     assert result["title"] == NAME
     assert result["data"] == expected_data
 
@@ -128,7 +128,7 @@ async def test_form_already_configured(hass, demo_user_input):
         data=demo_user_input["device_data"],
     )
 
-    assert result["type"] == "abort"
+    assert result["type"] == FlowResultType.ABORT
     assert result["reason"] == "already_configured"
 
 
@@ -154,14 +154,14 @@ async def test_options_creating_effect(
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_MENU
+    assert result["type"] == FlowResultType.MENU
     assert result["step_id"] == "init"
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], user_input={"next_step_id": "create_effect"}
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "create_effect"
 
     result = await hass.config_entries.options.async_configure(
@@ -174,7 +174,7 @@ async def test_options_creating_effect(
         },
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
+    assert result["type"] == FlowResultType.CREATE_ENTRY
     assert result["data"] == {
         "test": {
             "color_scheme": "Mood",
@@ -319,22 +319,20 @@ async def test_options_removing_custom_effect(
     }
 
     entry = MockConfigEntry(
-        domain=cololight.DOMAIN, data=demo_user_input, unique_id=HOST
+        domain=cololight.DOMAIN, data=demo_user_input, unique_id=HOST, options=test_effects
     )
     entry.add_to_hass(hass)
 
-    entry.options = test_effects
-
     result = await hass.config_entries.options.async_init(entry.entry_id)
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_MENU
+    assert result["type"] == FlowResultType.MENU
     assert result["step_id"] == "init"
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], user_input={"next_step_id": "remove_effect"}
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "remove_effect"
 
     result = await hass.config_entries.options.async_configure(
@@ -346,7 +344,7 @@ async def test_options_removing_custom_effect(
 
     await hass.async_block_till_done()
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_CREATE_ENTRY
+    assert result["type"] == FlowResultType.CREATE_ENTRY
     assert entry.options == expected_effetcs
 
 
@@ -516,14 +514,14 @@ async def test_options_has_error_if_invalid(
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_MENU
+    assert result["type"] == FlowResultType.MENU
     assert result["step_id"] == "init"
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], user_input={"next_step_id": "create_effect"}
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["step_id"] == "create_effect"
 
     result = await hass.config_entries.options.async_configure(
@@ -536,7 +534,7 @@ async def test_options_has_error_if_invalid(
         },
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["errors"] == {"cycle_speed": "invalid_cycle_speed"}
 
     result = await hass.config_entries.options.async_configure(
@@ -549,7 +547,7 @@ async def test_options_has_error_if_invalid(
         },
     )
 
-    assert result["type"] == data_entry_flow.RESULT_TYPE_FORM
+    assert result["type"] == FlowResultType.FORM
     assert result["errors"] == {"mode": "invalid_mode"}
 
 
