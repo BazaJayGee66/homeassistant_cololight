@@ -2,7 +2,7 @@
 
 Contributions are more than welcome.
 
-To get up and running, fellow the below process:
+To get up and running, follow the below process:
 
 - Fork the git repository.
 - Write the code for new feature or bug fix.

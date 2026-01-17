@@ -1,3 +1,9 @@
+# v2.0.9
+
+## Fixes
+
+- Fixed typos and Improved clarity in documentation
+
 # v2.0.8
 
 ## Fixes

@@ -18,7 +18,7 @@
           "dynamic_effects": "Dynamic Effects"
         },
         "title": "Effects to include",
-        "description": "Select effects to be included for device.\nThese can be added/removed later in integration options.\n\n**Custom effects** can also be created in integration options once the device has been created.\nMore details [here](https://github.com/BazaJayGee66/homeassistant_cololight/tree/master#extra-configuration)"
+        "description": "Choose which effects to include. You can add, remove, or create custom effects later in the integration options."
       }
     }
   },
@@ -49,11 +49,11 @@
       },
       "restore_effect": {
         "data": {
-          "default_effects": "Select default effect/s to restore",
-          "dynamic_effects": "Select dynamic effect/s to restore",
+          "default_effects": "Select default effects to restore",
+          "dynamic_effects": "Select dynamic effects to restore",
           "no_effects": "No effects found to restore."
         },
-        "description": "Restore default or dynamic effects for the Cololight device"
+        "description": "Restore default or dynamic effects"
       }
     },
     "error": {

@@ -4,7 +4,7 @@
 
 # Home Assistant Cololight
 
-The Cololight custom integration allows you to control [LifeSmart Cololight](http://www.cololight.com/) devices in Home Assistnat.
+The Cololight custom integration allows you to control [LifeSmart Cololight](http://www.cololight.com/) devices in Home Assistant.
 
 Supported devices include:
 
@@ -29,7 +29,7 @@ Supported devices include:
 3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
 
 ```sh
-wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v2.0.7/cololight.zip
+wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/download/v2.0.9/cololight.zip
 unzip cololight.zip -d /path/to/custom_components
 rm cololight.zip
 ```
@@ -97,9 +97,9 @@ Remove saved effects for the Cololight device in Home Assistant.
 
 Restore default or dynamic effects for the Cololight device in Home Assistant.
 
-> #### Deafult effects
+> #### Default effects
 >
-> List of deafult effects of the Cololight device to restore.
+> List of default effects of the Cololight device to restore.
 >
 > #### Dynamic effects
 >
