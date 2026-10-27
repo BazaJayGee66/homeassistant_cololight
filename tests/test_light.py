@@ -4,8 +4,10 @@ from datetime import timedelta
 from unittest.mock import patch
 from pycololight import UnavailableException
 
-from tests.conftest import hass, hass_storage, load_registries, hass_fixture_setup, mock_recorder_before_hass
-from tests.common import MockConfigEntry, async_fire_time_changed
+from pytest_homeassistant_custom_component.common import (
+    MockConfigEntry,
+    async_fire_time_changed,
+)
 from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON, STATE_UNAVAILABLE
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
@@ -151,7 +153,7 @@ async def setup_comp(hass):
     return
 
 
-@patch("homeassistant.components.cololight.light.PyCololight._send")
+@patch("custom_components.cololight.light.PyCololight._send")
 async def test_turn_on(mock_send, hass):
     """Test the light turns of successfully."""
 
@@ -169,7 +171,7 @@ async def test_turn_on(mock_send, hass):
     assert state.attributes.get(ATTR_BRIGHTNESS) == 255
 
 
-@patch("homeassistant.components.cololight.light.PyCololight._send")
+@patch("custom_components.cololight.light.PyCololight._send")
 async def test_turn_on_with_brightness(mock_send, hass):
     """Test the light turns on to the specified brightness."""
 
@@ -187,7 +189,7 @@ async def test_turn_on_with_brightness(mock_send, hass):
     assert state.attributes.get(ATTR_BRIGHTNESS) == 60
 
 
-@patch("homeassistant.components.cololight.light.PyCololight._send")
+@patch("custom_components.cololight.light.PyCololight._send")
 async def test_turn_on_with_effect(mock_send, hass):
     """Test the light turns on with effect."""
 
@@ -206,7 +208,7 @@ async def test_turn_on_with_effect(mock_send, hass):
     assert state.attributes.get(ATTR_EFFECT) == "Sunrise"
 
 
-@patch("homeassistant.components.cololight.light.PyCololight._send")
+@patch("custom_components.cololight.light.PyCololight._send")
 async def test_turn_on_with_colour(mock_send, hass):
     """Test the light turns on with colour."""
 
@@ -227,7 +229,7 @@ async def test_turn_on_with_colour(mock_send, hass):
     assert state.attributes.get(ATTR_HS_COLOR) == (300, 50)
 
 
-@patch("homeassistant.components.cololight.light.PyCololight._send")
+@patch("custom_components.cololight.light.PyCololight._send")
 async def test_turn_off(mock_send, hass):
     """Test the light turns off successfully."""
 
