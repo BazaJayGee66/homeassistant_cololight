@@ -7,7 +7,7 @@ To get up and running, follow the below process:
 - Fork the git repository.
 - Write the code for new feature or bug fix.
 - Ensure tests work.
-- Create a Pull Request against the master branch.
+- Create a Pull Request against the main branch.
 
 ## Prerequisites
 
