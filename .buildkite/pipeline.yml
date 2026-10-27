@@ -7,7 +7,9 @@ steps:
   - wait
 
   - label: ":bulb::hass: Run Tests"
-    command: pytest
+    command:
+      - uv sync --locked
+      - uv run pytest
     plugins:
       - docker#v3.5.0:
           image: "cololight-devimage"

@@ -32,16 +32,20 @@ _If you don't see this notification, open the command palette and select `Remote
 ## Tests
 
 Open a terminal in Visual Studio code within the Remote-Containers session.
-Tests can then be run using pytest.
-
-Run all test:
+Install the test dependencies with uv:
 
 ```
-pytest
+uv sync
+```
+
+Run all tests:
+
+```
+uv run pytest
 ```
 
 Run individual test:
 
 ```
-pytest tests/test_light.py::test_turn_on
+uv run pytest tests/test_light.py::test_turn_on
 ```

@@ -1,43 +1,8 @@
-FROM python:3.13
+FROM python:3.14
 
-RUN \
-    apt-get update && apt-get install -y --no-install-recommends \
-        libudev-dev \
-        libavformat-dev \
-        libavcodec-dev \
-        libavdevice-dev \
-        libavutil-dev \
-        libswscale-dev \
-        libswresample-dev \
-        libavfilter-dev \
-        git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /uvx /bin/
 
-WORKDIR /usr/src
-
-# Setup hass-release
-RUN git clone --depth 1 https://github.com/home-assistant/hass-release \
-    && pip3 install cryptography==3.3.2 \
-    && pip3 install -e hass-release/
-
-WORKDIR /homeassistant
-
-# Setup homeassistant framework
-RUN git clone --depth 1 https://github.com/home-assistant/core.git && \
-    pip3 install -r core/requirements_test.txt -c core/homeassistant/package_constraints.txt && \
-    pip3 uninstall -y typing && \
-    core/script/setup && \
-    pip3 install -r core/requirements.txt && \
-    pip3 install sqlalchemy==2.0.41 lru-dict==1.3.0
-
-# Add pycololight requirement
-RUN pip3 install pycololight==2.1.0
-
-WORKDIR /workspaces
-
-RUN ln -s /workspaces/homeassistant_cololight/custom_components/cololight /homeassistant/core/homeassistant/components/cololight
-
-# Set the default shell to bash instead of sh
-ENV PYTHONPATH /workspaces/homeassistant_cololight/custom_components:/homeassistant/core
-ENV SHELL /bin/bash
+# The uv cache is in the container but the venv is in the mounted checkout, so uv can't
+# hardlink between them.
+ENV UV_LINK_MODE=copy
+ENV SHELL=/bin/bash

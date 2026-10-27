@@ -1,12 +1,11 @@
 from copy import deepcopy
 import pytest
-import cololight
+from custom_components import cololight
 
 
 from unittest.mock import patch
 
-from tests.conftest import hass, hass_storage, load_registries, hass_fixture_setup, mock_recorder_before_hass
-from tests.common import MockConfigEntry
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from homeassistant.data_entry_flow import FlowResultType
 
@@ -133,14 +132,14 @@ async def test_form_already_configured(hass, demo_user_input):
 
 
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
     return_value=["Mood | Green", "Mood | Red"],
 )
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
     return_value=27,
 )
 async def test_options_creating_effect(
@@ -217,14 +216,14 @@ async def test_options_creating_effect(
 
 
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
     return_value=["Mood | Green", "Mood | Red"],
 )
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
     return_value=27,
 )
 async def test_options_updating_effect(
@@ -284,7 +283,7 @@ async def test_options_updating_effect(
 
 
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_effects",
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_effects",
     return_value={
         "80s Club": "80s Club",
         "Cherry Blossom": "Cherry Blossom",
@@ -293,7 +292,7 @@ async def test_options_updating_effect(
     },
 )
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
 async def test_options_removing_custom_effect(
     mock_cololight, mock_effects, hass, demo_user_input
@@ -493,14 +492,14 @@ async def test_options_restoring_dynamic_effect(hass, demo_user_input_2):
 
 
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_color_schemes",
     return_value=["Mood | Green"],
 )
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_cololight"
 )
 @patch(
-    "homeassistant.components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
+    "custom_components.cololight.config_flow.CololightOptionsFlowHandler._get_max_mode",
     return_value=27,
 )
 async def test_options_has_error_if_invalid(
