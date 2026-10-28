@@ -1,8 +1,9 @@
 import pytest
+import threading
 from datetime import timedelta
 
 from unittest.mock import patch
-from pycololight import UnavailableException
+from pycololight import PyCololight, UnavailableException
 
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
@@ -20,7 +21,10 @@ from homeassistant.components.light import (
 )
 from homeassistant.util.dt import utcnow
 
+from custom_components.cololight.light import SCAN_INTERVAL
+
 LIGHT_1_NAME = "cololight_test"
+LIGHT_1_HOST = "1.1.1.1"
 ENTITY_1_LIGHT = f"light.{LIGHT_1_NAME}"
 LIGHT_2_NAME = "cololight_custom_effect"
 ENTITY_2_LIGHT = f"light.{LIGHT_2_NAME}"
@@ -40,7 +44,7 @@ async def setup_comp(hass):
         data={
             "platform": "cololight",
             "name": LIGHT_1_NAME,
-            "host": "1.1.1.1",
+            "host": LIGHT_1_HOST,
             "device": "hexagon",
             "default_effects": [
                 "Pensieve",
@@ -243,6 +247,50 @@ async def test_turn_off(mock_send, hass):
     state = hass.states.get(ENTITY_1_LIGHT)
 
     assert state.state == STATE_OFF
+
+
+@patch("custom_components.cololight.light.PyCololight._send")
+async def test_commands_are_not_sent_from_the_event_loop(mock_send, hass):
+    sending_threads = []
+    mock_send.side_effect = lambda *args, **kwargs: sending_threads.append(
+        threading.get_ident()
+    )
+
+    await hass.services.async_call(
+        LIGHT_DOMAIN,
+        SERVICE_TURN_ON,
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT, ATTR_HS_COLOR: (300, 50)},
+        blocking=True,
+    )
+    await hass.services.async_call(
+        LIGHT_DOMAIN,
+        SERVICE_TURN_OFF,
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT},
+        blocking=True,
+    )
+
+    assert len(sending_threads) == 3
+    assert threading.get_ident() not in sending_threads
+
+
+@pytest.mark.parametrize("service", [SERVICE_TURN_ON, SERVICE_TURN_OFF])
+@patch("custom_components.cololight.light.PyCololight._send")
+async def test_poll_straight_after_a_command_is_skipped(mock_send, service, hass):
+    polled_hosts = []
+    record_poll = property(lambda light: polled_hosts.append(light.host))
+
+    with patch.object(PyCololight, "state", record_poll):
+        await hass.services.async_call(
+            LIGHT_DOMAIN,
+            service,
+            {ATTR_ENTITY_ID: ENTITY_1_LIGHT},
+            blocking=True,
+        )
+        assert LIGHT_1_HOST not in polled_hosts
+
+        async_fire_time_changed(hass, utcnow() + SCAN_INTERVAL)
+        await hass.async_block_till_done()
+        assert LIGHT_1_HOST in polled_hosts
 
 
 async def test_light_has_effects(hass):

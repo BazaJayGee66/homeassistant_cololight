@@ -48,6 +48,7 @@ HEXAGON_ICON = "mdi:hexagon-multiple"
 STRIP_ICON = "mdi:led-strip-variant"
 
 SCAN_INTERVAL = timedelta(seconds=30)
+PARALLEL_UPDATES = 1
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -224,7 +225,7 @@ class coloLight(Light, RestoreEntity):
             "model": "Cololight",
         }
 
-    async def async_turn_on(self, **kwargs):
+    def turn_on(self, **kwargs):
         hs_color = kwargs.get(ATTR_HS_COLOR)
         brightness = kwargs.get(ATTR_BRIGHTNESS)
         effect = kwargs.get(ATTR_EFFECT)
@@ -250,7 +251,7 @@ class coloLight(Light, RestoreEntity):
         self._on = True
         self._can_update = False  # disable next update because light is not switched state to on and will return off state
 
-    async def async_turn_off(self, **kwargs):
+    def turn_off(self, **kwargs):
         self._light.on = 0
         self._on = False
         self._can_update = False  # disable next update because light is not switched state to off and will return on state
