@@ -11,6 +11,8 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
 
 from . import DOMAIN
 
+MODES_URL = "https://github.com/BazaJayGee66/pycololight/blob/main/MODES.md"
+
 
 @config_entries.HANDLERS.register(DOMAIN)
 class CololightConfigFlow(config_entries.ConfigFlow):
@@ -185,7 +187,7 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="create_effect",
             data_schema=vol.Schema(options),
             errors=self._errors,
-            description_placeholders={"max_mode": max_mode},
+            description_placeholders={"max_mode": max_mode, "modes_url": MODES_URL},
         )
 
     async def async_step_remove_effect(self, user_input=None):

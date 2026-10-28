@@ -39,7 +39,7 @@
           "cycle_speed": "Cycle Speed",
           "mode": "Mode"
         },
-        "description": "Create a custom effect for the Cololight device.\n\n[Mode values](https://github.com/BazaJayGee66/pycololight/blob/main/MODES.md)"
+        "description": "Create a custom effect for the Cololight device.\n\n[Mode values]({modes_url})"
       },
       "remove_effect": {
         "data": {
