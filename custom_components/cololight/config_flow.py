@@ -74,6 +74,7 @@ class CololightConfigFlow(config_entries.ConfigFlow):
                 {
                     vol.Optional(
                         "dynamic_effects",
+                        default=[],
                     ): cv.multi_select(dynamic_effects),
                 }
             )
@@ -192,18 +193,18 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_remove_effect(self, user_input=None):
         if user_input is not None:
+            data = dict(self.config_entry.data)
             for effect in user_input[CONF_NAME]:
                 if self.options.get(effect):
                     del self.options[effect]
                 else:
-                    if effect in self.config_entry.data["default_effects"]:
-                        self.config_entry.data["default_effects"].remove(effect)
+                    for effects_key in ["default_effects", "dynamic_effects"]:
+                        if effect in data.get(effects_key, []):
+                            data[effects_key] = [
+                                e for e in data[effects_key] if e != effect
+                            ]
 
-                    if self.config_entry.data.get("dynamic_effects"):
-                        if effect in self.config_entry.data["dynamic_effects"]:
-                            self.config_entry.data["dynamic_effects"].remove(effect)
-
-                    self.options["removed_effects"] = user_input[CONF_NAME]
+            self.hass.config_entries.async_update_entry(self.config_entry, data=data)
             return self.async_create_entry(title="", data=self.options)
 
         effects = self._get_effects()
@@ -220,16 +221,15 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_restore_effect(self, user_input=None):
         if user_input is not None:
-            if user_input.get("default_effects"):
-                for effect in user_input["default_effects"]:
-                    self.config_entry.data["default_effects"].append(effect)
+            data = dict(self.config_entry.data)
+            for effects_key in ["default_effects", "dynamic_effects"]:
+                if user_input.get(effects_key):
+                    data[effects_key] = [
+                        *data.get(effects_key, []),
+                        *user_input[effects_key],
+                    ]
 
-            if user_input.get("dynamic_effects"):
-                for effect in user_input["dynamic_effects"]:
-                    self.config_entry.data["dynamic_effects"].append(effect)
-
-            self.options["restored_effects"] = user_input
-
+            self.hass.config_entries.async_update_entry(self.config_entry, data=data)
             return self.async_create_entry(title="", data=self.options)
 
         default_effects = self._get_removed_effects("default")
