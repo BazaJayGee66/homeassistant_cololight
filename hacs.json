@@ -1,8 +1,5 @@
 {
     "name": "LifeSmart Cololight",
-    "domains": [
-        "light"
-    ],
-    "iot_class": "Local Polling",
+    "homeassistant": "2024.11.0",
     "render_readme": true
 }
