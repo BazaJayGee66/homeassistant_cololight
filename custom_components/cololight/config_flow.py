@@ -201,7 +201,9 @@ class CololightOptionsFlowHandler(config_entries.OptionsFlow):
                     for effects_key in ["default_effects", "dynamic_effects"]:
                         if effect in data.get(effects_key, []):
                             data[effects_key] = [
-                                e for e in data[effects_key] if e != effect
+                                stored_effect
+                                for stored_effect in data[effects_key]
+                                if stored_effect != effect
                             ]
 
             self.hass.config_entries.async_update_entry(self.config_entry, data=data)
