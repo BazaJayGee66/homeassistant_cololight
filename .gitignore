@@ -1,7 +1,7 @@
 .vs
 .DS_Store
 
-# Built by scripts/release.sh
+# Built by the release workflow
 custom_components/cololight.zip
 
 # Byte-compiled / optimized / DLL files

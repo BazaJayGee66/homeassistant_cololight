@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "pull-request-title-pattern": "chore: release ${version}",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "custom_components/cololight/manifest.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  }
+}

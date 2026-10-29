@@ -1,14 +1,20 @@
 {
   "domain": "cololight",
   "name": "LifeSmart Cololight",
-  "codeowners": ["@BazaJayGee66"],
+  "codeowners": [
+    "@BazaJayGee66"
+  ],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/BazaJayGee66/homeassistant_cololight",
   "integration_type": "device",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/BazaJayGee66/homeassistant_cololight/issues",
-  "loggers": ["pycololight"],
-  "requirements": ["pycololight==2.1.0"],
+  "loggers": [
+    "pycololight"
+  ],
+  "requirements": [
+    "pycololight==2.1.0"
+  ],
   "version": "v2.0.9"
 }
