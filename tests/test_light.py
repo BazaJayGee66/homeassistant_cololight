@@ -1,6 +1,6 @@
 import pytest
+import logging
 import threading
-from datetime import timedelta
 
 from unittest.mock import patch
 from pycololight import PyCololight, UnavailableException
@@ -273,6 +273,22 @@ async def test_commands_are_not_sent_from_the_event_loop(mock_send, hass):
     assert threading.get_ident() not in sending_threads
 
 
+async def poll(hass):
+    async_fire_time_changed(hass, utcnow() + SCAN_INTERVAL)
+    # Home Assistant polls in background tasks, which a plain block_till_done skips.
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+
+def logged_exception_types(caplog):
+    return [
+        record.exc_info[0]
+        for record in caplog.records
+        if record.name == "custom_components.cololight.light"
+        and record.levelno == logging.ERROR
+        and record.exc_info
+    ]
+
+
 @pytest.mark.parametrize("service", [SERVICE_TURN_ON, SERVICE_TURN_OFF])
 @patch("custom_components.cololight.light.PyCololight._send")
 async def test_poll_straight_after_a_command_is_skipped(mock_send, service, hass):
@@ -288,9 +304,72 @@ async def test_poll_straight_after_a_command_is_skipped(mock_send, service, hass
         )
         assert LIGHT_1_HOST not in polled_hosts
 
-        async_fire_time_changed(hass, utcnow() + SCAN_INTERVAL)
-        await hass.async_block_till_done()
+        await poll(hass)
         assert LIGHT_1_HOST in polled_hosts
+
+
+@patch("custom_components.cololight.light.PyCololight._send")
+async def test_light_is_unavailable_when_a_poll_times_out(mock_send, hass):
+    with patch(
+        "custom_components.cololight.light.PyCololight._receive",
+        side_effect=UnavailableException,
+    ):
+        await poll(hass)
+
+    assert hass.states.get(ENTITY_1_LIGHT).state == STATE_UNAVAILABLE
+
+
+@patch("custom_components.cololight.light.PyCololight._send")
+async def test_light_is_available_again_when_it_replies(mock_send, hass):
+    # pycololight reads byte 40 as on (207) or off (206), and byte 41 as brightness.
+    on_reply = bytes(40) + bytes([207, 100])
+
+    with patch(
+        "custom_components.cololight.light.PyCololight._receive",
+        side_effect=UnavailableException,
+    ):
+        await poll(hass)
+    assert hass.states.get(ENTITY_1_LIGHT).state == STATE_UNAVAILABLE
+
+    with patch(
+        "custom_components.cololight.light.PyCololight._receive",
+        return_value=on_reply,
+    ):
+        await poll(hass)
+
+    assert hass.states.get(ENTITY_1_LIGHT).state == STATE_ON
+
+
+@patch("custom_components.cololight.light.PyCololight._send")
+async def test_unexpected_poll_error_makes_light_unavailable_and_logs_traceback(
+    mock_send, hass, caplog
+):
+    with patch(
+        "custom_components.cololight.light.PyCololight._receive",
+        side_effect=RuntimeError,
+    ):
+        await poll(hass)
+
+    assert hass.states.get(ENTITY_1_LIGHT).state == STATE_UNAVAILABLE
+    assert RuntimeError in logged_exception_types(caplog)
+
+
+@patch("custom_components.cololight.light.PyCololight._send")
+async def test_poll_error_traceback_is_not_logged_again_while_unavailable(
+    mock_send, hass, caplog
+):
+    with patch(
+        "custom_components.cololight.light.PyCololight._receive",
+        side_effect=RuntimeError,
+    ) as mock_receive:
+        await poll(hass)
+        caplog.clear()
+        receives_before = mock_receive.call_count
+
+        await poll(hass)
+
+    assert mock_receive.call_count > receives_before
+    assert logged_exception_types(caplog) == []
 
 
 async def test_light_has_effects(hass):
