@@ -1,147 +1,149 @@
-# v2.0.9
+# Changelog
 
-## Fixes
+## v2.0.9
+
+### Fixes
 
 - Fixed typos and Improved clarity in documentation
 
-# v2.0.8
+## v2.0.8
 
-## Fixes
+### Fixes
 
 - Resolved an issue in the options flow that prevented Create/Remove/Restore actions for Cololight effects
 - Improved README documentation with clearer extra configuration steps
 
-# v2.0.7
+## v2.0.7
 
-## Fixes
+### Fixes
 
 - Remove deprecated alias HomeAssistantType ([#45](https://github.com/BazaJayGee66/homeassistant_cololight/pull/45))
 
-# v2.0.6
+## v2.0.6
 
-## Fixes
+### Fixes
 
 - Resolves incorrect color mode when using effects, which prevented HA scenes from using effects ([#44](https://github.com/BazaJayGee66/homeassistant_cololight/pull/44))
 
-# v2.0.5
+## v2.0.5
 
-## Fixes
+### Fixes
 
 - Retain device state after HA restart ([#42](https://github.com/BazaJayGee66/homeassistant_cololight/pull/42))
 
-# v2.0.4
+## v2.0.4
 
-## Fixes
+### Fixes
 
 - Replace deprecated light SUPPORT_COLOR, with new ColorMode ([#40](https://github.com/BazaJayGee66/homeassistant_cololight/pull/40))
 
-# v2.0.3
+## v2.0.3
 
-## Fixes
+### Fixes
 
 - Replace deprecated light SUPPORT_EFFECT, with new EntityFeature enum ([#38](https://github.com/BazaJayGee66/homeassistant_cololight/pull/38))
 
-# v2.0.2
+## v2.0.2
 
-## Fixes
+### Fixes
 
 - Prevent cololight device from locking HA causing lag, when cololight device is unavailable. ([#32](https://github.com/BazaJayGee66/homeassistant_cololight/pull/32))
 
-# v2.0.1
+## v2.0.1
 
-## Fixes
+### Fixes
 
 - Let HA know the integration is `local_polling`, so that polling can be disabled via the integration system options
 
-# v2.0.0
+## v2.0.0
 
-## New Features
+### New Features
 
 - Support adding strip device custom effect
 - Support adding strip device dynamic effects
 
-## Fixes
+### Fixes
 
 - Default device to hexagon if cololight was setup prior to `v2.0.0`
 - Update configuration options to be a menu
 - Update restore effect option, to have a message if no effects found to restore
 
-## Breaking Changes
+### Breaking Changes
 
 - Remove deprecated yaml configuration [#24](https://github.com/BazaJayGee66/homeassistant_cololight/issues/24)
 
-# v1.3.2
+## v1.3.2
 
-## New Features
+### New Features
 
-## Fixes
+### Fixes
 
 - Import pycololight, and remove class, as code has been migrated to [pycololight](https://github.com/BazaJayGee66/pycololight)
 
-# v1.3.1
+## v1.3.1
 
-## New Features
+### New Features
 
-## Fixes
+### Fixes
 
 - Update Update manifest.json with codeowners and issue_tracker
 - Add warning for deprecated yaml configuration
 
-# v1.3.0
+## v1.3.0
 
-## New Features
+### New Features
 
 - Add polling to get light state (on/off) and brightness - Thanks [@pim12345](https://github.com/pim12345)
 
-## Fixes
+### Fixes
 
-# v1.2.3
+## v1.2.3
 
-## New Features
+### New Features
 
-## Fixes
+### Fixes
 
 - Fix issue [#13](https://github.com/BazaJayGee66/homeassistant_cololight/issues/13), where Colour Scheme "Shadow" had incorrect colours.
 
-# v1.2.2
+## v1.2.2
 
-## New Features
+### New Features
 
-## Fixes
+### Fixes
 
 - Fix issue [#11](https://github.com/BazaJayGee66/homeassistant_cololight/issues/11), where frequent commands could be unreliable in some cases.
 
-# v1.2.1
+## v1.2.1
 
-## New Features
+### New Features
 
-## Fixes
+### Fixes
 
 - Add version key to manifest.json file, as now [required](https://developers.home-assistant.io/docs/creating_integration_manifest/#version) by home assistant.
 
-# v1.2.0
+## v1.2.0
 
-## New Features
+### New Features
 
 - Allow deleting all effects through the UI, not just custom effects
 - Allow restoring default effects through the UI
 
-## Fixes
+### Fixes
 
-# v1.1.0
+## v1.1.0
 
-## New Features
+### New Features
 
 - Select which default Cololight effects to include when creating the entity via the UI
 - Set which default Cololight effects to include when creating the entity via config yaml
 
-## Fixes
+### Fixes
 
-# v1.0.0
+## v1.0.0
 
 Initial Release
 
-## New Features
+### New Features
 
 - Configure through yaml config
 - Configure through UI
@@ -150,4 +152,4 @@ Initial Release
 - Effects
 - Add custom effects
 
-## Fixes
+### Fixes
