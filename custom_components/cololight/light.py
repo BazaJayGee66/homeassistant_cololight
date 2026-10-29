@@ -289,5 +289,9 @@ class coloLight(Light, RestoreEntity):
             self._available = False
             _LOGGER.debug("Cololight unavailable: %s", self._name)
 
-        except:
-            _LOGGER.error("Error with update status of Cololight: %s", self._name)
+        except Exception:
+            if self._available:
+                _LOGGER.exception(
+                    "Error with update status of Cololight: %s", self._name
+                )
+            self._available = False
