@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.10](https://github.com/BazaJayGee66/homeassistant_cololight/compare/v2.0.9...v2.0.10) (2026-10-29)
+
+
+### Bug Fixes
+
+* stop light commands blocking the Home Assistant event loop ([#56](https://github.com/BazaJayGee66/homeassistant_cololight/issues/56)) ([771c52a](https://github.com/BazaJayGee66/homeassistant_cololight/commit/771c52a8c7be715dc515ac3dc4910eeafbe5f2c9))
+* stop the options flow losing effect removals and crashing on strips ([#55](https://github.com/BazaJayGee66/homeassistant_cololight/issues/55)) ([a9273df](https://github.com/BazaJayGee66/homeassistant_cololight/commit/a9273df41ec63882f7a43c66697cb07684e1efa4))
+
 ## v2.0.9
 
 ### Fixes
