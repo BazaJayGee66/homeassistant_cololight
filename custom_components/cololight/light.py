@@ -51,6 +51,14 @@ SCAN_INTERVAL = timedelta(seconds=30)
 PARALLEL_UPDATES = 1
 
 
+def _device_brightness(brightness):
+    return max(1, int(brightness / 2.55))
+
+
+def _ha_brightness(device_brightness):
+    return round(device_brightness * 2.55)
+
+
 async def async_setup_entry(hass, entry, async_add_entities):
     host = entry.data[CONF_HOST]
     name = entry.data[CONF_NAME]
@@ -245,9 +253,7 @@ class coloLight(Light, RestoreEntity):
         if brightness:
             self._brightness = brightness
 
-        coverted_brightness = max(1, (int(self._brightness / 2.55)))
-
-        self._light.on = coverted_brightness
+        self._light.on = _device_brightness(self._brightness)
         self._on = True
         self._can_update = False  # disable next update because light is not switched state to on and will return off state
 
@@ -280,8 +286,12 @@ class coloLight(Light, RestoreEntity):
         try:
             self._light.state
             self._on = self._light.on
-            if self._on:
-                self._brightness = round(self._light.brightness * 2.55)
+            # Several of HA's 255 brightness steps share one of the device's 100, so
+            # converting the device's value back would move a brightness HA just set.
+            if self._on and self._light.brightness != _device_brightness(
+                self._brightness
+            ):
+                self._brightness = _ha_brightness(self._light.brightness)
 
             self._available = True
 
