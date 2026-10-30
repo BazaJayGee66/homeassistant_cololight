@@ -1,23 +1,26 @@
 {
-	"name": "Cololight Dev",
-	"context": "..",
-	"dockerFile": "../Dockerfile.dev",
-	"runArgs": ["-e", "GIT_EDITOR=code --wait"],
-	"extensions": [
-	  "ms-python.python",
-	  "visualstudioexptteam.vscodeintellicode",
-	  "redhat.vscode-yaml",
-	  "esbenp.prettier-vscode"
-	],
-	"settings": {
-	  "python.pythonPath": "/usr/local/bin/python",
-	  "python.linting.pylintEnabled": true,
-	  "python.linting.enabled": true,
-	  "python.formatting.provider": "black",
-	  "editor.formatOnPaste": false,
-	  "editor.formatOnSave": true,
-	  "editor.formatOnType": true,
-	  "files.trimTrailingWhitespace": true,
-	  "terminal.integrated.shell.linux": "/bin/bash",
-	}
+  "name": "Cololight Dev",
+  "context": "..",
+  "dockerFile": "../Dockerfile.dev",
+  "runArgs": ["-e", "GIT_EDITOR=code --wait"],
+  "postCreateCommand": "uv sync",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "redhat.vscode-yaml",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "files.trimTrailingWhitespace": true
+      }
+    }
   }
+}
