@@ -1,13 +1,14 @@
 """Platform for LifeSmart ColoLight Light integration."""
+
 import logging
 from datetime import timedelta
 
 from pycololight import (
-    PyCololight,
-    ColourSchemeException,
     ColourException,
+    ColourSchemeException,
     CycleSpeedException,
     ModeExecption,
+    PyCololight,
     UnavailableException,
 )
 
@@ -15,27 +16,27 @@ from pycololight import (
 # H-A .110 and later
 try:
     from homeassistant.components.light import (
-        ATTR_HS_COLOR,
         ATTR_BRIGHTNESS,
         ATTR_EFFECT,
-        LightEntityFeature,
-        LightEntity as Light,
+        ATTR_HS_COLOR,
         ColorMode,
+        LightEntity as Light,
+        LightEntityFeature,
     )
 # Legacy
 except ImportError:
     from homeassistant.components.light import (
-        ATTR_HS_COLOR,
         ATTR_BRIGHTNESS,
         ATTR_EFFECT,
-        LightEntityFeature,
-        Light,
+        ATTR_HS_COLOR,
         ColorMode,
+        Light,
+        LightEntityFeature,
     )
 
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE, STATE_ON
-from homeassistant.helpers.restore_state import RestoreEntity
 import homeassistant.util.color as color_util
+from homeassistant.const import CONF_HOST, CONF_MODE, CONF_NAME, STATE_ON
+from homeassistant.helpers.restore_state import RestoreEntity
 
 from . import DOMAIN
 
@@ -145,7 +146,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class coloLight(Light, RestoreEntity):
-
     _attr_supported_color_modes = {ColorMode.HS}
     _attr_supported_features = LightEntityFeature.EFFECT
 
@@ -214,7 +214,7 @@ class coloLight(Light, RestoreEntity):
         return {
             "set_effect": self._effect,
             "set_hs_color": self._hs_color,
-            "set_brightness": self._brightness
+            "set_brightness": self._brightness,
         }
 
     @property

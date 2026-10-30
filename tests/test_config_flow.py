@@ -1,12 +1,12 @@
 from copy import deepcopy
+
 import pytest
-from custom_components import cololight
-
-from pytest_homeassistant_custom_component.common import MockConfigEntry, flush_store
-
 from homeassistant.components.light import ATTR_EFFECT_LIST
 from homeassistant.config_entries import STORAGE_KEY
 from homeassistant.data_entry_flow import FlowResultType
+from pytest_homeassistant_custom_component.common import MockConfigEntry, flush_store
+
+from custom_components import cololight
 
 NAME = "cololight_test"
 HOST = "1.1.1.1"

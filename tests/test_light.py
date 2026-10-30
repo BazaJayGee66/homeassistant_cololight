@@ -1,25 +1,24 @@
-import pytest
 import logging
 import threading
-
 from unittest.mock import patch
-from pycololight import PyCololight, UnavailableException
 
-from pytest_homeassistant_custom_component.common import (
-    MockConfigEntry,
-    async_fire_time_changed,
-)
-from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON, STATE_UNAVAILABLE
+import pytest
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ATTR_EFFECT,
-    ATTR_HS_COLOR,
     ATTR_EFFECT_LIST,
+    ATTR_HS_COLOR,
     DOMAIN as LIGHT_DOMAIN,
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
 )
+from homeassistant.const import ATTR_ENTITY_ID, STATE_OFF, STATE_ON, STATE_UNAVAILABLE
 from homeassistant.util.dt import utcnow
+from pycololight import PyCololight, UnavailableException
+from pytest_homeassistant_custom_component.common import (
+    MockConfigEntry,
+    async_fire_time_changed,
+)
 
 from custom_components.cololight.light import SCAN_INTERVAL
 
