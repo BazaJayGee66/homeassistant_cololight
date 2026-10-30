@@ -49,3 +49,12 @@ Run individual test:
 ```
 uv run pytest tests/test_light.py::test_turn_on
 ```
+
+## Linting and formatting
+
+CI checks the code with [ruff](https://docs.astral.sh/ruff/). Fix what it flags and format the code:
+
+```
+uv run ruff check --fix
+uv run ruff format
+```
