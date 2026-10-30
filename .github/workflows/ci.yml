@@ -23,6 +23,17 @@ jobs:
         with:
           category: integration
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.6"
+          python-version: "3.14"
+      - run: uv run --locked --only-group lint ruff check --output-format=github
+      - run: uv run --locked --only-group lint ruff format --check
+
   tests:
     runs-on: ubuntu-latest
     steps:
