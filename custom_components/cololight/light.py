@@ -49,6 +49,15 @@ STRIP_ICON = "mdi:led-strip-variant"
 
 SCAN_INTERVAL = timedelta(seconds=30)
 PARALLEL_UPDATES = 1
+BRIGHTNESS_SCALE = (1, 100)
+
+
+def _device_brightness(brightness):
+    return max(1, round(color_util.brightness_to_value(BRIGHTNESS_SCALE, brightness)))
+
+
+def _ha_brightness(device_brightness):
+    return color_util.value_to_brightness(BRIGHTNESS_SCALE, device_brightness)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -245,9 +254,7 @@ class coloLight(Light, RestoreEntity):
         if brightness:
             self._brightness = brightness
 
-        coverted_brightness = max(1, (int(self._brightness / 2.55)))
-
-        self._light.on = coverted_brightness
+        self._light.on = _device_brightness(self._brightness)
         self._on = True
         self._can_update = False  # disable next update because light is not switched state to on and will return off state
 
@@ -280,8 +287,11 @@ class coloLight(Light, RestoreEntity):
         try:
             self._light.state
             self._on = self._light.on
-            if self._on:
-                self._brightness = round(self._light.brightness * 2.55)
+
+            if self._on and self._light.brightness != _device_brightness(
+                self._brightness
+            ):
+                self._brightness = _ha_brightness(self._light.brightness)
 
             self._available = True
 
