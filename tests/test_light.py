@@ -154,7 +154,6 @@ async def setup_comp(hass):
     await hass.config_entries.async_setup(entry_6.entry_id)
 
     await hass.async_block_till_done()
-    return
 
 
 @patch("custom_components.cololight.light.PyCololight._send")

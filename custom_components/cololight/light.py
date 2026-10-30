@@ -63,7 +63,7 @@ def _ha_brightness(device_brightness):
 async def async_setup_entry(hass, entry, async_add_entities):
     host = entry.data[CONF_HOST]
     name = entry.data[CONF_NAME]
-    device = entry.data["device"] if "device" in entry.data else "hexagon"
+    device = entry.data.get("device", "hexagon")
     effects = []
 
     if DOMAIN not in hass.data:
@@ -285,7 +285,8 @@ class coloLight(Light, RestoreEntity):
     def _update_state(self):
         _LOGGER.debug("Updating cololight: %s", self._name)
         try:
-            self._light.state
+            # Reading state polls the device for its on state and brightness.
+            self._light.state  # noqa: B018
             self._on = self._light.on
 
             if self._on and self._light.brightness != _device_brightness(
