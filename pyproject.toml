@@ -5,6 +5,9 @@ version = "0.0.0"
 requires-python = ">=3.14.2"
 
 [dependency-groups]
+lint = [
+    "ruff==0.17.3",
+]
 test = [
     "pycololight==2.1.0",
     "pytest-homeassistant-custom-component==0.13.374",
@@ -13,9 +16,23 @@ test = [
 ]
 
 [tool.uv]
-default-groups = ["test"]
+default-groups = ["lint", "test"]
 
 [tool.pytest]
 testpaths = ["tests"]
 addopts = ["--cov=custom_components"]
 asyncio_mode = "auto"
+
+[tool.ruff]
+# requires-python only covers the tests. The integration still supports Home
+# Assistant 2024.11 (hacs.json), which runs on Python 3.12.
+target-version = "py312"
+
+[tool.ruff.lint]
+extend-select = ["I", "UP"]
+# Home Assistant entities declare their _attr_* defaults as class attributes.
+# Core ignores this rule for the same reason.
+ignore = ["RUF012"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
