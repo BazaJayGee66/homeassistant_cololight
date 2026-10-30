@@ -14,3 +14,12 @@ steps:
       - docker#v3.5.0:
           image: "cololight-devimage"
           workdir: /workspaces/homeassistant_cololight
+
+  - label: ":python: Lint"
+    command:
+      - uv run --locked --only-group lint ruff check
+      - uv run --locked --only-group lint ruff format --check
+    plugins:
+      - docker#v3.5.0:
+          image: "cololight-devimage"
+          workdir: /workspaces/homeassistant_cololight

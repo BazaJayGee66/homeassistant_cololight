@@ -1,8 +1,9 @@
-""" cololight """
+"""cololight"""
+
 from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
 from homeassistant.const import Platform
+from homeassistant.core import HomeAssistant
 
 DOMAIN = "cololight"
 PLATFORMS = [Platform.LIGHT]

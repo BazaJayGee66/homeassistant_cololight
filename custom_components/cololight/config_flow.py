@@ -1,13 +1,11 @@
 """Config flow to configure Cololight component."""
-import voluptuous as vol
-
-from pycololight import PyCololight
 
 import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.const import CONF_HOST, CONF_MODE, CONF_NAME
 from homeassistant.core import callback
-from homeassistant.const import CONF_HOST, CONF_NAME, CONF_MODE
-
+from pycololight import PyCololight
 
 from . import DOMAIN
 
