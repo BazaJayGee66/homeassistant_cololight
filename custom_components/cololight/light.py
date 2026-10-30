@@ -49,14 +49,15 @@ STRIP_ICON = "mdi:led-strip-variant"
 
 SCAN_INTERVAL = timedelta(seconds=30)
 PARALLEL_UPDATES = 1
+BRIGHTNESS_SCALE = (1, 100)
 
 
 def _device_brightness(brightness):
-    return max(1, int(brightness / 2.55))
+    return max(1, round(color_util.brightness_to_value(BRIGHTNESS_SCALE, brightness)))
 
 
 def _ha_brightness(device_brightness):
-    return round(device_brightness * 2.55)
+    return color_util.value_to_brightness(BRIGHTNESS_SCALE, device_brightness)
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -286,8 +287,7 @@ class coloLight(Light, RestoreEntity):
         try:
             self._light.state
             self._on = self._light.on
-            # Several of HA's 255 brightness steps share one of the device's 100, so
-            # converting the device's value back would move a brightness HA just set.
+
             if self._on and self._light.brightness != _device_brightness(
                 self._brightness
             ):

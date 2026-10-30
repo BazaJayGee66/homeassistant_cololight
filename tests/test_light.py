@@ -440,6 +440,22 @@ async def test_brightness_changed_outside_home_assistant_shows_on_the_next_poll(
     assert hass.states.get(ENTITY_1_LIGHT).attributes.get(ATTR_BRIGHTNESS) == 255
 
 
+async def test_brightness_changed_outside_home_assistant_survives_a_colour_change(
+    fake_device, hass
+):
+    fake_device.brightness = 24
+    await poll(hass)
+
+    await hass.services.async_call(
+        LIGHT_DOMAIN,
+        SERVICE_TURN_ON,
+        {ATTR_ENTITY_ID: ENTITY_1_LIGHT, ATTR_HS_COLOR: (300, 50)},
+        blocking=True,
+    )
+
+    assert fake_device.brightness == 24
+
+
 async def test_light_has_effects(hass):
     state = hass.states.get(ENTITY_1_LIGHT)
 
