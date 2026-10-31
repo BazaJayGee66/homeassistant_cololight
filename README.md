@@ -1,4 +1,4 @@
-[![Build status](https://badge.buildkite.com/03f664e487145ff4bfd75d66c94e6cecb26051e7479ccb0279.svg)](https://buildkite.com/goodwin/homeassistant-cololight)
+[![CI](https://github.com/BazaJayGee66/homeassistant_cololight/actions/workflows/ci.yml/badge.svg)](https://github.com/BazaJayGee66/homeassistant_cololight/actions/workflows/ci.yml)
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 <img src="https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.cololight.total">
 
