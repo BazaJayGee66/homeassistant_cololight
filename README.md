@@ -14,19 +14,20 @@ Supported devices include:
 
 ## Installation
 
-### HACS
+### Marketplace
 
-1. In HACS go to the tab "Settings"
-2. Add this repository as custom repository. Category is "Integration".
-3. Switch to the tab "Integrations"
-4. Install like any other custom integration.
-5. Restart Home Assistant
+1. Go to **Settings → Marketplace**.
+2. Select **Add from link**, enter `BazaJayGee66/homeassistant_cololight`, then select **Add**.
+3. Open **LifeSmart Cololight** and select **Install**.
+4. Restart Home Assistant if prompted.
+
+On Home Assistant 2026.10 or older, add this repository in HACS as a [custom repository](https://hacs.xyz/docs/faq/custom_repositories/) (type **Integration**), download it, then restart Home Assistant.
 
 ### Manual
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find configuration.yaml).
 2. If you do not have a custom_components directory (folder) there, you need to create it.
-3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
+3. Download the latest [`cololight.zip`](https://github.com/BazaJayGee66/homeassistant_cololight/releases/latest/download/cololight.zip), and unzip to custom_components directory
 
 ```sh
 wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/latest/download/cololight.zip
