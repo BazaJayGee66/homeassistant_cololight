@@ -21,7 +21,7 @@ Supported devices include:
 3. Open **LifeSmart Cololight** and select **Install**.
 4. Restart Home Assistant if prompted.
 
-On Home Assistant 2026.10 or older, add this repository in HACS as a [custom repository](https://hacs.xyz/docs/faq/custom_repositories/) (type **Integration**), download it, then restart Home Assistant.
+On Home Assistant 2026.10 or older, add `https://github.com/BazaJayGee66/homeassistant_cololight` in HACS as a [custom repository](https://hacs.xyz/docs/faq/custom_repositories/) (type **Integration**), download **LifeSmart Cololight**, then restart Home Assistant.
 
 ### Manual
 
