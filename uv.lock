@@ -1296,7 +1296,7 @@ test = [
 [package.metadata.requires-dev]
 lint = [{ name = "ruff", specifier = "==0.17.3" }]
 test = [
-    { name = "pycololight", specifier = "==2.1.0" },
+    { name = "pycololight", specifier = "==2.2.0" },
     { name = "pytest", specifier = ">=9,<10" },
     { name = "pytest-cov", specifier = ">=7,<8" },
     { name = "pytest-homeassistant-custom-component", specifier = "==0.13.374" },
@@ -2128,11 +2128,11 @@ wheels = [
 
 [[package]]
 name = "pycololight"
-version = "2.1.0"
+version = "2.2.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/2e/f6/94025b5e68d3d0faee9f723d4a673245b04eaeb713e8dda3f5cc38ef3abd/pycololight-2.1.0.tar.gz", hash = "sha256:bc63800cf0b48bc1f25d043ee013dacf4e64868ac774d199580a8b3e47ad24fa", size = 7004, upload-time = "2023-03-27T08:43:26.149Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/9b/f7/a5ab3a371e8a803260450771c96c21bac234a898dfb9be4ec31c72c96354/pycololight-2.2.0.tar.gz", hash = "sha256:8b2ee2da5e2c5346e3b02659e7f630d1a282fe498fd09b10b3ae89f7846fcc39", size = 7503, upload-time = "2026-11-01T04:44:18.535Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/1c/a255522e52ebc6088adcfeac05bf8d2cb793f65abaae0766bddf17c29ad9/pycololight-2.1.0-py3-none-any.whl", hash = "sha256:16af691771c0f1869cc0136f22f05e9a4e9e6529cc054d302b3bf6de3e894697", size = 7982, upload-time = "2023-03-27T08:43:24.872Z" },
+    { url = "https://files.pythonhosted.org/packages/40/71/832fb4394148e2b8dcbcf222f1a3d36dd95055b30c6d3ee0fbe3a0765bce/pycololight-2.2.0-py3-none-any.whl", hash = "sha256:cff1f0616ad958d6855dba5b3c7d892f5992f865ae9d7f1d3df764be9e3c1c8d", size = 8120, upload-time = "2026-11-01T04:44:17.785Z" },
 ]
 
 [[package]]

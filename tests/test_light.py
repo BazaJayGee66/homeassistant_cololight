@@ -308,11 +308,8 @@ async def test_poll_straight_after_a_command_is_skipped(mock_send, service, hass
 
 @patch("custom_components.cololight.light.PyCololight._send")
 async def test_light_is_unavailable_when_a_poll_times_out(mock_send, hass):
-    with patch(
-        "custom_components.cololight.light.PyCololight._receive",
-        side_effect=UnavailableException,
-    ):
-        await poll(hass)
+    mock_send.side_effect = UnavailableException
+    await poll(hass)
 
     assert hass.states.get(ENTITY_1_LIGHT).state == STATE_UNAVAILABLE
 
@@ -322,18 +319,13 @@ async def test_light_is_available_again_when_it_replies(mock_send, hass):
     # pycololight reads byte 40 as on (207) or off (206), and byte 41 as brightness.
     on_reply = bytes(40) + bytes([207, 100])
 
-    with patch(
-        "custom_components.cololight.light.PyCololight._receive",
-        side_effect=UnavailableException,
-    ):
-        await poll(hass)
+    mock_send.side_effect = UnavailableException
+    await poll(hass)
     assert hass.states.get(ENTITY_1_LIGHT).state == STATE_UNAVAILABLE
 
-    with patch(
-        "custom_components.cololight.light.PyCololight._receive",
-        return_value=on_reply,
-    ):
-        await poll(hass)
+    mock_send.side_effect = None
+    mock_send.return_value = on_reply
+    await poll(hass)
 
     assert hass.states.get(ENTITY_1_LIGHT).state == STATE_ON
 
@@ -342,11 +334,8 @@ async def test_light_is_available_again_when_it_replies(mock_send, hass):
 async def test_unexpected_poll_error_makes_light_unavailable_and_logs_traceback(
     mock_send, hass, caplog
 ):
-    with patch(
-        "custom_components.cololight.light.PyCololight._receive",
-        side_effect=RuntimeError,
-    ):
-        await poll(hass)
+    mock_send.side_effect = RuntimeError
+    await poll(hass)
 
     assert hass.states.get(ENTITY_1_LIGHT).state == STATE_UNAVAILABLE
     assert RuntimeError in logged_exception_types(caplog)
@@ -356,17 +345,14 @@ async def test_unexpected_poll_error_makes_light_unavailable_and_logs_traceback(
 async def test_poll_error_traceback_is_not_logged_again_while_unavailable(
     mock_send, hass, caplog
 ):
-    with patch(
-        "custom_components.cololight.light.PyCololight._receive",
-        side_effect=RuntimeError,
-    ) as mock_receive:
-        await poll(hass)
-        caplog.clear()
-        receives_before = mock_receive.call_count
+    mock_send.side_effect = RuntimeError
+    await poll(hass)
+    caplog.clear()
+    polls_before = mock_send.call_count
 
-        await poll(hass)
+    await poll(hass)
 
-    assert mock_receive.call_count > receives_before
+    assert mock_send.call_count > polls_before
     assert logged_exception_types(caplog) == []
 
 
@@ -383,22 +369,17 @@ class FakeDevice:
             if command[-2] == 0xCF:
                 self.brightness = command[-1]
 
-    def receive(self):
-        return bytes(40) + bytes([0xCF, self.brightness])
+        if response:
+            return bytes(40) + bytes([0xCF, self.brightness])
+        return None
 
 
 @pytest.fixture
 def fake_device():
     device = FakeDevice()
-    with (
-        patch(
-            "custom_components.cololight.light.PyCololight._send",
-            side_effect=device.send,
-        ),
-        patch(
-            "custom_components.cololight.light.PyCololight._receive",
-            side_effect=device.receive,
-        ),
+    with patch(
+        "custom_components.cololight.light.PyCololight._send",
+        side_effect=device.send,
     ):
         yield device
 
