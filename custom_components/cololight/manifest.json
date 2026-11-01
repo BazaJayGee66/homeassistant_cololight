@@ -14,7 +14,7 @@
     "pycololight"
   ],
   "requirements": [
-    "pycololight==2.1.0"
+    "pycololight==2.2.0"
   ],
   "version": "v2.0.10"
 }

@@ -9,7 +9,7 @@ lint = [
     "ruff==0.17.3",
 ]
 test = [
-    "pycololight==2.1.0",
+    "pycololight==2.2.0",
     "pytest-homeassistant-custom-component==0.13.374",
     "pytest>=9,<10",
     "pytest-cov>=7,<8",
