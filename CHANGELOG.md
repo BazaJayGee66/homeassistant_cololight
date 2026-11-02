@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.0.11](https://github.com/BazaJayGee66/homeassistant_cololight/compare/v2.0.10...v2.0.11) (2026-11-01)
+
+
+### Bug Fixes
+
+* bump pycololight to 2.2.0 ([#67](https://github.com/BazaJayGee66/homeassistant_cololight/issues/67)) ([cd9229a](https://github.com/BazaJayGee66/homeassistant_cololight/commit/cd9229a08a2e9bf103c158d44359cf80728d6795))
+* mark the light unavailable and log a traceback when a poll fails ([#60](https://github.com/BazaJayGee66/homeassistant_cololight/issues/60)) ([2dd557f](https://github.com/BazaJayGee66/homeassistant_cololight/commit/2dd557fc71d6b990b68c778be59c0c3e3414eb65))
+* stop brightness drifting between setting it and the next poll ([#62](https://github.com/BazaJayGee66/homeassistant_cololight/issues/62)) ([a9eb0c0](https://github.com/BazaJayGee66/homeassistant_cololight/commit/a9eb0c02a35f4a5cd5cea399529180395ec02f0a))
+
 ## [2.0.10](https://github.com/BazaJayGee66/homeassistant_cololight/compare/v2.0.9...v2.0.10) (2026-10-29)
 
 
