@@ -1286,8 +1286,6 @@ lint = [
 ]
 test = [
     { name = "pycololight" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
     { name = "pytest-homeassistant-custom-component" },
 ]
 
@@ -1297,8 +1295,6 @@ test = [
 lint = [{ name = "ruff", specifier = "==0.17.3" }]
 test = [
     { name = "pycololight", specifier = "==2.2.0" },
-    { name = "pytest", specifier = ">=9,<10" },
-    { name = "pytest-cov", specifier = ">=7,<8" },
     { name = "pytest-homeassistant-custom-component", specifier = "==0.13.374" },
 ]
 
