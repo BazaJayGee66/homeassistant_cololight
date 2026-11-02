@@ -1,0 +1,25 @@
+version: 2
+
+updates:
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Bumped by hand: Dependabot can't update its matching pin in manifest.json.
+      - dependency-name: pycololight
+    commit-message:
+      prefix: build
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: build
