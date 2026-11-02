@@ -10,7 +10,7 @@ lint = [
 ]
 test = [
     "pycololight==2.2.0",
-    "pytest-homeassistant-custom-component==0.13.374",
+    "pytest-homeassistant-custom-component==0.13.375",
 ]
 
 [tool.uv]
