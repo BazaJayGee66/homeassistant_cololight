@@ -1,10 +1,10 @@
 [![CI](https://github.com/BazaJayGee66/homeassistant_cololight/actions/workflows/ci.yml/badge.svg)](https://github.com/BazaJayGee66/homeassistant_cololight/actions/workflows/ci.yml)
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 <img src="https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=integration%20usage&suffix=%20installs&cacheSeconds=15600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.cololight.total">
 
 # Home Assistant Cololight
 
-The Cololight custom integration allows you to control [LifeSmart Cololight](http://www.cololight.com/) devices in Home Assistant.
+The Cololight custom integration allows you to control [LifeSmart Cololight](https://cololight.com/) devices in Home Assistant.
 
 Supported devices include:
 
@@ -14,19 +14,20 @@ Supported devices include:
 
 ## Installation
 
-### HACS
+### Marketplace
 
-1. In HACS go to the tab "Settings"
-2. Add this repository as custom repository. Category is "Integration".
-3. Switch to the tab "Integrations"
-4. Install like any other custom integration.
-5. Restart Home Assistant
+1. Go to **Settings → Marketplace**.
+2. Select **Add from link**, enter `BazaJayGee66/homeassistant_cololight`, then select **Add**.
+3. Open **LifeSmart Cololight** and select **Install**.
+4. Restart Home Assistant if prompted.
+
+On Home Assistant 2026.10 or older, add `https://github.com/BazaJayGee66/homeassistant_cololight` in HACS as a [custom repository](https://hacs.xyz/docs/faq/custom_repositories/) (type **Integration**), download **LifeSmart Cololight**, then restart Home Assistant.
 
 ### Manual
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find configuration.yaml).
-2. If you do not have a custom_components directory (folder) there, you need to create it.
-3. Download `cololight.zip` [release version](https://github.com/BazaJayGee66/homeassistant_cololight/releases), and unzip to custom_components directory
+2. If you do not have a `custom_components` directory (folder) there, you need to create it.
+3. Download the latest [`cololight.zip`](https://github.com/BazaJayGee66/homeassistant_cololight/releases/latest/download/cololight.zip), and unzip to the `custom_components` directory.
 
 ```sh
 wget https://github.com/BazaJayGee66/homeassistant_cololight/releases/latest/download/cololight.zip
@@ -44,7 +45,7 @@ After installation, adding Cololight to your Home Assistant instance can be done
 
 > #### Host
 >
-> The host address of the cololight device (eg, `192.168.1.50`).
+> The IP address or hostname of the Cololight (for example, `192.168.1.50`).
 >
 > #### Name
 >
@@ -60,7 +61,7 @@ Additional Cololight options can be configured through the Home Assistant user i
 
 1. Open your Home Assistant instance.
 2. Go to [Settings → Devices & services](https://my.home-assistant.io/redirect/integrations).
-3. Locate and select the **Cololight** integration.
+3. Locate and select the **LifeSmart Cololight** integration.
 4. Click the cog icon (⚙️) on the device you want to update.
 
 <img src="images/cololight_options.png?raw=true" alt="Extra Configuration" width="500"/>
@@ -109,7 +110,7 @@ Restore default or dynamic effects for the Cololight device in Home Assistant.
 
 Please create an issue [here](https://github.com/BazaJayGee66/homeassistant_cololight/issues).
 
-For contriuting, have a look [here](CONTRIBUTING.md).
+For contributing, have a look [here](CONTRIBUTING.md).
 
 ## Sponsor
 
